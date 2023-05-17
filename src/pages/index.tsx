@@ -3,17 +3,17 @@ import styles from "../styles/index.module.css"
 
 export default function Home() {
     return (
-        <>         
-            <main className={`lg:flex lg:flex-row-reverse`}> 
+        <>
+            <main className={`lg:flex lg:flex-row-reverse`}>
                 <section className={`hidden bg-slate-300 lg:w-full  lg:block lg:h-screen lg:basis-2/5 `}>
                 </section>
                 <section className={`basis-3/5 p-8 pt-3`}>
                     <h1 className={`text-3xl font-bold underline mb-5`} >Chatter</h1>
-                    <div className={`lg:w-3/5 lg:m-auto lg:h-5/6 lg:flex flex-col justify-center`}>
-                    <div className={`mb-3`}>
-                        <p>Log in</p>
-                        <p>Join our community start a blog just one click</p>
-                    </div>               
+                    <div className={`lg:w-3/5 lg:m-auto lg:mt-7 lg:h-6/6 lg:flex flex-col justify-center`}>
+                        <div className={`mb-3`}>
+                            <p className={`font-semibold text-3xl mb-2`}>Welcome back</p>
+                            <p className={`text-base  text-slate-400`}>Let&apos;s get you logged in so you can jump right back into sharing your brilliant ideas and engaging stories </p>
+                        </div>
                         <form className={` mb-10`}>
                             <label className={`block mb-4`}>
                                 <input type="email" placeholder='Enter your email' className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`} />
@@ -31,8 +31,8 @@ export default function Home() {
                             <button className={`${styles.loginBtn}  ${styles.githubBtn} focus:border-solid rounded-full hover:border-dashed rounded-full`} aria-label='github login button'></button>
                         </div>
                     </div>
-                    </section>
-        </main>
-          </>
+                </section>
+            </main>
+        </>
     )
 }
