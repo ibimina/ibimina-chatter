@@ -16,3 +16,7 @@
     background: transparent url("../assets/icons8-github.svg") no-repeat;
     background-size: cover;
 }
+
+.loginCard{
+    min-height: 80vh;
+}
