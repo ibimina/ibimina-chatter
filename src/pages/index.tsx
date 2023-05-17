@@ -8,9 +8,9 @@ export default function Home() {
                 <section className={`hidden bg-slate-300 lg:w-full  lg:block lg:h-screen lg:basis-2/5 `}>
                 </section>
                 <section className={`basis-3/5 p-8 pt-3`}>
-                    <h1 className={`text-3xl font-bold underline mb-5`} >Chatter</h1>
-                    <div className={`lg:w-3/5 lg:m-auto lg:mt-7 lg:h-6/6 lg:flex flex-col justify-center`}>
-                        <div className={`mb-3`}>
+                    <h1 className={`text-3xl font-bold underline`} >Chatter</h1>
+                    <div className={`lg:w-3/5 lg:m-auto lg:mt-7 flex flex-col justify-center ${styles.loginCard}`}>
+                        <div className={`mb-8`}>
                             <p className={`font-semibold text-3xl mb-2`}>Welcome back</p>
                             <p className={`text-base  text-slate-400`}>Let&apos;s get you logged in so you can jump right back into sharing your brilliant ideas and engaging stories </p>
                         </div>
@@ -22,8 +22,8 @@ export default function Home() {
                                 <input type="password" placeholder='Enter your password' className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`} />
                             </label>
                             <Link href="resetpassword" className={`block text-right mb-8 underline`}>forgot password</Link>
-                            <input type="submit" value="Log in" className={`cursor-pointer block w-full p-2 bg-slate-300 rounded-lg hover:bg-black hover:text-white lg:m-auto`} />
-                            <Link href="signup" className={`block text-center`}>Don&apos;t have an account? <span>Create one</span> </Link>
+                            <input type="submit" value="Log in" className={`cursor-pointer block w-full p-2 bg-slate-300 rounded-lg hover:bg-black hover:text-white`} />
+                            <p className={`text-center`}>Don&apos;t have an account? <Link href="signup" >Create one</Link> </p>
                         </form>
                         <p className={`mb-10`}>or continue with ______________</p>
                         <div className={`flex items-center justify-center gap-4`}>
