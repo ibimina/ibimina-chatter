@@ -7,7 +7,7 @@ function SignUp() {
             </section>
             <section className={`basis-3/5 p-8 pt-3`}>
                 <h1 className={`text-3xl font-bold underline`} >Chatter</h1>
-                <div className={`lg:w-3/5 lg:m-auto  flex flex-col justify-center ${styles.height}`}>
+                <div className={`lg:w-3/5 lg:m-auto  flex flex-col justify-center ${styles.signupCard}`}>
                     <div className={`mb-8`}>
                         <p className={`font-semibold text-3xl mb-2`}>Create your account</p>
                         <p className={`text-base  text-slate-400`}>Start crafting compelling blog posts that engage and captivate readers from the very beginning. </p>
