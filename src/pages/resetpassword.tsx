@@ -14,21 +14,14 @@ function SignUp() {
           >
             <div className={`mb-8`}>
               <p className={`font-semibold text-3xl mb-2`}>
-                Create your account
+                Reset your password
               </p>
               <p className={`text-base  text-slate-400`}>
-                Start crafting compelling blog posts that engage and captivate
-                readers from the very beginning.{" "}
+                Enter your email assoicated with your account and we will send
+                you a link to reset your password{" "}
               </p>
             </div>
             <form className={`mb-10`}>
-              <label className={`block mb-4`}>
-                <input
-                  type="text"
-                  placeholder="Enter your username"
-                  className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
-                />
-              </label>
               <label className={`block mb-4`}>
                 <input
                   type="email"
@@ -36,16 +29,9 @@ function SignUp() {
                   className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
                 />
               </label>
-              <label className={`block mb-3`}>
-                <input
-                  type="password"
-                  placeholder="Enter your password"
-                  className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
-                />
-              </label>
               <input
                 type="submit"
-                value="Sign Up"
+                value="Submit Email"
                 className={`cursor-pointer mt-10 block w-full p-2 bg-slate-300 rounded-lg hover:bg-black hover:text-white `}
               />
               <p className={` text-center`}>

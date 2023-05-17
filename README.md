@@ -33,15 +33,13 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 
-
 ### Project name
 
 Chatter
 
 ### Project description
 
- A multi-functional platform where authors and readers can create and have access to their own content. Chatter aims to knock off competition from the likes of Hashnode and Medium in its first 2 years of launch.
-
+A multi-functional platform where authors and readers can create and have access to their own content. Chatter aims to knock off competition from the likes of Hashnode and Medium in its first 2 years of launch.
 
 ## Project system Architecture
 
@@ -51,35 +49,33 @@ Screenshot of the project architecture:
 
 ### Project features
 
--  User can create an account.
--  User can login.
--  User can create a post.
--  User can view all posts.
--  User can view a single post.
--  User can update a post.
--  User can delete a post.
--  User can like a post.
--  User can view all likes on a post.
--  User can see all views analytics on a post.
--  User can comment on a post.
--  User can view all comments on a post.
--  User can view all posts by a user.
--  User can view all posts by a user.
+- User can create an account.
+- User can login.
+- User can create a post.
+- User can view all posts.
+- User can view a single post.
+- User can update a post.
+- User can delete a post.
+- User can like a post.
+- User can view all likes on a post.
+- User can see all views analytics on a post.
+- User can comment on a post.
+- User can view all comments on a post.
+- User can view all posts by a user.
+- User can view all posts by a user.
 
 ### Project technologies
 
--  Next.js
--  TypeScript
--  Module CSS
--  React Query
--  React Hook Form
--  React Markdown
--  React Syntax Highlighter
--  React Share
--  React Infinite Scroll
--  React Timeago
-
-
+- Next.js
+- TypeScript
+- Module CSS
+- React Query
+- React Hook Form
+- React Markdown
+- React Syntax Highlighter
+- React Share
+- React Infinite Scroll
+- React Timeago
 
 ### Project status
 
@@ -94,8 +90,3 @@ Screenshot of the project architecture:
   - `types` - Contains all the types of the project.
   - `utils` - Contains all the utils of the project.
 - `public` - Contains all the public files of the project.
-
-
-
-
-

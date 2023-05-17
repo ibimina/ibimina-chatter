@@ -1,22 +1,20 @@
 .loginBtn {
-    width: 34px;
-    height: 34px;
-    cursor: pointer;
-    border: none;
-
+  width: 34px;
+  height: 34px;
+  cursor: pointer;
+  border: none;
 }
 
 .googleBtn {
-    background: transparent url("../assets/icons8-google.svg") no-repeat;
-    background-size: cover;
-
+  background: transparent url("../assets/icons8-google.svg") no-repeat;
+  background-size: cover;
 }
 
 .githubBtn {
-    background: transparent url("../assets/icons8-github.svg") no-repeat;
-    background-size: cover;
+  background: transparent url("../assets/icons8-github.svg") no-repeat;
+  background-size: cover;
 }
 
-.loginCard{
-    min-height: 80vh;
+.loginCard {
+  min-height: 80vh;
 }
