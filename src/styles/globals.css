@@ -76,7 +76,7 @@
   }
 }
 
-* {
+*,*::after,*::before {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
@@ -89,13 +89,16 @@ body {
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
+  width: 100%;
+  min-height: 100vh;
+  font-size: 16px;
+  /* color: rgb(var(--foreground-rgb));
   background: linear-gradient(
       to bottom,
       transparent,
       rgb(var(--background-end-rgb))
     )
-    rgb(var(--background-start-rgb));
+    rgb(var(--background-start-rgb)); */
 }
 
 a {
@@ -105,6 +108,6 @@ a {
 
 @media (prefers-color-scheme: dark) {
   html {
-    color-scheme: dark;
+    /* color-scheme: dark; */
   }
 }
