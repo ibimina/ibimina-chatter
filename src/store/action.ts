@@ -10,7 +10,7 @@ export const signIn = (user: UserProps) => ({
 	payload: user,
 });
 
-export const signOut = () => ({
+export const logOut = () => ({
 	type: SIGN_OUT,
 });
 

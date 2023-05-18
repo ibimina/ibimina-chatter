@@ -15,7 +15,7 @@ export const InitialState = {
 
 export const authReducer = (
     state = InitialState,
-    action: { type: string; payload: any }
+    action: { type: string; payload?: any }
 ) => {
     if (action.type === SIGN_IN) {
         return {
@@ -46,7 +46,7 @@ export const authReducer = (
 };
 export const AuthContext = createContext({
     state: InitialState,
-    dispatch: (action: { type: string; payload: any }) => { },
+    dispatch: (action: { type: string; payload?: any }) => { },
 });
 export const AuthContextProvider = ({
     children,
