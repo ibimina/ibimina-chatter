@@ -1,6 +1,38 @@
 import Link from "next/link";
 import styles from "../styles/signup.module.css";
+import useSignUp from "@/hooks/useSignUp";
+import { useState } from "react";
+import { useRouter } from "next/router";
+import { useAuthContext } from "@/store/store";
+
 function SignUp() {
+  const { createUser, error, isLoading } = useSignUp();
+  const { state } = useAuthContext();
+  const [userDetails, setUserDetails] = useState({ username: "", email: "", password: "" });
+  const [emailExists, setEmailExists] = useState<boolean | null>(null);
+  const [isPasswordShort, setIsPasswordShort] = useState<boolean | null>(null);
+  const router = useRouter();
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUserDetails({ ...userDetails, [e.target.name]: e.target.value });
+    if (isPasswordShort) {
+      userDetails.password.length > 6
+      setIsPasswordShort(false)
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    await createUser(userDetails)
+    if (state.authState) {
+      return router.push('/chatter')
+    } else if (error === 'FirebaseError: Firebase: Error (auth/email-already-in-use)') {
+      setEmailExists(true);
+    } else if (error === "FirebaseError: Firebase: Password should be at least 6 characters (auth/weak-password).") {
+      setIsPasswordShort(true)
+    }
+  };
+
   return (
     <>
       <main className={`lg:flex lg:flex-row-reverse`}>
@@ -21,32 +53,49 @@ function SignUp() {
                 readers from the very beginning.{" "}
               </p>
             </div>
-            <form className={`mb-10`}>
+            <form className={`mb-10`} onSubmit={handleSubmit}>
               <label className={`block mb-4`}>
                 <input
                   type="text"
+                  name="username"
                   placeholder="Enter your username"
                   className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
+                  onChange={handleInputChange}
                 />
               </label>
               <label className={`block mb-4`}>
                 <input
+                  onChange={handleInputChange}
+                  name="email"
                   type="email"
                   placeholder="Enter your email"
                   className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
                 />
+                {emailExists && (
+                  <p className={`text-red-500 text-sm`}>
+                    Email already exists
+                  </p>
+                )}
               </label>
               <label className={`block mb-3`}>
+                {isPasswordShort && (
+                  <p className={`text-red-500 text-sm`}>
+                    Password should be at least 6 characters
+                  </p>
+                )}
                 <input
                   type="password"
+                  name="password"
                   placeholder="Enter your password"
                   className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
+                  onChange={handleInputChange}
                 />
               </label>
               <input
                 type="submit"
                 value="Sign Up"
-                className={`cursor-pointer mt-10 block w-full p-2 bg-slate-300 rounded-lg hover:bg-black hover:text-white `}
+                className={`cursor-pointer mt-10 block w-full p-2 bg-slate-300 rounded-lg hover:bg-black hover:text-white ${isLoading ? styles.grey : ""} `}
+                disabled={isLoading}
               />
               <p className={` text-center`}>
                 Already have an account? <Link href="/">Log in</Link>{" "}
