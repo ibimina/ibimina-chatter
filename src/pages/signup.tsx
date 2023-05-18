@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import styles from '../styles/signup.module.css';
 import useSignUp from '@/hooks/useSignUp';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuthContext } from '@/store/store';
 
@@ -17,6 +17,13 @@ function SignUp() {
 	const [isPasswordShort, setIsPasswordShort] = useState<boolean | null>(null);
 	const router = useRouter();
 
+
+  useEffect(() => {
+    if (state?.user?.uid?.length! > 0) {
+      router.push('/chatter');
+    }
+  }, [router, state.user]);
+
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setUserDetails({ ...userDetails, [e.target.name]: e.target.value });
 		if (isPasswordShort) {
@@ -28,7 +35,7 @@ function SignUp() {
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		await createUser(userDetails);
-		if (state.authState) {
+		if (state?.user?.uid?.length! > 0) {
 			return router.push('/chatter');
 		} else if (
 			error === 'FirebaseError: Firebase: Error (auth/email-already-in-use)'
