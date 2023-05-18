@@ -1,7 +1,19 @@
 import Link from 'next/link';
 import styles from '../styles/index.module.css';
+import { useEffect } from 'react';
+import { useAuthContext } from '@/store/store';
+import { useRouter } from 'next/router';
 
 export default function Home() {
+	const { state } = useAuthContext();
+	const router = useRouter();
+
+	useEffect(() => {		
+		if (state?.user?.uid?.length! > 0) {
+			 router.push('/chatter');
+		}
+	}, [router, state.user]);
+
 	return (
 		<>
 			<main className={`lg:flex lg:flex-row-reverse`}>
