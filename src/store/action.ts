@@ -6,20 +6,20 @@ export const LOG_IN = 'LOG_IN';
 export const AUTH_STATE_CHANGED = 'AUTH_STATE_CHANGED';
 
 export const signIn = (user: UserProps) => ({
-    type: SIGN_IN,
-    payload: user,
+	type: SIGN_IN,
+	payload: user,
 });
 
 export const signOut = () => ({
-    type: SIGN_OUT,
+	type: SIGN_OUT,
 });
 
 export const logIn = (user: UserProps) => ({
-    type: LOG_IN,
-    payload: user,
+	type: LOG_IN,
+	payload: user,
 });
 
 export const authStateChanged = (user: UserProps) => ({
-    type: AUTH_STATE_CHANGED,
-    payload: user,
+	type: AUTH_STATE_CHANGED,
+	payload: user,
 });
