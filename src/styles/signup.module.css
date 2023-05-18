@@ -1,3 +1,7 @@
 .signupCard {
-  min-height: 85vh;
+	min-height: 85vh;
+}
+.grey {
+	background-color: #e6dbdb;
+	color: rgb(9, 9, 9);
 }
