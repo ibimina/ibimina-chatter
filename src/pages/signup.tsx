@@ -17,7 +17,6 @@ function SignUp() {
 	const [isPasswordShort, setIsPasswordShort] = useState<boolean | null>(null);
 	const router = useRouter();
 
-
   useEffect(() => {
     if (state?.user?.uid?.length! > 0) {
       router.push('/chatter');
@@ -35,7 +34,7 @@ function SignUp() {
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		await createUser(userDetails);
-		if (state?.user?.uid?.length! > 0) {
+		if (state?.user !== null && state?.user?.uid?.length! >0) {
 			return router.push('/chatter');
 		} else if (
 			error === 'FirebaseError: Firebase: Error (auth/email-already-in-use)'
