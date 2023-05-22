@@ -1,0 +1,6 @@
+.add[aria-pressed="false"] {
+    background-image: url("../../public/images/icons8-plus.svg");
+}
+.add[aria-pressed="true"]{
+    background-image:url("../../public/images/icons8-done.svg");
+}
