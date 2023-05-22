@@ -18,7 +18,6 @@ export default function useLogin() {
                 email,
                 password
             );
-       
             // Signed in
             const userRef = userCredential.user;
             dispatch(logIn(userRef));
