@@ -3,5 +3,4 @@ export interface UserProps {
 	email: string | null;
 	displayName: string | null;
 	photoURL: string | null;
-	emailVerified: boolean;
 }

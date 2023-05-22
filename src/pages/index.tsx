@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useAuthContext } from '@/store/store';
 import { useRouter } from 'next/router';
 import useLogin from '@/hooks/useLogin';
+import { useGoogleSignin } from '@/hooks/useGoogleSignin';
+import { useGitHubSignin } from '@/hooks/useGithubSigin';
 
 export default function Home() {
 	const [loginDetails, setLoginDetails] = useState({
@@ -20,6 +22,17 @@ export default function Home() {
 			...loginDetails,
 			[e.target.name]: e.target.value,
 		});
+	};
+	const { google } = useGoogleSignin();
+	const {github} = useGitHubSignin()
+	const handleGithubLogin = async (e: React.MouseEvent) => {
+		e.preventDefault()
+		await github();
+		console.log(state.user)
+	};
+	const handleGoogleLogin = async (e:React.MouseEvent) => {
+		e.preventDefault()
+		await google();
 	};
 	const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -98,10 +111,12 @@ export default function Home() {
 						<p className={`mb-10`}>or continue with ______________</p>
 						<div className={`flex items-center justify-center gap-4`}>
 							<button
+							onClick={handleGoogleLogin}
 								className={`${styles.loginBtn}  ${styles.googleBtn} focus:border-solid rounded-full hover:border-dashed rounded-full`}
 								aria-label='google login button'
 							></button>
 							<button
+							onClick={handleGithubLogin}
 								className={`${styles.loginBtn}  ${styles.githubBtn} focus:border-solid rounded-full hover:border-dashed rounded-full`}
 								aria-label='github login button'
 							></button>

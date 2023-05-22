@@ -1,5 +1,5 @@
 import { createContext, useEffect, useReducer } from 'react';
-import { AUTH_STATE_CHANGED, LOG_IN, SIGN_IN, SIGN_OUT } from './action';
+import { AUTH_STATE_CHANGED, GITHUB_AUTH, GOOGLE_AUTH, LOG_IN, SIGN_IN, SIGN_OUT } from './action';
 import { firebaseAuth } from '@/firebase/config';
 import { onAuthStateChanged } from 'firebase/auth';
 
@@ -7,7 +7,7 @@ export const InitialState = {
     user: {
         uid: '',
         email: '',
-        username: '',
+        displayName: '',
         photoURL: '',
     },
     authState: false,
@@ -35,6 +35,18 @@ export const authReducer = (
             user: null,
         };
     }
+    if(action.type === GOOGLE_AUTH){
+        return {
+            ...state,
+            user: action.payload,
+        };
+    } if (action.type === GITHUB_AUTH) {
+        return {
+            ...state,
+            user: action.payload,
+        };
+    }
+
     if (action.type === AUTH_STATE_CHANGED) {
         return {
             ...state,
