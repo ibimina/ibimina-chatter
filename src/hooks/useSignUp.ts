@@ -1,8 +1,9 @@
-import { firebaseAuth } from '@/firebase/config';
+import { firebaseAuth, firebaseStore } from '@/firebase/config';
 import { signIn } from '@/store/action';
 import { useAuthContext } from '@/store/store';
 import { SignUpProps } from '@/types/signup';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 import { useState } from 'react';
 
 export default function useSignUp() {
@@ -19,16 +20,17 @@ export default function useSignUp() {
 				password
 			);
 			await updateProfile(userCredential.user, {
-				displayName: username,
+				displayName: username
 			});
-			// Signed in
 			const userRef = userCredential.user;
-			dispatch(signIn(userRef));
+			await setDoc(doc(firebaseStore, "users", userCredential?.user?.uid), { uid: userRef?.uid, displayName: userRef?.displayName, email: userRef?.email, photoURL: userRef?.photoURL });
+			// Signed in
+
+			dispatch(signIn({ uid: userRef?.uid, displayName: userRef?.displayName, email: userRef?.email, photoURL: userRef?.photoURL }));
 			setIsLoading(false);
 		} catch (error: any) {
 			setError(error.message);
 			setIsLoading(false);
-			console.log(error);
 		}
 	};
 	return { createUser, error, isLoading };
