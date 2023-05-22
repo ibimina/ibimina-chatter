@@ -16,12 +16,12 @@ function SignUp() {
 	const [emailExists, setEmailExists] = useState<boolean | null>(null);
 	const [isPasswordShort, setIsPasswordShort] = useState<boolean | null>(null);
 	const router = useRouter();
-
-  useEffect(() => {
-    if (state?.user?.uid?.length! > 0) {
-      router.push('/chatter');
-    }
-  }, [router, state.user]);
+	const { user } = state;
+	useEffect(() => {
+		if (state?.user?.uid?.length! > 0) {
+			router.push('/tags');
+		}
+	}, [router, state?.user, user]);
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setUserDetails({ ...userDetails, [e.target.name]: e.target.value });
@@ -34,9 +34,7 @@ function SignUp() {
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		await createUser(userDetails);
-		if (state?.user !== null && state?.user?.uid?.length! >0) {
-			return router.push('/chatter');
-		} else if (
+		if (
 			error === 'FirebaseError: Firebase: Error (auth/email-already-in-use)'
 		) {
 			setEmailExists(true);
@@ -107,9 +105,8 @@ function SignUp() {
 							<input
 								type='submit'
 								value='Sign Up'
-								className={`cursor-pointer mt-10 block w-full p-2 bg-slate-300 rounded-lg hover:bg-black hover:text-white ${
-									isLoading ? styles.grey : ''
-								} `}
+								className={`cursor-pointer mt-10 block w-full p-2 bg-slate-300 rounded-lg hover:bg-black hover:text-white ${isLoading ? styles.grey : ''
+									} `}
 								disabled={isLoading}
 							/>
 							<p className={` text-center`}>
