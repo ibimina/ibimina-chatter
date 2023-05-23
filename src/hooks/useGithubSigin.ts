@@ -10,10 +10,10 @@ export const useGitHubSignin = () => {
         try {
             const result = await signInWithPopup(firebaseAuth, googleAuthProvider)
             const user = result.user;
+       
             dispatch(githubAuth(user))
             // ...
         } catch (error: any) {
-            console.log(error)
             // Handle Errors here.
             const errorCode = error.code;
             const errorMessage = error.message;
@@ -23,11 +23,6 @@ export const useGitHubSignin = () => {
             // const credential = GoogleAuthProvider.credentialFromError(error);
             // ...
         }
-
-
-
-
-
     }
     return { github }
 }

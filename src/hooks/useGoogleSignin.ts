@@ -1,7 +1,7 @@
 import { firebaseAuth, googleAuthProvider } from "@/firebase/config";
 import { googleAuth } from "@/store/action";
 import { useAuthContext } from "@/store/store";
-import { GoogleAuthProvider, linkWithPopup, signInWithPopup } from "firebase/auth";
+import { signInWithPopup } from "firebase/auth";
 
 export const useGoogleSignin = () => {
     const { dispatch } = useAuthContext()
@@ -11,10 +11,8 @@ export const useGoogleSignin = () => {
             const result = await signInWithPopup(firebaseAuth, googleAuthProvider)
             const user = result.user;
             dispatch(googleAuth(user))
-  
-            // ...
+
         } catch (error: any) {
-            console.log(error)
             // Handle Errors here.
             const errorCode = error.code;
             const errorMessage = error.message;
@@ -24,11 +22,6 @@ export const useGoogleSignin = () => {
             // const credential = GoogleAuthProvider.credentialFromError(error);
             // ...
         }
-
-
-
-
-
     }
     return { google }
 }

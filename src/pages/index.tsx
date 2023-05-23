@@ -6,6 +6,9 @@ import { useRouter } from 'next/router';
 import useLogin from '@/hooks/useLogin';
 import { useGoogleSignin } from '@/hooks/useGoogleSignin';
 import { useGitHubSignin } from '@/hooks/useGithubSigin';
+import { firebaseStore } from '@/firebase/config';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+
 
 export default function Home() {
 	const [loginDetails, setLoginDetails] = useState({
@@ -24,13 +27,12 @@ export default function Home() {
 		});
 	};
 	const { google } = useGoogleSignin();
-	const {github} = useGitHubSignin()
+	const { github } = useGitHubSignin()
 	const handleGithubLogin = async (e: React.MouseEvent) => {
 		e.preventDefault()
 		await github();
-		console.log(state.user)
 	};
-	const handleGoogleLogin = async (e:React.MouseEvent) => {
+	const handleGoogleLogin = async (e: React.MouseEvent) => {
 		e.preventDefault()
 		await google();
 	};
@@ -39,7 +41,7 @@ export default function Home() {
 		await loginUser(loginDetails)
 
 		if (error == "Firebase: Error (auth/user-not-found).") {
-			setEmailExists(false) 
+			setEmailExists(false)
 			setPasswordLimit(false)
 		} else if (error == "Firebase: Error (auth/wrong-password).") {
 			setEmailExists(true)
@@ -49,9 +51,23 @@ export default function Home() {
 			setPasswordLimit(true)
 		}
 	}
+
+
 	useEffect(() => {
-		if (state?.user !== null) {
-			router.push('/chatter');
+		const changeRoute = async () => {
+			const docRef = doc(firebaseStore, "users", state.user.uid);
+			const docSnap = await getDoc(docRef);
+
+			if (docSnap.exists()) {
+				router.push('/chatter');
+			} else {
+				await setDoc(doc(firebaseStore, "users", state.user?.uid), { uid: state.user?.uid, displayName: state.user?.displayName, email: state.user?.email, photoURL: state.user?.photoURL });
+				router.push('/tags');
+			}
+		}
+		if (state?.user !== null && state.user.uid !== "") {
+			changeRoute()
+
 		}
 	}, [router, state.user]);
 
@@ -93,7 +109,7 @@ export default function Home() {
 								/>
 							</label>
 							<Link
-								href='resetpassword'
+								href='forgotpassword'
 								className={`block text-right mb-8 underline`}>
 								forgot password
 							</Link>
@@ -111,12 +127,12 @@ export default function Home() {
 						<p className={`mb-10`}>or continue with ______________</p>
 						<div className={`flex items-center justify-center gap-4`}>
 							<button
-							onClick={handleGoogleLogin}
+								onClick={handleGoogleLogin}
 								className={`${styles.loginBtn}  ${styles.googleBtn} focus:border-solid rounded-full hover:border-dashed rounded-full`}
 								aria-label='google login button'
 							></button>
 							<button
-							onClick={handleGithubLogin}
+								onClick={handleGithubLogin}
 								className={`${styles.loginBtn}  ${styles.githubBtn} focus:border-solid rounded-full hover:border-dashed rounded-full`}
 								aria-label='github login button'
 							></button>
