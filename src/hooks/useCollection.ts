@@ -1,26 +1,22 @@
 import { firebaseStore } from "@/firebase/config";
-import { doc, getDoc,  } from "firebase/firestore";
+import { DocumentData, doc, getDoc,  } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react"
 
-const useCollection = (user: string) => {
-    const [data, setData] = useState<string[]>([])
+const useCollection = (collRef:string,user: string,) => {
+    const [data, setData] = useState<DocumentData>([])
 
     const q = useRef(user).current
 
     useEffect(() => {
         const getData = async () => {
-            const docRef = doc(firebaseStore, "users", user);
+            const docRef = doc(firebaseStore, collRef, user);
             const docSnap = await getDoc(docRef);
 
-            if (docSnap.exists()) {
-               
-                setData(docSnap.data().tags)
-            } else {
-                // docSnap.data() will be undefined in this case
-                setData([...data])
-            }
+            if (docSnap.exists()) {         
+                setData(docSnap.data())
+            } 
         }
-        if (user.length > 1) {
+        if (user?.length > 1) {
             getData()
         }
     }, [user?.length])

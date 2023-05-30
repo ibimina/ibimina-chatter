@@ -6,17 +6,19 @@ import { useRouter } from 'next/router';
 import { useAuthContext } from '@/store/store';
 
 function SignUp() {
+	const [emailExists, setEmailExists] = useState<boolean | null>(null);
+	const [isPasswordShort, setIsPasswordShort] = useState<boolean | null>(null);
 	const { createUser, error, isLoading } = useSignUp();
 	const { state } = useAuthContext();
+
+	const router = useRouter();
+	const { user } = state;
 	const [userDetails, setUserDetails] = useState({
 		username: '',
 		email: '',
 		password: '',
 	});
-	const [emailExists, setEmailExists] = useState<boolean | null>(null);
-	const [isPasswordShort, setIsPasswordShort] = useState<boolean | null>(null);
-	const router = useRouter();
-	const { user } = state;
+
 	useEffect(() => {
 		if (state?.user?.uid?.length! > 0) {
 			router.push('/tags');

@@ -9,11 +9,9 @@ import useCollection from "@/hooks/useCollection";
 
 
 function Chatter() {
-
 	const { state } = useAuthContext();
-	const { data } = useCollection(state?.user?.uid)
-
-	let arr: string[] = data
+	const { data } = useCollection("users",state?.user?.uid)
+	let arr = data.tags
 	const [tag, setTag] = useState("")
 	const router = useRouter();
 
@@ -56,7 +54,7 @@ function Chatter() {
 		if (addBtn === 'false') {
 			const userRef = doc(firebaseStore, 'users', state?.user?.uid);
 			e.currentTarget.setAttribute('aria-pressed', 'true');
-			const exist = arr.find((articleTag) => {
+			const exist = arr.find((articleTag: string) => {
 				return articleTag.toLowerCase() === tag.toLowerCase()
 			})
 			if (exist) {
@@ -72,7 +70,7 @@ function Chatter() {
 		else {
 			const userRef = doc(firebaseStore, 'users', state?.user?.uid);
 			e.currentTarget.setAttribute('aria-pressed', 'false');
-			const updateArray = arr.filter((userTag) => userTag !== tag)
+			const updateArray = arr.filter((userTag: string) => userTag !== tag)
 			arr = updateArray
 			setDoc(userRef, {
 				tags: arr
