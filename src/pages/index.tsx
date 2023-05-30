@@ -128,12 +128,12 @@ export default function Home() {
 						<div className={`flex items-center justify-center gap-4`}>
 							<button
 								onClick={handleGoogleLogin}
-								className={`${styles.loginBtn}  ${styles.googleBtn} focus:border-solid rounded-full hover:border-dashed rounded-full`}
+								className={`${styles.loginBtn}  ${styles.googleBtn} focus:border-solid hover:border-dashed rounded-full`}
 								aria-label='google login button'
 							></button>
 							<button
 								onClick={handleGithubLogin}
-								className={`${styles.loginBtn}  ${styles.githubBtn} focus:border-solid rounded-full hover:border-dashed rounded-full`}
+								className={`${styles.loginBtn}  ${styles.githubBtn} focus:border-solid hover:border-dashed rounded-full`}
 								aria-label='github login button'
 							></button>
 						</div>
