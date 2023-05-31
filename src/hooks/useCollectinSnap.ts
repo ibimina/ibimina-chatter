@@ -4,14 +4,14 @@ import { DocumentData, collection, onSnapshot, orderBy, query, where } from "fir
 import { useEffect, useState } from "react";
 
 
-function useCollectionSnap( c: string, queyrRef: string) {
+function useCollectionSnap( c: string, queyRef?: string) {
     const {state}= useAuthContext()
     const [snap, setSnap] = useState<DocumentData>()
     const [error, setError] = useState("")
 
     useEffect(() => {
 
-        let ref = query(collection(firebaseStore, c),where(queyrRef,"==",state.user.uid));
+        let ref = query(collection(firebaseStore, c),where(queyRef!,"==",state.user.uid));
         const unsub = onSnapshot(ref, (snapshot) => {
             if (snapshot.empty) {
                 setError("No documents found");
@@ -27,7 +27,7 @@ function useCollectionSnap( c: string, queyrRef: string) {
             setError(err.message);
         });
         return () => {unsub();}
-    }, [c, queyrRef, state.user.uid])
+    }, [c, queyRef, state.user.uid])
     return { snap,error }
 }
 export default useCollectionSnap;
