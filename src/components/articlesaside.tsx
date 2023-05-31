@@ -1,6 +1,7 @@
 import useCollectionSnap from '@/hooks/useCollectinSnap';
 import styles from '@/styles/editor.module.css';
 import Link from 'next/link';
+
 function ArticleSide({ isvisible }: { isvisible: boolean }) {
     const { snap } = useCollectionSnap("articles", "author.uid");
     const publishedLength = snap?.filter((doc: any) => doc.published === true).length;
