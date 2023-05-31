@@ -52,25 +52,6 @@ export default function Home() {
 		}
 	}
 
-
-	useEffect(() => {
-		const changeRoute = async () => {
-			const docRef = doc(firebaseStore, "users", state.user.uid);
-			const docSnap = await getDoc(docRef);
-
-			if (docSnap.exists()) {
-				router.push('/chatter');
-			} else {
-				await setDoc(doc(firebaseStore, "users", state.user?.uid), { uid: state.user?.uid, displayName: state.user?.displayName, email: state.user?.email, photoURL: state.user?.photoURL });
-				router.push('/tags');
-			}
-		}
-		if (state?.user !== null && state.user.uid !== "") {
-			changeRoute()
-
-		}
-	}, [router, state.user]);
-
 	return (
 		<>
 			<main className={`lg:flex lg:flex-row-reverse`}>

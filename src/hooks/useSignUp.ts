@@ -23,10 +23,10 @@ export default function useSignUp() {
 				displayName: username
 			});
 			const userRef = userCredential.user;
-			await setDoc(doc(firebaseStore, "users", userCredential?.user?.uid), { uid: userRef?.uid, displayName: userRef?.displayName, email: userRef?.email, photoURL: userRef?.photoURL });
+			const userInfo = { uid: userRef?.uid, displayName: userRef?.displayName, email: userRef?.email, photoURL: userRef?.photoURL };
+			await setDoc(doc(firebaseStore, "users", userCredential?.user?.uid), userInfo);
 			// Signed in
-
-			dispatch(signIn({ uid: userRef?.uid, displayName: userRef?.displayName, email: userRef?.email, photoURL: userRef?.photoURL }));
+			dispatch(signIn(userInfo));
 			setIsLoading(false);
 		} catch (error: any) {
 			setError(error.message);

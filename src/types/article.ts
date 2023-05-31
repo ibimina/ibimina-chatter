@@ -7,9 +7,9 @@ export interface ArticleProps {
     createdat: string,
     tags: string[],
     published: boolean,
-    likes: number,
+    likes: LikeProps[],
     views: number,
-    bookmarks: number,
+    bookmarks: BookmarkProps[],
     comments: CommentProps[],
     author: {
         name: string,
@@ -23,4 +23,13 @@ export interface CommentProps{
     uid: string,
     image: string,
     comment: string,
+}
+export interface BookmarkProps {
+    uid: string,
+}
+
+export interface LikeProps {
+    uid: string,
+    image: string,
+    name: string,
 }
