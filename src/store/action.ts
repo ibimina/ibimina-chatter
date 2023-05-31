@@ -1,4 +1,5 @@
 import { UserProps } from '@/types/user';
+import { DocumentData } from 'firebase/firestore';
 
 export const SIGN_IN = 'SIGN_IN';
 export const SIGN_OUT = 'SIGN_OUT';
@@ -16,7 +17,7 @@ export const logOut = () => ({
 	type: SIGN_OUT,
 });
 
-export const logIn = (user: UserProps) => ({
+export const logIn = (user: DocumentData | UserProps) => ({
 	type: LOG_IN,
 	payload: user,
 });
@@ -26,12 +27,12 @@ export const authStateChanged = (user: UserProps) => ({
 	payload: user,
 });
 
-export const googleAuth = (user: UserProps) => ({
+export const googleAuth = (user: DocumentData | UserProps) => ({
 	type: GOOGLE_AUTH,
 	payload: user,
 })
 
-export const githubAuth = (user: UserProps) => ({
+export const githubAuth = (user: DocumentData | UserProps) => ({
 	type: GITHUB_AUTH,
 	payload: user,
 })

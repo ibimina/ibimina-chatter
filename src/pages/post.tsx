@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import { EditorHeader, Editor } from '@/components/index';
 import { CommentProps, } from '@/types';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { BookmarkProps, LikeProps } from '@/types/article';
 
 const MarkdownEditor = () => {
     const { state } = useAuthContext();
@@ -19,9 +20,9 @@ const MarkdownEditor = () => {
         createdat: "",
         tags: [],
         published: false,
-        likes: 0,
+        likes: [] as LikeProps[],
         views: 0,
-        bookmarks: 0,
+        bookmarks: [] as BookmarkProps[],
         comments: [] as CommentProps[],
 
     })
