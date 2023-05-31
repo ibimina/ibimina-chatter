@@ -1,7 +1,8 @@
 import { createContext, useEffect, useReducer } from 'react';
 import { AUTH_STATE_CHANGED, GITHUB_AUTH, GOOGLE_AUTH, LOG_IN, SIGN_IN, SIGN_OUT } from './action';
-import { firebaseAuth } from '@/firebase/config';
+import { firebaseAuth, firebaseStore } from '@/firebase/config';
 import { onAuthStateChanged } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 
 export const InitialState = {
     user: {
@@ -9,6 +10,7 @@ export const InitialState = {
         email: '',
         displayName: '',
         photoURL: '',
+        tags: [],  
     },
     authState: false,
 };
@@ -67,11 +69,13 @@ export const AuthContextProvider = ({
 }) => {
     const [state, dispatch] = useReducer(authReducer, InitialState);
     useEffect(() => {
-        const unsub = onAuthStateChanged(firebaseAuth, (user) => {
+        const unsub = onAuthStateChanged(firebaseAuth, async (user) => {
             if (user) {
+                const docRef = doc(firebaseStore, "users", user.uid);
+                const docSnap = await getDoc(docRef);
                 dispatch({
                     type: AUTH_STATE_CHANGED,
-                    payload: user,
+                    payload: docSnap.data(),
                 });
             }else{
                 dispatch({
