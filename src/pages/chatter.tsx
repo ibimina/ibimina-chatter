@@ -184,7 +184,7 @@ function Chatter() {
 												{feed.bookmarks.length}
 											</button>
 											<Link href={`/${encodeURIComponent(feed.author.uid)}/${encodeURIComponent(feed.title)}`} className='flex items-center gap-1'>
-												<Image src="/images/icons8-chart-24 (1).png" height={18} width={18} alt="views chart" />
+												<Image src="/images/icons8-chart-24.png" height={18} width={18} alt="views chart" />
 												{feed.views}
 											</Link>
 											<Link href={`/${encodeURIComponent(feed.author.uid)}/${encodeURIComponent(feed.title)}`} className='flex items-center gap-1'>
