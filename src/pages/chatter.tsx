@@ -51,12 +51,10 @@ function Chatter() {
 		const hasBookmarked = bookmarks?.find((bookmark: BookmarkProps) => {
 			return bookmark?.uid === state?.user?.uid
 		})
-
 		const bookmarkSnap = await getDoc(bookmarkRef)
 		const userBookmarks = bookmarkSnap.data()?.bookmarks
 
-		if (hasBookmarked ) {
-		
+		if (hasBookmarked ) {		
 			await setDoc(docRef, {
 				bookmarks: bookmarks?.filter((bookmark: BookmarkProps) => {
 					return bookmark?.uid !== state?.user?.uid
