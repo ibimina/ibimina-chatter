@@ -8,7 +8,7 @@ const MarkdownEditor = () => {
     const { state } = useAuthContext();
     const{articleDetails,handleValueChange,uploadImage,
         isUnsplashVisible,toggleUnsplash,unsplashSearch,
-        getUnsplashTerm,insertMarkdown,getUnSplashUrl,
+        getUnsplashTerm,insertMarkdown,getUnSplashUrl,changeRoute,
         updateArticleInFirebase, isvisible, toggleVisible}=useEditor()
 
     useEffect(() => {
@@ -21,9 +21,11 @@ const MarkdownEditor = () => {
             <EditorHeader
                 isvisible={isvisible}
                 handleVisible={toggleVisible}
+                changeRoute={changeRoute}
                 publishArticleInFirebase={updateArticleInFirebase} />
             <Editor
                 isvisible={isvisible}
+                handleVisible={toggleVisible}
                 articleDetails={articleDetails}
                 uploadImage={uploadImage}
                 isUnsplashVisible={isUnsplashVisible}
