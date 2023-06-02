@@ -15,7 +15,8 @@ export interface ArticleProps {
         name: string,
         uid: string,
         image: string
-    }
+    },
+    timestamp: string,
 }
 
 export interface CommentProps{
@@ -23,6 +24,7 @@ export interface CommentProps{
     uid: string,
     image: string,
     comment: string,
+    timestamp: string,
 }
 export interface BookmarkProps {
     uid: string,
