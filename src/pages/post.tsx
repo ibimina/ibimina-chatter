@@ -13,7 +13,7 @@ const MarkdownEditor = () => {
     } = useEditor()
     const { state } = useAuthContext();
     useEffect(() => {
-        if (state?.user === null || state?.user?.uid === "") {
+        if (state?.user === null) {
             router.push('/');
         }
     }, [state?.user]);
@@ -27,6 +27,7 @@ const MarkdownEditor = () => {
             <Editor
                 articleDetails={articleDetails}
                 isvisible={isvisible}
+                handleVisible={toggleVisible}
                 uploadImage={uploadImage}
                 isUnsplashVisible={isUnsplashVisible}
                 toggleUnsplash={toggleUnsplash}

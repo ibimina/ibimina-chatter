@@ -6,23 +6,25 @@ import { useAuthContext } from '@/store/store';
 
 const MarkdownEditor = () => {
     const { state } = useAuthContext();
-    const {articleDetails,handleValueChange,uploadImage,
-        isUnsplashVisible,toggleUnsplash,unsplashSearch,isvisible,toggleVisible,
-        getUnsplashTerm,insertMarkdown,getUnSplashUrl,updateArticleInFirebase} = useEditor()
-    
+    const { articleDetails, handleValueChange, uploadImage, changeRoute,
+        isUnsplashVisible, toggleUnsplash, unsplashSearch, isvisible, toggleVisible,
+        getUnsplashTerm, insertMarkdown, getUnSplashUrl, updateArticleInFirebase } = useEditor()
+
     useEffect(() => {
         if (state?.user === null || state?.user?.uid === "") {
             router.push('/');
         }
     }, [state?.user]);
-        return (
+    return (
         <main>
             <EditorHeader
+                changeRoute={changeRoute}
                 isvisible={isvisible}
                 handleVisible={toggleVisible}
                 publishArticleInFirebase={updateArticleInFirebase} />
             <Editor
                 isvisible={isvisible}
+                handleVisible={toggleVisible}
                 articleDetails={articleDetails}
                 uploadImage={uploadImage}
                 isUnsplashVisible={isUnsplashVisible}
