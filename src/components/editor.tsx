@@ -22,9 +22,11 @@ interface NewType {
     toggleUnsplash: () => void;
     uploadImage: (e: React.ChangeEvent<HTMLInputElement>) => void;
     isvisible: boolean;
+    handleVisible: (e: React.MouseEvent) => void;
 }
 
-function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible, toggleUnsplash, getUnsplashTerm, articleDetails, handleValueChange, insertMarkdown, getUnSplashUrl }: NewType) {
+function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible, toggleUnsplash, getUnsplashTerm, 
+    articleDetails, handleValueChange, insertMarkdown, getUnSplashUrl, handleVisible }: NewType) {
    
     const [showEmojiPicker, setShowEmojiPicker] = useState<boolean>(false);
     const [hide, setHide] = useState<boolean>(true);
@@ -63,15 +65,15 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible, tog
     return (
     <>
         <main className={`lg:grid lg:grid-cols-9 gap-6 px-4  ${styles.editorGrid}`}>
-            <ArticleSide isvisible={isvisible} />
-            <section className={`col-span-7 ${styles.editSection}`} data-shrink={isvisible}>
+            <ArticleSide isvisible={isvisible} handleVisible={handleVisible}/>
+           <section className={`col-start-3  ${styles.editSection}`} data-shrink={isvisible}>
                 {
                     articleDetails?.coverImageUrl ?
                         <div className={`relative w-full h-96 mb-2`}>
                             <Image src={articleDetails?.coverImageUrl} alt="cover image" fill
                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw,  33vw" />
                         </div>
-                        : <button className={`mb-1`}>Add cover image</button>
+                        : <button className={`mb-3 font-medium`}>Add cover image</button>
                 }
                 <div className={`px-3 md:px-5 lg:px-0`}>
                     <div className={`relative`}>
@@ -154,9 +156,9 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible, tog
 
                             <ReactMarkdown remarkPlugins={[remarkGfm]}
                                 components={{ a: LinkRenderer }}
-                                className={` prose prose-headings:m-0 prose-p:m-0.6 
+                                className={` prose prose-headings:m-0 prose-p:m-0.6 prose-li:m-0 prose-ol:m-0 prose-ul:m-0 prose-ul:leading-3
                             hr-black prose-hr:border-solid prose-hr:border prose-hr:border-black
-                             marker:text-sky-400 ${styles['markdownPreview']}`} >
+                             marker:text-gray-400 ${styles['markdownPreview']}`} >
                                 {articleDetails.article}
                             </ReactMarkdown>
                         </div>
@@ -169,3 +171,7 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible, tog
 }
 
 export default Editor;
+
+function callback() {
+    throw new Error("Function not implemented.");
+}
