@@ -2,16 +2,16 @@ import useCollectionSnap from '@/hooks/useCollectinSnap';
 import styles from '@/styles/editor.module.css';
 import Link from 'next/link';
 
-function ArticleSide({ isvisible }: { isvisible: boolean }) {
+function ArticleSide({ isvisible, handleVisible }: { isvisible: boolean, handleVisible: (e: React.MouseEvent) => void }) {
     const { snap } = useCollectionSnap("articles", "author.uid");
     const publishedLength = snap?.filter((doc: any) => doc.published === true).length;
     const draftLength = snap?.filter((doc: any) => doc.published === false).length;
-
     return (
-        <aside className={`hidden px-3 pt-5 lg:block lg:col-span-2 bg-gray-100 shadow-inner  rounded-lg ${styles.articlesSection}`}
+        <aside className={` px-3 pt-5 lg:block lg:col-span-2 bg-gray-100 shadow-inner lg:rounded-lg ${styles.articlesSection}`}
             data-visible={isvisible}>
+                <button className='absolute top-1 md:hidden' onClick={handleVisible}>close</button>
             <div className={`mb-12`}>
-                <h1 className={`mb-2 font-medium text-amber-950`}>My drafts</h1>
+                <h1 className={`mb-2 font-medium text-amber-950`}>My Drafts</h1>
                 <ul>
                     {
                         snap?.map((doc: any) => {
@@ -26,7 +26,7 @@ function ArticleSide({ isvisible }: { isvisible: boolean }) {
                         })
                     }
                     {
-                        draftLength === 0 &&
+                        draftLength === 0 || snap === undefined &&
                             <span>
                                 You have no draft
                             </span>
@@ -34,7 +34,7 @@ function ArticleSide({ isvisible }: { isvisible: boolean }) {
                 </ul>
             </div>
             <div>
-                <h1 className={`mb-4 font-medium text-amber-950`}>My published articles</h1>
+                <h1 className={`mb-4 font-medium text-amber-950`}>Published</h1>
                 <ul>
                     {
                         snap?.map((doc: any) => {
@@ -49,15 +49,15 @@ function ArticleSide({ isvisible }: { isvisible: boolean }) {
                         })
                     }
                     {
-                        publishedLength === 0 &&
+                        publishedLength === 0 || snap === undefined &&
                         <span>
-                            You have no published article
+                            No published article
                         </span>
                     }
                 </ul>
 
             </div>
-            <Link href={`/post`} className='text-center block my-12 bg-violet-900 text-slate-200 max-w-max mx-auto  px-4 py-2'>
+            <Link href={`/post`} className='text-center block my-12 border-solid border border-violet-900 text-violet-700 rounded-3xl max-w-max mx-auto  px-4 py-2'>
                 Create new post
             </Link>
         </aside>);
