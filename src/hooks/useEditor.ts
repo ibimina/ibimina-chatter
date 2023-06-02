@@ -2,10 +2,10 @@ import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { DocumentData, collection, doc, setDoc, addDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { firebaseStore, firebaseAuth, firebaseStorage } from "@/firebase/config";
+import { firebaseStore, firebaseAuth, firebaseStorage,timestamp } from "@/firebase/config";
 import useCollection from "./useCollection";
 import { useAuthContext } from "@/store/store";
-import { ArticleProps, CommentProps } from "@/types";
+import { ArticleProps, CommentProps, BookmarkProps, LikeProps } from "@/types";
 
 function useEditor() {
     const router = useRouter()
@@ -23,26 +23,33 @@ function useEditor() {
         createdat: "",
         tags: [],
         published: false,
-        likes: 0,
+        likes: [] as LikeProps[],
         views: 0,
-        bookmarks: 0,
+        bookmarks: [] as BookmarkProps[],
         comments: [] as CommentProps[],
-
+        timestamp: timestamp,
     })
     const getUnsplashTerm = (e: React.ChangeEvent<HTMLInputElement>) => {
         setUnsplashSearch(e.target.value.trim())
     }
     const insertMarkdown = (markdownSyntax: string) => {
         const textarea = document.getElementById('markdownTextarea') as HTMLTextAreaElement;
-        setArticleDetails({ ...articleDetails, article: articleDetails.article + markdownSyntax })
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const text = textarea.value;
+        const before = text.substring(0, start);
+        const after = text.substring(end, text.length);
+        textarea.value = (before + markdownSyntax + after);
+        console.log(textarea.value)
+        setArticleDetails({ ...articleDetails, article: textarea.value })
         textarea.focus();
     };
- const toggleVisible = () => {
+    const toggleVisible = () => {
         setIsVisible(!isvisible)
     }
 
     useEffect(() => {
-        if(id) return setArticleDetails(data);
+        if (id) return setArticleDetails(data);
 
     }, [id, data])
 
@@ -50,7 +57,7 @@ function useEditor() {
         e.preventDefault();
         if (articleDetails.title.trim() === "") {
             alert("Looks like you forgot to add a title")
-        } else if (articleDetails.title.trim().length > 9) {
+        } else if (articleDetails.title.trim().length < 9) {
             return alert("Title is too short")
         } else if (articleDetails.article.trim().length > 9 && articleDetails.title.trim() !== "") {
             const author = {
@@ -58,8 +65,8 @@ function useEditor() {
                 uid: state?.user?.uid,
                 image: state?.user?.photoURL
             }
-            await addDoc(collection(firebaseStore, "articles"), { ...articleDetails, published: true, author });
-            //    router.push(`/article/${docRef.id}`)
+          const docRef =  await addDoc(collection(firebaseStore, "articles"), { ...articleDetails, published: true, author });
+               router.push(`/article/${docRef.id}`)
         }
     }
 
@@ -104,13 +111,13 @@ function useEditor() {
             uid: state?.user?.uid,
             image: state?.user?.photoURL
         }
-        if (articleDetails.article.trim() !== "" && articleDetails.published === false) {
+        if (articleDetails?.article?.trim() !== "" && articleDetails?.published === false) {
             await addDoc(collection(firebaseStore, "articles"), { ...articleDetails, author })
         }
     }
-    const changeRoute = (route: string) => {
+    const changeRoute = async (route: string) => {
+        await autoSaveDraft()
         router.push(`/${route}`)
-        autoSaveDraft()
     }
     return {
         changeRoute,
