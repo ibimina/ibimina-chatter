@@ -17,6 +17,7 @@ function SignUp() {
 		username: '',
 		email: '',
 		password: '',
+		tags: [],
 	});
 
 	useEffect(() => {
