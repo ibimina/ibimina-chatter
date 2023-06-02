@@ -14,15 +14,33 @@ function FeedLayout({ children }: { children: React.ReactNode }) {
         <>
             <Header handleNav={handleNav} />
             <section
-                className={`relative  lg:grid lg:grid-cols-5 lg:gap-9 p-4  ${styles.grid}`}
-            >
-                <aside className={` ${styles.aside}`} data-visible={isvisible}>
-                    <ul
-                        className={`h-full w-9/12 lg:w-full p-10 bg-slate-100 lg:rounded-xl ${styles.ul}`}
-                    >
-                        <li className={`mb-3`}>
-                            <Link href='/edit/:id' className={`flex items-center gap-1`}>
-
+                className={`relative md:flex md:gap-9 p-4  ${styles.grid}`}>
+                <aside className={` ${styles.aside} md:w-3/12 lg:w-3/12`} data-visible={isvisible}>
+                    <ul  className={`h-full w-9/12 md:w-full  p-5 pt-12 bg-gray-100 md:rounded-xl ${styles.ul}`}>
+                        <li className={`mb-3 font-medium`}>
+                            <Link href='/chatter' className={`flex items-center gap-2`}>
+                                <Image
+                                    src='/images/icons8-home-48.png'
+                                    height={44}
+                                    width={34}
+                                    alt='notification'
+                                />
+                                Home
+                            </Link>
+                        </li>
+                        <li className={`mb-3 font-medium`}>
+                            <Link href='/explore' className={`flex items-center gap-2`}>
+                                <Image
+                                    src='/images/icons8-explore-48.png'
+                                    height={44}
+                                    width={34}
+                                    alt='notification'
+                                />
+                              Explore
+                            </Link>
+                        </li>
+                        <li className={`mb-3 font-medium`}>
+                            <Link href='/post' className={`flex items-center gap-2`}>
                                 <Image
                                     src='/images/icons8-article.svg'
                                     height={44}
@@ -32,12 +50,10 @@ function FeedLayout({ children }: { children: React.ReactNode }) {
                                 My article
                             </Link>
                         </li>
-
-                        <li className={`flex items-center gap-1 mb-3`}>
-                            <Link href='/draft/:id' className={`flex items-center gap-1`}>
-
+                        <li className={`flex items-center gap-1 mb-3 font-medium`}>
+                            <Link href='/post' className={`flex items-center gap-2`}>
                                 <Image
-                                    src='/images/icons8-draft-64.png'
+                                    src='/images/icons8-article-50.png'
                                     height={34}
                                     width={34}
                                     alt='notification'
@@ -45,9 +61,8 @@ function FeedLayout({ children }: { children: React.ReactNode }) {
                                 Drafts
                             </Link>
                         </li>
-                        <li className={` mb-3`}>
-                            <Link href='/bookmarks' className={`flex items-center gap-1`}>
-
+                        <li className={`mb-3 font-medium`}>
+                            <Link href='/bookmarks' className={`flex items-center gap-2`}>
                                 <Image
                                     src='/images/icons8-bookmark-64.png'
                                     height={24}
@@ -57,27 +72,24 @@ function FeedLayout({ children }: { children: React.ReactNode }) {
                                 Bookmark
                             </Link>
                         </li>
-                        <li className={`flex items-center gap-1`}>
+                        <li className={`flex items-center gap-2 font-medium`}>
                             <Image
                                 src='/images/icons8-message-50.png'
                                 height={44}
                                 width={34}
                                 alt='notification'
                             />
-                            message
+                            Message
                         </li>
                     </ul>
                     <button
-                        className={`bg-blue-100 top-0 right-0 absolute lg:hidden`}
-                        onClick={() => seIsVisible(!isvisible)}
-                    >
-                        close
-                    </button>
+                        aria-label='close'
+                        className={` top-1 brightness-100 invert right-2 absolute md:hidden ${styles.close}`}
+                        onClick={() => seIsVisible(!isvisible)}></button>
                 </aside>
                 {children}
             </section >
         </>
     );
 }
-
 export default FeedLayout;
