@@ -76,6 +76,7 @@ export default function Home() {
 									name='email'
 									type='email'
 									placeholder='Enter your email'
+									required
 									className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
 								/>
 							</label>
@@ -86,6 +87,7 @@ export default function Home() {
 									name='password'
 									type='password'
 									placeholder='Enter your password'
+									required
 									className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
 								/>
 							</label>

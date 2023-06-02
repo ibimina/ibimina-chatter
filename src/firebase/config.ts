@@ -1,8 +1,9 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, Timestamp } from 'firebase/firestore';
 import { GithubAuthProvider, getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { getStorage } from 'firebase/storage';
+
 
 
 const firebaseConfig = {
@@ -23,4 +24,5 @@ const firebaseAuth = getAuth();
 const firebaseStorage = getStorage();
 const googleAuthProvider = new GoogleAuthProvider();
 const githubAuthProvider = new GithubAuthProvider();
-export { firebaseStore, firebaseAuth, firebaseStorage, googleAuthProvider, githubAuthProvider };
+const timestamp = Timestamp.now();
+export { firebaseStore, firebaseAuth, firebaseStorage, googleAuthProvider, githubAuthProvider,timestamp };

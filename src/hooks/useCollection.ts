@@ -13,13 +13,13 @@ const useCollection = (collRef:string,user: string,) => {
             const docSnap = await getDoc(docRef);
 
             if (docSnap.exists()) {         
-                setData(docSnap.data())
+                setData({...docSnap.data(),id:docSnap.id})
             } 
         }
         if (user?.length > 1) {
             getData()
         }
-    }, [user?.length])
+    }, [collRef, user, user?.length])
 
 
 

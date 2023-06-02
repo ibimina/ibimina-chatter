@@ -11,9 +11,9 @@ function useCollectionSnap( c: string, queyRef?: string) {
 
     useEffect(() => {
 
-        let ref = query(collection(firebaseStore, c),where(queyRef!,"==",state.user.uid));
+        let ref = query(collection(firebaseStore, c),where(queyRef!,"==",state?.user?.uid));
         const unsub = onSnapshot(ref, (snapshot) => {
-            if (snapshot.empty) {
+            if (snapshot?.empty) {
                 setError("No documents found");
             } else {
                 let result: { id: string; }[] =[]
@@ -27,7 +27,7 @@ function useCollectionSnap( c: string, queyRef?: string) {
             setError(err.message);
         });
         return () => {unsub();}
-    }, [c, queyRef, state.user.uid])
+    }, [c, queyRef, state?.user?.uid])
     return { snap,error }
 }
 export default useCollectionSnap;

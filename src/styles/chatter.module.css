@@ -8,6 +8,12 @@
     display: none;
 }
 
+.close {
+    width: 24px;
+    height: 24px;
+    background-image: url('../../public/images/icons8-close.svg');
+}
+
 .aside[data-visible="true"] {
     position: fixed;
     top: 0;
@@ -17,9 +23,13 @@
     background-color: rgba(0, 0, 0, 0.5);
 }
 
-@media (min-width:60rem) {
+@media (min-width:40rem) {
     .grid {
         align-items: flex-start;
+    }
+
+    .close {
+        display: none;
     }
 
     .aside[data-visible="false"],

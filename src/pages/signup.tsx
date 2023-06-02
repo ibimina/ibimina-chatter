@@ -17,6 +17,7 @@ function SignUp() {
 		username: '',
 		email: '',
 		password: '',
+		tags: [],
 	});
 
 	useEffect(() => {
@@ -73,6 +74,7 @@ function SignUp() {
 								<input
 									type='text'
 									name='username'
+									required
 									placeholder='Enter your username'
 									className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
 									onChange={handleInputChange}
@@ -84,6 +86,7 @@ function SignUp() {
 									name='email'
 									type='email'
 									placeholder='Enter your email'
+									required
 									className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
 								/>
 								{emailExists && (
@@ -99,6 +102,7 @@ function SignUp() {
 								<input
 									type='password'
 									name='password'
+									required
 									placeholder='Enter your password'
 									className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
 									onChange={handleInputChange}
