@@ -23,7 +23,7 @@ export default function useSignUp() {
 				displayName: username
 			});
 			const userRef = userCredential.user;
-			const userInfo = { uid: userRef?.uid, displayName: userRef?.displayName, email: userRef?.email, photoURL: userRef?.photoURL };
+			const userInfo = { uid: userRef?.uid, displayName: userRef?.displayName, email: userRef?.email, photoURL: userRef?.photoURL, tags: [] };
 			await setDoc(doc(firebaseStore, "users", userCredential?.user?.uid), userInfo);
 			// Signed in
 			dispatch(signIn(userInfo));
