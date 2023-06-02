@@ -24,7 +24,7 @@ function Chatter() {
 		if (state?.user === null) {
 			router.push('/');
 		}
-	}, [router, state.user]);
+	}, [router, state?.user]);
 
 	useEffect(() => {
 		const q = query(collection(firebaseStore, 'articles'));
@@ -39,7 +39,6 @@ function Chatter() {
 				}
 			});
 			setFeeds(articles);
-
 		});
 		return () => unsubscribe();
 	}, [state?.user, state?.user?.uid]);
@@ -86,17 +85,18 @@ function Chatter() {
 	return (
 		<>
 			<FeedLayout>
-				<main className={`lg:col-span-4`}>
-					{feeds && feeds.length > 0 ? (
+				<main className={`md:w-4/6`}>
+					{feeds 
+					&& feeds.length > 0 ? (
 						<ul className={`p-2`}>
 							{feeds.map((feed: ArticleProps, index: Key) => {
 								return (
 									<li key={index} className={`mb-8`}>
 										<Link href={`/${encodeURIComponent(feed?.author?.uid)}`} className={`flex items-center gap-1 mb-2`}>
-											<Image className={`rounded-full`} src={feed?.author?.image} width={30} height={30} alt="author avatar" />
-											<span>{feed.author.name}</span>
+											<Image className={`rounded-full`} src={feed?.author?.image === null ? "/images/icons8-user-64.png" : feed?.author?.image} width={30} height={30} alt="author avatar" />
+											<span>{feed?.author?.name}</span>
 										</Link>
-										<Link className={`grid grid-cols-4 items-center`} href={`/${encodeURIComponent(feed.author.uid)}/${encodeURIComponent(feed.id!)}`}>
+										<Link className={`grid grid-cols-4 items-center`} href={`/${encodeURIComponent(feed?.author?.uid)}/${encodeURIComponent(feed?.id!)}`}>
 											<div className={`col-span-3 mb-2`}>
 												<h1 className={`text-2xl font-bold`}>{feed?.title}</h1>
 												<p className={`text-sm`}>{feed?.subtitle}</p>
@@ -105,7 +105,7 @@ function Chatter() {
 													className={` prose prose-headings:m-0 prose-p:m-0.6 
                             hr-black prose-hr:border-solid prose-hr:border prose-hr:border-black
                              marker:text-sky-400 ${styles['markdownPreview']}`} >
-													{feed.article.slice(0, 100)}
+													{feed?.article?.slice(0, 50)}
 												</ReactMarkdown>
 
 											</div>
@@ -141,7 +141,16 @@ function Chatter() {
 							})}
 						</ul>
 					) : (
-						<p>no article</p>
+						<div className={`flex items-center justify-center font-normal max-h-screen h-96`}>
+							<div className='max-w-md text-center'>
+									<p className='text-center'>No articles found matching your preferred tags.</p>
+									<p>Why not write your own article? It&apos;s a great way to contribute and engage with the community</p>
+									<p className='font-medium mt-2 text-violet-700'>Happy exploring!</p>
+									<Link href='/post' className='text-center font-medium block my-12 bg-violet-900 text-slate-200 max-w-max mx-auto  px-4 py-2'>
+										Explore more tags
+									</Link>
+							</div>		
+						</div>			
 					)}
 				</main>
 			</FeedLayout>
