@@ -1,11 +1,9 @@
 import { firebaseStore } from "@/firebase/config";
 import { DocumentData, doc, getDoc,  } from "firebase/firestore";
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 
 const useCollection = (collRef:string,user: string,) => {
     const [data, setData] = useState<DocumentData>([])
-
-    const q = useRef(user).current
 
     useEffect(() => {
         const getData = async () => {
@@ -20,8 +18,6 @@ const useCollection = (collRef:string,user: string,) => {
             getData()
         }
     }, [collRef, user, user?.length])
-
-
 
     return { data }
 }
