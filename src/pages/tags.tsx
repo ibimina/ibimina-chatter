@@ -25,7 +25,7 @@ function Chatter() {
 		{ tag: "accessibility", selected: false },
 		{ tag: "nodejs", selected: false },
 	])
-	console.log(arr)
+
 	const getUserPreferredTag = async (e: React.FormEvent, tag: string) => {
 		const userRef = doc(firebaseStore, 'users', state?.user?.uid);
 		e.preventDefault()
@@ -34,11 +34,9 @@ function Chatter() {
 				return articleTag.tag.toLowerCase() === tag.toLowerCase()
 			})
 			if (exist) {
-				console.log(arr)
 				return
 			} else {
 				arr.push(tag)
-				console.log(arr)
 				setDoc(userRef, {
 					tags: arr
 				}, { merge: true });
@@ -52,7 +50,6 @@ function Chatter() {
 
 	const addUserTags = async (e: React.MouseEvent, tag: string) => {
 		e.preventDefault();
-
 		let addBtn = e.currentTarget.getAttribute('aria-pressed');
 		if (addBtn === 'false') {
 			const userRef = doc(firebaseStore, 'users', state?.user?.uid);
@@ -118,5 +115,3 @@ function Chatter() {
 }
 
 export default Chatter;
-
-
