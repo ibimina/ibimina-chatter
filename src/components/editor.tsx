@@ -23,14 +23,21 @@ interface NewType {
     uploadImage: (e: React.ChangeEvent<HTMLInputElement>) => void;
     isvisible: boolean;
     handleVisible: (e: React.MouseEvent) => void;
+    publishArticleInFirebase: (e: React.MouseEvent) => Promise<void>;
+    isPublishing: boolean;
+    togglePublishing: (e: React.MouseEvent) => void;
+    addTag: (e: React.FormEvent) => void;
+    removeTag: (tag: string) => void;
 }
 
-function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible, toggleUnsplash, getUnsplashTerm, 
-    articleDetails, handleValueChange, insertMarkdown, getUnSplashUrl, handleVisible }: NewType) {
-   
+function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,
+    toggleUnsplash, getUnsplashTerm, removeTag, isPublishing, togglePublishing,
+    articleDetails, handleValueChange, insertMarkdown, getUnSplashUrl, handleVisible, publishArticleInFirebase, addTag }: NewType) {
+
     const [showEmojiPicker, setShowEmojiPicker] = useState<boolean>(false);
     const [hide, setHide] = useState<boolean>(true);
     const [page, setPage] = useState<number>(1);
+
     const { state } = useAuthContext();
     const router = useRouter();
 
@@ -63,115 +70,144 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible, tog
         }
     }, [router.pathname, state?.user?.uid])
     return (
-    <>
-        <main className={`lg:grid lg:grid-cols-9 gap-6 px-4  ${styles.editorGrid}`}>
-            <ArticleSide isvisible={isvisible} handleVisible={handleVisible}/>
-           <section className={`col-start-3  ${styles.editSection}`} data-shrink={isvisible}>
-                {
-                    articleDetails?.coverImageUrl ?
-                        <div className={`relative w-full h-96 mb-2`}>
-                            <Image src={articleDetails?.coverImageUrl} alt="cover image" fill
-                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw,  33vw" />
-                        </div>
-                        : <button className={`mb-3 font-medium`}>Add cover image</button>
-                }
-                <div className={`px-3 md:px-5 lg:px-0`}>
-                    <div className={`relative`}>
-                        {hide && <div className={`flex items-center mb-1 gap-2`}>
-                            <label className={`${styles.fileInput}`}>
-                                <input type="file" onChange={uploadImage} />
-                                <span>upload image</span>
-                            </label>
-                            <button onClick={toggleUnsplash} className={`${styles.unsplash}`} >Unsplash</button>
-                            <div data-visible={isUnsplashVisible} className={`${styles.unsplashDropdown}`} onScroll={onScroll}>
-                                <form onSubmit={getPicturesFromUnsplash}>
-                                    <input value={unsplashSearch} onChange={getUnsplashTerm} type="text"
-                                        placeholder='Search Unsplash Image' name="" className={`block w-full`} />
-                                </form>
-                                <div className={`grid grid-cols-2  ${styles.pictures}`}>
-                                    {fetchedData &&
-                                        fetchedData.map((item, index) => {
-                                            return <button key={index} className={`relative ${styles.imageContainer}`}
-                                                onClick={() => getUnSplashUrl(item.urls.regular)}>
-                                                <Image src={item?.urls?.full} fill sizes="(max-width: 768px) 100vw,
+        <>
+            <main className={`lg:grid lg:grid-cols-9 gap-6 px-4  ${styles.editorGrid}`}>
+                <ArticleSide isvisible={isvisible} handleVisible={handleVisible} />
+                <section className={`col-start-3  ${styles.editSection}`} data-shrink={isvisible}>
+                    {
+                        articleDetails?.coverImageUrl ?
+                            <div className={`relative w-full h-96 mb-2`}>
+                                <Image src={articleDetails?.coverImageUrl} alt="cover image" fill
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw,  33vw" />
+                            </div>
+                            : <button className={`mb-3 font-medium`}>Add cover image</button>
+                    }
+                    <div className={`px-3 md:px-5 lg:px-0`}>
+                        <div className={`relative`}>
+                            {hide && <div className={`flex items-center mb-1 gap-2`}>
+                                <label className={`${styles.fileInput}`}>
+                                    <input type="file" onChange={uploadImage} />
+                                    <span>upload image</span>
+                                </label>
+                                <button onClick={toggleUnsplash} className={`${styles.unsplash}`} >Unsplash</button>
+                                <div data-visible={isUnsplashVisible} className={`${styles.unsplashDropdown}`} onScroll={onScroll}>
+                                    <form onSubmit={getPicturesFromUnsplash}>
+                                        <input value={unsplashSearch} onChange={getUnsplashTerm} type="text"
+                                            placeholder='Search Unsplash Image' name="" className={`block w-full`} />
+                                    </form>
+                                    <div className={`grid grid-cols-2  ${styles.pictures}`}>
+                                        {fetchedData &&
+                                            fetchedData.map((item, index) => {
+                                                return <button key={index} className={`relative ${styles.imageContainer}`}
+                                                    onClick={() => getUnSplashUrl(item.urls.regular)}>
+                                                    <Image src={item?.urls?.full} fill sizes="(max-width: 768px) 100vw,
                                                 (max-width: 1200px) 50vw,  33vw" className={`${styles.unsplashImage}`}
-                                                    alt={item.alt_description} />
-                                                <span className={`absolute bottom-2 text-slate-200 `}>{item.user.name}</span>
-                                            </button>
-                                        })
-                                    }
+                                                        alt={item.alt_description} />
+                                                    <span className={`absolute bottom-2 text-slate-200 `}>{item.user.name}</span>
+                                                </button>
+                                            })
+                                        }
+                                    </div>
                                 </div>
-                            </div>
-                        </div>}
-                    </div>
-                    {
-                        hide ?
-                            <textarea placeholder='Title' name="title" rows={1}
-                                value={articleDetails.title} className={`block mb-2 w-full p-2`}
-                                onChange={handleValueChange} /> :
-                            <h1 className={`font-bold text-3xl mb-4`}>{articleDetails.title}</h1>
-
-                    }
-                    {
-                        hide ? 
-                            <textarea placeholder='subtitle' name="subtitle" rows={1}
-                                value={articleDetails.subtitle} className={`block mb-2 w-full p-2`}
-                                onChange={handleValueChange}
-                            />
-                            : <h2 className={`font-medium text-2xl mb-4`}>{articleDetails.subtitle}</h2>
-                    }
-
-                    {hide && <Buttons
-                        handleClick={insertMarkdown}
-                        toggleEmojiPicker={toggleEmojiPicker}
-                        showEmojiPicker={showEmojiPicker}
-                        selectEmoji={handleEmojiSelect}
-                    />}
-
-                    <div className={`flex w-full gap-2 ${styles.markdownWrapper}`}>
+                            </div>}
+                        </div>
                         {
-                            hide && <div className={`${styles.markdown} w-full`}>
-                                <h1 className={`font-medium  max-w-max p-2 rounded-lg`}>Editor</h1>
-                                <textarea
-                                    name="article"
-                                    id="markdownTextarea"
-                                    rows={10}
-                                    value={articleDetails.article}
-                                    onChange={(e) => handleValueChange(e)}
-                                    placeholder="Enter Markdown text"
-                                    className={` ${styles.textarea} w-full p-3 border-2 border-solid border-current`}
-                                />
-                            </div>
+                            hide ?
+                                <textarea placeholder='Title' name="title" rows={1}
+                                    value={articleDetails.title} className={`block mb-2 w-full p-2`}
+                                    onChange={handleValueChange} /> :
+                                <h1 className={`font-bold text-3xl mb-4`}>{articleDetails.title}</h1>
 
                         }
-                        <div className={`w-full `}>
-                            <div className={`flex items-center gap-2 mb-2`}>
-                                {hide && <h2 className={` font-medium  max-w-max p-2 rounded-lg`}>Preview</h2>}
+                        {
+                            hide ?
+                                <textarea placeholder='subtitle' name="subtitle" rows={1}
+                                    value={articleDetails.subtitle} className={`block mb-2 w-full p-2`}
+                                    onChange={handleValueChange}
+                                />
+                                : <h2 className={`font-medium text-2xl mb-4`}>{articleDetails.subtitle}</h2>
+                        }
+
+                        {hide && <Buttons
+                            handleClick={insertMarkdown}
+                            toggleEmojiPicker={toggleEmojiPicker}
+                            showEmojiPicker={showEmojiPicker}
+                            selectEmoji={handleEmojiSelect}
+                        />}
+
+                        <div className={`flex w-full gap-2 ${styles.markdownWrapper}`}>
+                            {
+                                hide && <div className={`${styles.markdown} w-full`}>
+                                    <h1 className={`font-medium  max-w-max p-2 rounded-lg`}>Editor</h1>
+                                    <textarea
+                                        name="article"
+                                        id="markdownTextarea"
+                                        rows={10}
+                                        value={articleDetails.article}
+                                        onChange={(e) => handleValueChange(e)}
+                                        placeholder="Enter Markdown text"
+                                        className={` ${styles.textarea} w-full p-3 border-2 border-solid border-current`}
+                                    />
+                                </div>
+
+                            }
+                            <div className={`w-full `}>
+                                <div className={`flex items-center gap-2 mb-2`}>
+                                    {hide && <h2 className={` font-medium  max-w-max p-2 rounded-lg`}>Preview</h2>}
                                     <button
                                         onClick={() => setHide(!hide)}
                                         className={`border-2 border-violet-400 font-medium
-                                          max-w-max py-1 px-6 rounded-3xl`}> 
-                                          {hide && router ? "close editor" :"edit"}</button>
-                            </div>
+                                          max-w-max py-1 px-6 rounded-3xl`}>
+                                        {hide && router ? "close editor" : "edit"}</button>
+                                </div>
 
-                            <ReactMarkdown remarkPlugins={[remarkGfm]}
-                                components={{ a: LinkRenderer }}
-                                className={` prose prose-headings:m-0 prose-p:m-0.6 prose-li:m-0 prose-ol:m-0 prose-ul:m-0 prose-ul:leading-3
+                                <ReactMarkdown remarkPlugins={[remarkGfm]}
+                                    components={{ a: LinkRenderer }}
+                                    className={` prose prose-headings:m-0 prose-p:m-0.6 prose-li:m-0 prose-ol:m-0 prose-ul:m-0 prose-ul:leading-3
                             hr-black prose-hr:border-solid prose-hr:border prose-hr:border-black
                              marker:text-gray-400 ${styles['markdownPreview']}`} >
-                                {articleDetails.article}
-                            </ReactMarkdown>
+                                    {articleDetails.article}
+                                </ReactMarkdown>
+                            </div>
                         </div>
                     </div>
+                </section>
+            </main>
 
+            {
+                isPublishing &&
+                <div className={`fixed top-0 left-0 w-full h-full bg-slate-900 bg-opacity-50`}>
+                    <div className={`bg-white p-4 w-5/12 ml-auto h-full relative`}>
+                        <div className="flex items-center justify-between mb-6">
+                            <button className={`mb-2`} onClick={togglePublishing}>Close</button>
+                            <button className="p-2 rounded-2xl text-white bg-violet-900" onClick={publishArticleInFirebase}>Publish now</button>
+                        </div>
+                        <p className="mb-8">Add or change topics (up to 5) so readers know what your story is about</p>
+
+                        <form
+                            onSubmit={addTag}
+                            className="flex items-center mb-2 gap-2 w-full"
+                        >
+                            <input type="text" name="tags" className="block p-2 border-2 w-9/12 border-gray border-solid rounded-md" />
+                            <button type="submit" className="bg-violet-500 cursor-pointer text-gray-100 p-2 rounded-md">Add topic</button>
+                        </form>
+                            <p className="mb-8">Topics are optional, but they help surface your story to the right readers</p>
+
+                        <div className="flex items-center gap-3">
+                                {articleDetails?.tags &&
+                                    articleDetails?.tags?.map((tag: string, index: number) => {
+                                        return <button onClick={() => removeTag(tag)} key={index} className={`bg-gray-300 flex items-center gap-2 p-2 rounded-xl`}>
+                                            {tag}
+                                            <Image src="/images/icons8-close.svg" width={15} height={15} alt="close"/>
+                                        </button>
+                                    })
+                                }
+                        </div>
+                    </div>
                 </div>
-            </section>
-        </main>
-    </>);
+            }
+
+        </>);
 }
 
 export default Editor;
-
-function callback() {
-    throw new Error("Function not implemented.");
-}
