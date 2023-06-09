@@ -1,8 +1,8 @@
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
-import { DocumentData, collection, doc, setDoc, addDoc } from "firebase/firestore";
+import { DocumentData, collection, doc, setDoc, addDoc, getDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { firebaseStore, firebaseAuth, firebaseStorage,timestamp } from "@/firebase/config";
+import { firebaseStore, firebaseAuth, firebaseStorage, timestamp } from "@/firebase/config";
 import useCollection from "./useCollection";
 import { useAuthContext } from "@/store/store";
 import { ArticleProps, CommentProps, BookmarkProps, LikeProps } from "@/types";
@@ -11,16 +11,21 @@ function useEditor() {
     const router = useRouter()
     const id = router.query.id
     const { state } = useAuthContext()
+    const { displayName, photoURL, uid } = state.user
     const { data } = useCollection("articles", id?.toString()!)
+    const [author, setAuthor] = useState({ name: "", uid: "", image: "" })
+
     const [unsplashSearch, setUnsplashSearch] = useState<string>('Inspiration');
     const [isUnsplashVisible, setIsUnsplashVisible] = useState<boolean>(false);
     const [isvisible, setIsVisible] = useState<boolean>(false);
+    const [isPublishing, setIsPublishing] = useState<boolean>(false);
     const [articleDetails, setArticleDetails] = useState<DocumentData | ArticleProps>({
         title: "",
         subtitle: "",
         coverImageUrl: "",
         article: "",
         createdat: "",
+        readingTime: 0,
         tags: [],
         published: false,
         likes: [] as LikeProps[],
@@ -40,18 +45,21 @@ function useEditor() {
         const before = text.substring(0, start);
         const after = text.substring(end, text.length);
         textarea.value = (before + markdownSyntax + after);
-        console.log(textarea.value)
         setArticleDetails({ ...articleDetails, article: textarea.value })
         textarea.focus();
     };
     const toggleVisible = () => {
         setIsVisible(!isvisible)
     }
+    const togglePublishing = () => {
+        setIsPublishing(!isPublishing)
+    }
 
     useEffect(() => {
+        setAuthor({ name: displayName, uid: uid, image: photoURL })
         if (id) return setArticleDetails(data);
 
-    }, [id, data])
+    }, [id, data, displayName, uid, photoURL])
 
     const publishArticleInFirebase = async (e: React.MouseEvent) => {
         e.preventDefault();
@@ -60,14 +68,34 @@ function useEditor() {
         } else if (articleDetails.title.trim().length < 9) {
             return alert("Title is too short")
         } else if (articleDetails.article.trim().length > 9 && articleDetails.title.trim() !== "") {
-            const author = {
-                name: state?.user?.displayName,
-                uid: state?.user?.uid,
-                image: state?.user?.photoURL
-            }
-          const docRef =  await addDoc(collection(firebaseStore, "articles"), { ...articleDetails, published: true, author });
-               router.push(`/article/${docRef.id}`)
+            readingTime()
+            const docRef = await addDoc(collection(firebaseStore, "articles"), { ...articleDetails, published: true, author });
+            await countTags()
+            router.push(`/article/${docRef.id}`)
         }
+    }
+    function readingTime() {
+        const wpm = 225;
+        const words = articleDetails.article.trim().split(/\s+/).length;
+        const time = Math.ceil(words / wpm);
+        setArticleDetails({ ...articleDetails, readingTime: time })
+    }
+
+    const countTags = async () => {
+        const firebaseTags = getDoc(doc(firebaseStore, "tags", "qt9AhhdGU6ZaR5PasTrP"))
+        const ft = (await firebaseTags)?.data()?.tags
+        articleDetails.tags.forEach(async (tag: string) => {
+            const existing = ft?.find((t: { name: string }) => t.name === tag)
+            if (existing) {
+                await setDoc(doc(firebaseStore, "tags", "qt9AhhdGU6ZaR5PasTrP"), {
+                    tags: ft?.map((t: { name: string, count: number }) => t.name === tag ? { ...t, count: t.count + 1 } : t)
+                }, { merge: true })
+            } else {
+                await setDoc(doc(firebaseStore, "tags", "qt9AhhdGU6ZaR5PasTrP"), {
+                    tags: [...ft, { name: tag, count: 1 }]
+                }, { merge: true })
+            }
+        })
     }
 
     const updateArticleInFirebase = async (e: React.MouseEvent) => {
@@ -80,13 +108,26 @@ function useEditor() {
             const userRef = doc(firebaseStore, 'articles', id?.toString()!);
             setDoc(userRef, {
                 ...articleDetails,
+                published: true
             }, { merge: true });
-            //    router.push(`/article/${docRef.id}`)
-            console.log("Document update with: ", articleDetails);
+            router.push(`/article/${id}`)
         }
     }
     const handleValueChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setArticleDetails({ ...articleDetails, [e.target.name]: e.target.value })
+    }
+    const addTag = (e: React.FormEvent) => {
+        e.preventDefault();
+        let forms = e.currentTarget as HTMLFormElement
+        let tag = (e.currentTarget.childNodes[0] as HTMLInputElement).value
+
+        if (tag.trim() !== "" && articleDetails.tags.length < 5) {
+            setArticleDetails({ ...articleDetails, tags: [...articleDetails.tags, tag] })
+            forms.reset()
+        }
+    }
+    const removeTag = (tag: string) => {
+        setArticleDetails({ ...articleDetails, tags: articleDetails.tags.filter((t: string) => t !== tag) })
     }
     const getUnSplashUrl = (url: string) => {
         toggleUnsplash()
@@ -106,15 +147,11 @@ function useEditor() {
 
 
     const autoSaveDraft = async () => {
-        const author = {
-            name: state?.user?.displayName,
-            uid: state?.user?.uid,
-            image: state?.user?.photoURL
-        }
         if (articleDetails?.article?.trim() !== "" && articleDetails?.published === false) {
             await addDoc(collection(firebaseStore, "articles"), { ...articleDetails, author })
         }
     }
+
     const changeRoute = async (route: string) => {
         await autoSaveDraft()
         router.push(`/${route}`)
@@ -133,7 +170,11 @@ function useEditor() {
         toggleUnsplash,
         unsplashSearch,
         insertMarkdown,
-        uploadImage
+        uploadImage,
+        isPublishing,
+        togglePublishing,
+        addTag,
+        removeTag,
     };
 }
 
