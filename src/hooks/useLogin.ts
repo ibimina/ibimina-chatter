@@ -1,5 +1,5 @@
 import { firebaseAuth, firebaseStore } from '@/firebase/config';
-import { logIn } from '@/store/action';
+import { signIn } from '@/store/action';
 import { useAuthContext } from '@/store/store';
 import { LoginProps } from '@/types/login';
 import { signInWithEmailAndPassword } from 'firebase/auth';
@@ -21,7 +21,7 @@ export default function useLogin() {
             );
             const docRef = doc(firebaseStore, "users", userCredential?.user?.uid);
             const docSnap = await getDoc(docRef);
-            dispatch(logIn(docSnap?.data()!));
+            dispatch(signIn(docSnap?.data()!));
             setIsLoading(false);
         } catch (error: any) {
             setError(error.message);

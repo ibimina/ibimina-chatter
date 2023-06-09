@@ -1,11 +1,11 @@
 import { firebaseAuth, firebaseStore, googleAuthProvider } from "@/firebase/config";
-import { githubAuth } from "@/store/action";
+import { signIn } from "@/store/action";
 import { useAuthContext } from "@/store/store";
 import { signInWithPopup } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import router from "next/router";
 
-export const useGitHubSignin = () => {
+const useGitHubSignin = () => {
     const { dispatch } = useAuthContext()
 
     const github = async () => {
@@ -15,12 +15,12 @@ export const useGitHubSignin = () => {
             const docRef = doc(firebaseStore, "users", user.uid);
             const docSnap = await getDoc(docRef);
             if (docSnap.exists()) {
-                dispatch(githubAuth(docSnap.data()))
+                dispatch(signIn(docSnap.data()))
                 router.push('/chatter');
             } else {
                 const userInfo = { uid: user?.uid, displayName: user?.displayName, email: user?.email, photoURL: user?.photoURL }
                 await setDoc(doc(firebaseStore, "users", user?.uid), userInfo);
-                dispatch(githubAuth(userInfo))
+                dispatch(signIn(userInfo))
                 router.push('/tags');
             }
         } catch (error: any) {
@@ -36,3 +36,4 @@ export const useGitHubSignin = () => {
     }
     return { github }
 }
+export default useGitHubSignin

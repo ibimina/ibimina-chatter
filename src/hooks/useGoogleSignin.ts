@@ -1,11 +1,11 @@
 import { firebaseAuth, firebaseStore, googleAuthProvider } from "@/firebase/config";
-import { googleAuth } from "@/store/action";
+import { signIn } from "@/store/action";
 import { useAuthContext } from "@/store/store";
 import { signInWithPopup } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useRouter } from 'next/router';
 
-export const useGoogleSignin = () => {
+const useGoogleSignin = () => {
     const { dispatch } = useAuthContext()
     const router = useRouter()
 
@@ -16,12 +16,12 @@ export const useGoogleSignin = () => {
             const docRef = doc(firebaseStore, "users", user.uid);
             const docSnap = await getDoc(docRef);
             if (docSnap.exists()) {
-                dispatch(googleAuth(docSnap.data()))
+                dispatch(signIn(docSnap.data()))
                 router.push('/chatter');
             } else {
                 const userInfo = { uid: user?.uid, displayName: user?.displayName, email: user?.email, photoURL: user?.photoURL }
                 await setDoc(doc(firebaseStore, "users", user?.uid), userInfo);
-                dispatch(googleAuth(userInfo))
+                dispatch(signIn(userInfo))
                 router.push('/tags');
             }
         } catch (error: any) {
@@ -37,3 +37,4 @@ export const useGoogleSignin = () => {
     }
     return { google }
 }
+export default useGoogleSignin
