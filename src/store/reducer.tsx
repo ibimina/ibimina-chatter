@@ -25,27 +25,10 @@ export const authReducer = (
             user: action.payload,
         };
     }
-    if (action.type === LOG_IN) {
-        return {
-            ...state,
-            user: action.payload,
-        };
-    }
     if (action.type === SIGN_OUT) {
         return {
             ...state,
             user: null,
-        };
-    }
-    if(action.type === GOOGLE_AUTH){
-        return {
-            ...state,
-            user: action.payload,
-        };
-    } if (action.type === GITHUB_AUTH) {
-        return {
-            ...state,
-            user: action.payload,
         };
     }
 
