@@ -8,8 +8,8 @@ const MarkdownEditor = () => {
     const { articleDetails, handleValueChange,
         uploadImage, isUnsplashVisible, toggleUnsplash,
         unsplashSearch, getUnsplashTerm, insertMarkdown, getUnSplashUrl,
-        publishArticleInFirebase, changeRoute,
-        isvisible, toggleVisible
+        publishArticleInFirebase, changeRoute, removeTag,
+        isvisible, toggleVisible, isPublishing, togglePublishing, addTag
     } = useEditor()
     const { state } = useAuthContext();
     useEffect(() => {
@@ -23,7 +23,8 @@ const MarkdownEditor = () => {
                 isvisible={isvisible}
                 handleVisible={toggleVisible}
                 changeRoute={changeRoute}
-                publishArticleInFirebase={publishArticleInFirebase} />
+                togglePublishing={togglePublishing}
+            />
             <Editor
                 articleDetails={articleDetails}
                 isvisible={isvisible}
@@ -36,6 +37,11 @@ const MarkdownEditor = () => {
                 handleValueChange={handleValueChange}
                 insertMarkdown={insertMarkdown}
                 getUnSplashUrl={getUnSplashUrl}
+                publishArticleInFirebase={publishArticleInFirebase}
+                isPublishing={isPublishing}
+                togglePublishing={togglePublishing}
+                addTag={addTag}
+                removeTag={removeTag}
             />
         </>
     );
