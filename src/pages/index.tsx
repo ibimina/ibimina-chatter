@@ -1,25 +1,18 @@
 import Link from 'next/link';
 import styles from '../styles/index.module.css';
-import { useEffect, useState } from 'react';
-import { useAuthContext } from '@/store/store';
-import { useRouter } from 'next/router';
-import useLogin from '@/hooks/useLogin';
-import { useGoogleSignin } from '@/hooks/useGoogleSignin';
-import { useGitHubSignin } from '@/hooks/useGithubSigin';
-import { firebaseStore } from '@/firebase/config';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import {useState } from 'react';
+import { useGoogleSignin, useGitHubSignin, useLogin } from '@/hooks';
 
 
 export default function Home() {
+
 	const [loginDetails, setLoginDetails] = useState({
 		email: '',
 		password: '',
 	});
 	const [emailExists, setEmailExists] = useState<boolean | null>(null);
 	const [passwordLimit, setPasswordLimit] = useState<boolean | null>(null);
-	const { state } = useAuthContext();
 	const { loginUser, error, isLoading } = useLogin();
-	const router = useRouter();
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setLoginDetails({
 			...loginDetails,
