@@ -19,7 +19,7 @@ function ViewProfile() {
     const { data } = useCollection("users", `${author}`)
     const [articles, setArticles] = useState<DocumentData>()
     const { addBookmark } = useInteraction()
-    console.log('l')
+
     useEffect(() => {
         setArticles(snap?.filter((doc: { published: boolean; }) => doc.published === true));
     }, [snap])
@@ -62,9 +62,9 @@ function ViewProfile() {
                     <p className="my-3 font-medium">My Topics</p>
                     <ul className="flex items-center gap-2 flex-wrap">
                         {data &&
-                            data?.tags?.map((doc: string) =>
+                            data?.tags?.map((doc: string,index: Key ) =>
                                 <>
-                                    <li className="bg-violet-500 p-2 rounded-sm text-white">
+                                    <li key={index} className="bg-violet-500 p-2 rounded-sm text-white">
                                         {doc}
                                     </li>
                                 </>
