@@ -1,15 +1,12 @@
 import { useAuthContext } from '@/store/store';
-import { useRouter } from 'next/router';
 import { Key, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { query, collection, onSnapshot } from 'firebase/firestore';
+import { query, collection, onSnapshot,DocumentData } from 'firebase/firestore';
 import { firebaseStore } from '@/firebase/config';
-import { DocumentData } from 'firebase/firestore';
 import { ArticleProps } from '@/types/index';
 import useInteraction from '@/hooks/useInteraction';
 import FeedLayout from '@/container/feedslayout';
 import ArticleCard from '@/components/articlecard';
-import Cookies from 'js-cookie';
 
 
 function Chatter() {
