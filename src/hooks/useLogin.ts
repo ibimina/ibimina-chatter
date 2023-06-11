@@ -5,6 +5,7 @@ import { LoginProps } from '@/types/login';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useState } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
+import Cookies from 'js-cookie';
 
 export default function useLogin() {
     const { dispatch } = useAuthContext();
@@ -23,6 +24,7 @@ export default function useLogin() {
             const docSnap = await getDoc(docRef);
             dispatch(signIn(docSnap?.data()!));
             setIsLoading(false);
+            Cookies.set("loggedin", "true");
         } catch (error: any) {
             setError(error.message);
             setIsLoading(false);
