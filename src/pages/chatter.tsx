@@ -9,22 +9,17 @@ import { ArticleProps } from '@/types/index';
 import useInteraction from '@/hooks/useInteraction';
 import FeedLayout from '@/container/feedslayout';
 import ArticleCard from '@/components/articlecard';
+import Cookies from 'js-cookie';
 
 
 function Chatter() {
 	const { state } = useAuthContext();
 	const [feeds, setFeeds] = useState<DocumentData | null>(null);
-	const [isloading,setIsLoading] =useState(false)
-	const router = useRouter();
+	const [isloading, setIsLoading] = useState(false)
+
 
 	useEffect(() => {
-		if (state?.user === null) {
-			router.push('/');
-		}
-	}, [router, state?.user]);
 
-	useEffect(() => {
-		
 		const q = query(collection(firebaseStore, 'articles'));
 		const unsubscribe = onSnapshot(q, (querySnapshot) => {
 			setIsLoading(true)
@@ -40,11 +35,11 @@ function Chatter() {
 			setFeeds(articles);
 			setIsLoading(false)
 		});
-	
+
 		return () => unsubscribe();
 	}, [state?.user, state?.user?.uid]);
 
-	const { addBookmark} = useInteraction()
+	const { addBookmark } = useInteraction()
 
 	return (
 		<>

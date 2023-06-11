@@ -1,8 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { EditorHeader, Editor } from '@/components/index';
 import useEditor from '@/hooks/useEditor';
-import router from 'next/router';
-import { useAuthContext } from '@/store/store';
 
 const MarkdownEditor = () => {
     const { articleDetails, handleValueChange,
@@ -11,12 +9,7 @@ const MarkdownEditor = () => {
         publishArticleInFirebase, changeRoute, removeTag,
         isvisible, toggleVisible, isPublishing, togglePublishing, addTag
     } = useEditor()
-    const { state } = useAuthContext();
-    useEffect(() => {
-        if (state?.user === null) {
-            router.push('/');
-        }
-    }, [state?.user]);
+   
     return (
         <>
             <EditorHeader

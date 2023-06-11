@@ -1,5 +1,4 @@
 import { useAuthContext } from '@/store/store';
-import { useRouter } from 'next/router';
 import {  useEffect, useState } from 'react';
 import {  doc, DocumentData, getDoc } from 'firebase/firestore';
 import { firebaseStore } from '@/firebase/config';
@@ -15,13 +14,7 @@ function Bookmarks() {
     const [isloading, setIsLoading] = useState(false)
     const { data } = useCollection("bookmarks", state.user.uid)
 
-    const router = useRouter();
 
-    useEffect(() => {
-        if (state?.user === null) {
-            router.push('/');
-        }
-    }, [router, state.user]);
 
     useEffect(() => {
         let r: DocumentData = []
