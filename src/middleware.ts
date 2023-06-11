@@ -7,11 +7,16 @@ export default function middleware(req: NextRequest) {
     let url = req.url
 
     if (!verify && url.includes('/settings') || url.includes('/chatter') || url.includes('/tags') || url.includes('/bookmarks') || url.includes('/explore') || url.includes('/post')) {
-        return NextResponse.redirect("https://ibimina-chatter-git-feat-single-article-ibimina.vercel.app/");
+      let url = req.nextUrl.clone()
+      url.pathname = '/'
+        NextResponse.redirect(url);
+        return NextResponse.next();
     }
 
-    if (verify && url === "https://ibimina-chatter-git-feat-single-article-ibimina.vercel.app/") {
-        return NextResponse.redirect("https://ibimina-chatter-git-feat-single-article-ibimina.vercel.app/chatter");
+    if (verify && url === "http://localhost:3000/") {
+        let url = req.nextUrl.clone()
+        url.pathname = '/chatter'
+        NextResponse.redirect(url);
+        return NextResponse.next();
     }
-    }
-   
+}
