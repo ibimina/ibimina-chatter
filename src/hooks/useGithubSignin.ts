@@ -3,6 +3,7 @@ import { signIn } from "@/store/action";
 import { useAuthContext } from "@/store/store";
 import { signInWithPopup } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import Cookies from "js-cookie";
 import router from "next/router";
 
 const useGitHubSignin = () => {
@@ -18,11 +19,18 @@ const useGitHubSignin = () => {
                 dispatch(signIn(docSnap.data()))
                 router.push('/chatter');
             } else {
-                const userInfo = { uid: user?.uid, displayName: user?.displayName, email: user?.email, photoURL: user?.photoURL }
+                const userInfo = {
+                    uid: user?.uid, displayName: user?.displayName, email: user?.email,
+                    profile_tagline: "", location: "",
+                    bio: "", twitter: "", github: "", instagram: "",
+                    website: "", linkedin: "", youtube: "", facebook: "", tags: [],
+                    photoURL: user?.photoURL
+                }
                 await setDoc(doc(firebaseStore, "users", user?.uid), userInfo);
                 dispatch(signIn(userInfo))
                 router.push('/tags');
             }
+            Cookies.set("loggedin", "true");
         } catch (error: any) {
             // Handle Errors here.
             const errorCode = error.code;
