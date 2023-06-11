@@ -4,8 +4,10 @@ import Image from 'next/image';
 import styles from '@/styles/chatter.module.css';
 import useLogOut from '@/hooks/useLogout';
 import { useState } from 'react';
+import { useRouter } from 'next/router';
 function Header({ handleNav }: { handleNav: () => void }) {
     const [isClicked, setIsClicked] = useState(false)
+    const router = useRouter();
     const { state } = useAuthContext();
     const author = state?.user?.uid
     const { logoutUser } = useLogOut();
@@ -16,22 +18,28 @@ function Header({ handleNav }: { handleNav: () => void }) {
                 className={`grid grid-cols-3 lg:grid-cols-7 items-center py-4 px-4`}
             >
                 <div className={`flex items-center gap-3 col-span-2 md:col-span-1`}>
-                    <button
-                        onClick={handleNav}
-                        className={`md:hidden ${styles.menu}`}
-                        aria-label='menu'
-                    ></button>
+                    {router.pathname !== '/settings' &&
+                        <button
+                            onClick={handleNav}
+                            className={`md:hidden ${styles.menu}`}
+                            aria-label='menu'
+                        ></button>
+                  }
                     <Link href="/chatter"><h1 className={`text-3xl font-bold underline`}>Chatter</h1></Link>
                 </div>
-                <form
-                    className={`col-span-4 row-start-2 mt-5 lg:mt-0 lg:col-span-3 lg:row-start-1 lg:col-start-3`}
-                >
-                    <input
-                        className={`w-full p-2 rounded-xl border-2 border-slate-500`}
-                        type='search'
-                        placeholder='what would you like to read?'
-                    />
-                </form>
+                {router.pathname !== '/settings' && 
+                    <form
+                        className={`col-span-4 row-start-2 mt-5 lg:mt-0 lg:col-span-3 lg:row-start-1 lg:col-start-3`}
+                    >
+                        <input
+                            className={`w-full p-2 rounded-xl border-2 border-slate-500`}
+                            type='search'
+                            placeholder='what would you like to read?'
+                        />
+                    </form>
+
+                
+                }
                 <nav className={`col-start-3 lg:col-start-6 lg:col-end-8`}>
                     <ul className={`flex items-center gap-2 justify-end`}>
                         <li
@@ -82,6 +90,7 @@ function Header({ handleNav }: { handleNav: () => void }) {
                     />
                     <span className='capitalize'>{state?.user?.displayName}</span>
                 </Link>
+                <Link href='/chatter' className='block mb-2 cursor-pointer '>Feeds</Link>
                 <Link href='/settings' className='block mb-2 cursor-pointer '>Account setting</Link>
                 <button onClick={logoutUser} className='block'>Logout</button>
             </div>
