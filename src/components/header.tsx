@@ -41,7 +41,7 @@ function Header({ handleNav }: { handleNav: () => void }) {
                 <nav className={`col-start-3 lg:col-start-6 lg:col-end-8`}>
                     <ul className={`flex items-center gap-2 justify-end`}>
                         <li
-                            className={`fixed bottom-10 right-5 md:relative md:bottom-auto bg-violet-900 text-gray-50 p-4 rounded-full lg:rounded-3xl lg:right-auto lg:py-2 lg:px-6  hover:border-2 border-current`}
+                            className={`fixed z-50 bottom-10 right-5 md:relative md:bottom-auto bg-violet-900 text-gray-50 p-4 rounded-full lg:rounded-3xl lg:right-auto lg:py-2 lg:px-6  hover:border-2 border-current`}
                         >
                             <Link href='/post' className={`md:flex md:items-center gap-2 z-50`}>
                                 <Image
@@ -67,9 +67,9 @@ function Header({ handleNav }: { handleNav: () => void }) {
                             className='cursor-pointer'
                             onClick={() => setIsClicked(!isClicked)}>
                             <Image
-                                src={state?.user?.photoURL || '/images/icons8-user-64.png'}
-                                height={50}
-                                width={50}
+                                src={state?.user?.photoURL || '/images/icons8-user.svg'}
+                                height={40}
+                                width={40}
                                 alt='user'
                                 className={`rounded-full`}
                             />
