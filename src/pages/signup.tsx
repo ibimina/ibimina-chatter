@@ -22,7 +22,7 @@ function SignUp() {
 
 	useEffect(() => {
 		if (state?.user?.uid?.length! > 0) {
-			router.push('/tags');
+			router.push('/topics');
 		}
 	}, [router, state?.user, user]);
 
