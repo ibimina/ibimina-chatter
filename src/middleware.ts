@@ -6,17 +6,20 @@ export default function middleware(req: NextRequest) {
     let verify = req.cookies.get("loggedin");
     let url = req.url
 
-    if (!verify && url.includes('/settings') || url.includes('/chatter') || url.includes('/tags') || url.includes('/bookmarks') || url.includes('/explore') || url.includes('/post')) {
-      let url = req.nextUrl.clone()
-      url.pathname = '/'
-        NextResponse.redirect(url);
-        return NextResponse.next();
+    if (verify === undefined && url.includes('/settings') || url.includes('/chatter') || url.includes('/topics') || url.includes('/bookmarks') || url.includes('/explore') || url.includes('/post')) {
+        let url = req.nextUrl.clone()
+        url.pathname = '/'
+        return NextResponse.redirect(url);
     }
 
     if (verify && url === "http://localhost:3000/") {
         let url = req.nextUrl.clone()
         url.pathname = '/chatter'
-        NextResponse.redirect(url);
-        return NextResponse.next();
+        return NextResponse.redirect(url);
     }
+    return NextResponse.next();
+}
+
+export const config = {
+    matcher: ['/', '/bookmarks', '/chatter', '/explore', '/post', '/settings', '/topics',],
 }
