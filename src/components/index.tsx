@@ -5,3 +5,4 @@ export {default as Header} from './header';
 export {default as EditorHeader} from './editorheader';
 export {default as Editor} from './editor';
 export {default as ArticleCard} from './articlecard'
+export {default as LinkIcon} from './linkicon'
