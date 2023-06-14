@@ -10,7 +10,7 @@ export const InitialState = {
         email: '',
         displayName: '',
         photoURL: '',
-        tags: [],
+        topics: [],
         profile_tagline: "",
         location: "",
         bio: "",
@@ -118,7 +118,7 @@ export const authReducer = (
         return {
             ...state,
             authState: true,
-            user: { ...state?.user, tags: [...state?.user?.tags,action.payload] },
+            user: { ...state?.user, topics: [...state?.user?.topics,action.payload] },
         };
     }
 

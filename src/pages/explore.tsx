@@ -15,12 +15,9 @@ export default function Explore() {
     // const docRef = doc(firebaseStore, 'users', state?.user?.uid);
     useEffect(() => {
         const getTopics = async () => {
-
-
-            const firebaseTags = getDoc(doc(firebaseStore, "tags", "qt9AhhdGU6ZaR5PasTrP"))
-            const response = (await firebaseTags)?.data()?.tags
+            const firebaseTopics = getDoc(doc(firebaseStore, "topics", `${process.env.NEXT_PUBLIC_TOPICS_DATABASE_ID}`))
+            const response = (await firebaseTopics)?.data()?.topics
             setTopics(response.sort((a: topic, b: topic) => b.count - a.count))
-
 
             if (state.user.uid.length > 1) {
                 const userRef = doc(firebaseStore, 'users', state.user.uid);
@@ -31,7 +28,7 @@ export default function Explore() {
         getTopics()
         return () => { getTopics }
     }, [state, state?.user?.uid])
-    const addUserTags = async (e: React.MouseEvent, tag: string) => {
+    const addUserTopic = async (e: React.MouseEvent, tag: string) => {
         e.preventDefault();
         let addBtn = e.currentTarget.getAttribute('aria-pressed');
         if (addBtn === 'false') {
@@ -79,7 +76,7 @@ export default function Explore() {
                             <div key={index} className={`flex justify-between items-center bg-stone-200 hover:bg-zinc-500 hover:text-slate-100 cursor-pointer`} aria-selected='false'>
                                 <p className={`px-4 py-3 font-medium`}>{topic.name} </p>
                                 <button
-                                    onClick={(e) => addUserTags(e, topic.name)}
+                                    onClick={(e) => addUserTopic(e, topic.name)}
                                     className={`bg-contain bg-no-repeat bg-center w-5 h-5 m-2 ${styles.add}`} aria-label="add tag" aria-pressed={userTopics?.includes(topic.name)! ? "true" : "false"}>
                                 </button>
 

@@ -26,7 +26,7 @@ function useEditor() {
         article: "",
         createdat: "",
         readingTime: 0,
-        tags: [],
+        topics: [],
         published: false,
         likes: [] as LikeProps[],
         views: 0,
@@ -70,7 +70,7 @@ function useEditor() {
         } else if (articleDetails.article.trim().length > 9 && articleDetails.title.trim() !== "") {
             readingTime()
             const docRef = await addDoc(collection(firebaseStore, "articles"), { ...articleDetails, published: true, author });
-            await countTags()
+            await countTopics()
             router.push(`/article/${docRef.id}`)
         }
     }
@@ -81,18 +81,18 @@ function useEditor() {
         setArticleDetails({ ...articleDetails, readingTime: time })
     }
 
-    const countTags = async () => {
-        const firebaseTags = getDoc(doc(firebaseStore, "tags", "qt9AhhdGU6ZaR5PasTrP"))
-        const ft = (await firebaseTags)?.data()?.tags
-        articleDetails.tags.forEach(async (tag: string) => {
+    const countTopics = async () => {
+        const chatterTopics = getDoc(doc(firebaseStore, "topics", `${process.env.NEXT_PUBLIC_TOPICS_DATABASE_ID}`))
+        const ft = (await chatterTopics)?.data()?.tags
+        articleDetails?.topics.forEach(async (tag: string) => {
             const existing = ft?.find((t: { name: string }) => t.name === tag)
             if (existing) {
-                await setDoc(doc(firebaseStore, "tags", "qt9AhhdGU6ZaR5PasTrP"), {
-                    tags: ft?.map((t: { name: string, count: number }) => t.name === tag ? { ...t, count: t.count + 1 } : t)
+                await setDoc(doc(firebaseStore, "topics", `${process.env.NEXT_PUBLIC_TOPICS_DATABASE_ID}`), {
+                    topics: ft?.map((t: { name: string, count: number }) => t.name === tag ? { ...t, count: t.count + 1 } : t)
                 }, { merge: true })
             } else {
-                await setDoc(doc(firebaseStore, "tags", "qt9AhhdGU6ZaR5PasTrP"), {
-                    tags: [...ft, { name: tag, count: 1 }]
+                await setDoc(doc(firebaseStore, "topics", `${process.env.NEXT_PUBLIC_TOPICS_DATABASE_ID}`), {
+                    topics: [...ft, { name: tag, count: 1 }]
                 }, { merge: true })
             }
         })
@@ -119,15 +119,15 @@ function useEditor() {
     const addTag = (e: React.FormEvent) => {
         e.preventDefault();
         let forms = e.currentTarget as HTMLFormElement
-        let tag = (e.currentTarget.childNodes[0] as HTMLInputElement).value
+        let topic = (e.currentTarget.childNodes[0] as HTMLInputElement).value
 
-        if (tag.trim() !== "" && articleDetails.tags.length < 5) {
-            setArticleDetails({ ...articleDetails, tags: [...articleDetails.tags, tag] })
+        if (topic.trim() !== "" && articleDetails.topics.length < 5) {
+            setArticleDetails({ ...articleDetails, tags: [...articleDetails.topics, topic] })
             forms.reset()
         }
     }
-    const removeTag = (tag: string) => {
-        setArticleDetails({ ...articleDetails, tags: articleDetails.tags.filter((t: string) => t !== tag) })
+    const removeTag = (topic: string) => {
+        setArticleDetails({ ...articleDetails, topics: articleDetails.topics.filter((t: string) => t !== topic) })
     }
     const getUnSplashUrl = (url: string) => {
         toggleUnsplash()

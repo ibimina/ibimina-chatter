@@ -5,7 +5,7 @@ export interface ArticleProps {
     coverImageUrl: string,
     article: string,
     createdat: string,
-    tags: string[],
+    topics: string[],
     published: boolean,
     likes: LikeProps[],
     views: number,
