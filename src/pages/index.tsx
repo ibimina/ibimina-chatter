@@ -2,6 +2,7 @@ import Link from 'next/link';
 import styles from '../styles/index.module.css';
 import {useState } from 'react';
 import { useGoogleSignin, useGitHubSignin, useLogin } from '@/hooks';
+import Cookies from 'js-cookie';
 
 
 export default function Home() {
@@ -19,6 +20,7 @@ export default function Home() {
 			[e.target.name]: e.target.value,
 		});
 	};
+	console.log(Cookies.get("loggedin"))
 	const { google } = useGoogleSignin();
 	const { github } = useGitHubSignin()
 	const handleGithubLogin = async (e: React.MouseEvent) => {
