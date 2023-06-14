@@ -6,12 +6,13 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useState } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
 import Cookies from 'js-cookie';
+import { useRouter } from 'next/router';
 
 export default function useLogin() {
     const { dispatch } = useAuthContext();
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-
+    const router = useRouter()
     const loginUser = async ({ email, password }: LoginProps) => {
         try {
             setIsLoading(true);
@@ -25,6 +26,7 @@ export default function useLogin() {
             dispatch(signIn(docSnap?.data()!));
             setIsLoading(false);
             Cookies.set("loggedin", "true");
+            router.push("/chatter")
         } catch (error: any) {
             setError(error.message);
             setIsLoading(false);
