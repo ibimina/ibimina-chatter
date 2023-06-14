@@ -101,7 +101,7 @@ export default function SingleArticle() {
                 <meta name="twitter:creator" content="@chatter" />
             </Head>
             <FeedLayout>    
-                <main className={` md:w-8/12 mx-auto `}>
+                <main className={` md:w-10/12 mx-auto lg:w-9/12 `}>
                     <div className="flex items-center mb-6 gap-4">
                         <button
                             onClick={handleRoute}
@@ -132,7 +132,7 @@ export default function SingleArticle() {
                         components={{ a: LinkRenderer }}
                         className={` prose prose-headings:m-0 prose-p:m-0.6  prose-li:m-0 prose-ol:m-0 prose-ul:m-0 prose-ul:leading-3
                             hr-black prose-hr:border-solid prose-hr:border prose-hr:border-black
-                             marker:text-gray-700 ${styles['markdownPreview']}`} >
+                             marker:text-gray-700  break-words whitespace-pre-wrap`} >
                         {article?.article}
                     </ReactMarkdown>
                     <div className='relative flex items-center gap-2 justify-center mt-20 mb-10'>
