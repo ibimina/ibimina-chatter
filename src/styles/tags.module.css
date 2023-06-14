@@ -4,3 +4,6 @@
 .add[aria-pressed="true"]{
     background-image:url("../../public/images/icons8-done.svg");
 }
+.picture{
+    background-image: url("../../public/images/icons8-camera-24.png");
+}
