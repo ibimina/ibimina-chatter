@@ -25,7 +25,7 @@ function User() {
                 throw new Error("Function not implemented.");
             }} />
             <form className="bg-slate-100 px-8 py-4" onSubmit={updateInfo}>
-                <div className="grid grid-cols-2 gap-8">
+                <div className="grid lg:grid-cols-2 gap-8">
                     <div>
                         <p className="font-bold text-4xl mb-4">Basic info</p>
                         <label className="block mb-4">
@@ -78,13 +78,13 @@ function User() {
                                         if (addTag.trim().length > 2) {
                                             dispatch({ type: "ADDTAG", payload: addTag })
                                         }
-                                    }}>add topics</button>
+                                    }}>add</button>
                             </div>
 
                         </label>
                         <ul className="flex items-center gap-2 flex-wrap mt-8">
                             {state?.user &&
-                                state?.user?.tags?.map((doc: string, index: Key) =>
+                                state?.user?.topics?.map((doc: string, index: Key) =>
                                     <>
                                         <li key={index} className="bg-violet-200 p-2 rounded-sm text-current">
                                             {doc}
@@ -126,7 +126,7 @@ function User() {
                         </label>
                     </div>
                 </div>
-                <input type="submit" className="bg-violet-900 text-white py-2 px-4 rounded-xl mt-8 block ml-auto" value="Update" />
+                <input type="submit" className="bg-violet-900 text-white py-2 px-4 rounded-xl mt-8 block lg:ml-auto" value="Update" />
             </form>
     </>);
 }
