@@ -12,7 +12,7 @@ export default function middleware(req: NextRequest) {
         return NextResponse.redirect(url);
     }
 
-    if (verify && url === "http://localhost:3000/") {
+    if (verify && url === process.env.NEXT_PUBLIC_HOST) {
         let url = req.nextUrl.clone()
         url.pathname = '/chatter'
         return NextResponse.redirect(url);
