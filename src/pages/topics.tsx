@@ -8,72 +8,72 @@ import styles from '../styles/tags.module.css'
 import useCollection from "@/hooks/useCollection";
 
 
-function Chatter() {
+function Topics() {
 	const { state } = useAuthContext();
 	const { data } = useCollection("users",state?.user?.uid)
-	const [arr,setArr] = useState(data?.tags || [])
-	const [tag, setTag] = useState("")
+	const [arr,setArr] = useState(data?.topics || [])
+	const [topic, setTopic] = useState("")
 	const router = useRouter();
 
 	const [articleTags, setArticleTags] = useState([
-		{ tag: "JavaScript", selected: false },
-		{ tag: "HTML", selected: false },
-		{ tag: "CSS", selected: false },
-		{ tag: "React", selected: false },
-		{ tag: "Vue", selected: false },
-		{ tag: "cloud engineering", selected: false },
-		{ tag: "accessibility", selected: false },
-		{ tag: "nodejs", selected: false },
+		{ topic: "JavaScript", selected: false },
+		{ topic: "HTML", selected: false },
+		{ topic: "CSS", selected: false },
+		{ topic: "React", selected: false },
+		{ topic: "Vue", selected: false },
+		{ topic: "cloud engineering", selected: false },
+		{ topic: "accessibility", selected: false },
+		{ topic: "nodejs", selected: false },
 	])
 
-	const getUserPreferredTag = async (e: React.FormEvent, tag: string) => {
+	const getUserPreferredTag = async (e: React.FormEvent, topic: string) => {
 		const userRef = doc(firebaseStore, 'users', state?.user?.uid);
 		e.preventDefault()
-		if (tag.length > 1) {
+		if (topic.length > 1) {
 			const exist = articleTags.find((articleTag) => {
-				return articleTag.tag.toLowerCase() === tag.toLowerCase()
+				return articleTag.topic.toLowerCase() === topic.toLowerCase()
 			})
 			if (exist) {
 				return
 			} else {
-				arr.push(tag)
+				arr.push(topic)
 				setDoc(userRef, {
 					tags: arr
 				}, { merge: true });
-				setArticleTags([...articleTags, { tag, selected: true }])
-				setTag("")
+				setArticleTags([...articleTags, { topic, selected: true }])
+				setTopic("")
 			}
 		}
 
 	}
 
 
-	const addUserTags = async (e: React.MouseEvent, tag: string) => {
+	const addUserTags = async (e: React.MouseEvent, topic: string) => {
 		e.preventDefault();
 		let addBtn = e.currentTarget.getAttribute('aria-pressed');
 		if (addBtn === 'false') {
 			const userRef = doc(firebaseStore, 'users', state?.user?.uid);
 			e.currentTarget.setAttribute('aria-pressed', 'true');
 			const exist = arr.find((articleTag: string) => {
-				return articleTag.toLowerCase() === tag.toLowerCase()
+				return articleTag.toLowerCase() === topic.toLowerCase()
 			})
 			if (exist) {
 				return
 			}
 			else {
-				arr.push(tag)
+				arr.push(topic)
 				setDoc(userRef, {
-					tags: arr
+					topics: arr
 				}, { merge: true });
 			}
 		}
 		else {
 			const userRef = doc(firebaseStore, 'users', state?.user?.uid);
 			e.currentTarget.setAttribute('aria-pressed', 'false');
-			const updateArray = arr.filter((userTag: string) => userTag !== tag)
+			const updateArray = arr.filter((userTag: string) => userTag !== topic)
 			setArr(updateArray)
 			setDoc(userRef, {
-				tags: arr
+				topics: arr
 			}, { merge: true });
 		}
 	}
@@ -89,20 +89,20 @@ function Chatter() {
 				<div className={`pb-3`}>
 					<div className={`w-10/12 ml-5 md:px-2`}>
 						<div className={`mb-5`}>
-							<p className={`font-medium`}>Select your tags</p>
+							<p className={`font-medium`}>Select your topics</p>
 							<p className="text-slate-600">
-								We use tags to personalise your feeds and make it easier for you to discover relevent content
+								We use topics to personalise your feeds and make it easier for you to discover relevent content
 							</p>
 						</div>
-						<form className={`flex rounded-xl items-stretch`} onSubmit={(e) => getUserPreferredTag(e, tag)}>
-							<input type="text" name="tag" placeholder="Add your preferred tag" value={tag} onChange={(e) => setTag(e.target.value)} className={`border-2 border-solid border-slate-300 basis-9/12 md:basis-6/12 lg:basis-2/5 p-2 rounded-s-xl`} />
-							<input type="submit" value="Add tag" className={`bg-violet-500 font-medium block basis-1/4 text-white rounded-e-xl hover:bg-violet-800 cursor-pointer`} />
+						<form className={`flex rounded-xl items-stretch`} onSubmit={(e) => getUserPreferredTag(e, topic)}>
+							<input type="text" name="topic" placeholder="Add your preferred topic" value={topic} onChange={(e) => setTopic(e.target.value)} className={`border-2 border-solid border-slate-300 basis-9/12 md:basis-6/12 lg:basis-2/5 p-2 rounded-s-xl`} />
+							<input type="submit" value="Add topic" className={`bg-violet-500 font-medium block basis-1/4 text-white rounded-e-xl hover:bg-violet-800 cursor-pointer`} />
 						</form>
 						<div className={`grid md:grid-cols-2 lg:grid-cols-3 gap-3 my-8`}>
 							{articleTags.map((articleTag, index) =>
 								<div key={index} className={`flex justify-between items-center bg-stone-200 hover:bg-zinc-500 hover:text-slate-100 cursor-pointer`} aria-selected='false'>
-									<p className={`px-4 py-3 font-medium`}>{articleTag.tag} </p>
-									<button onClick={(e) => addUserTags(e, articleTag.tag)} className={`bg-contain bg-no-repeat bg-center w-5 h-5 m-2 ${styles.add}`} aria-label="add tag" aria-pressed={articleTag.selected}></button>
+									<p className={`px-4 py-3 font-medium`}>{articleTag.topic} </p>
+									<button onClick={(e) => addUserTags(e, articleTag.topic)} className={`bg-contain bg-no-repeat bg-center w-5 h-5 m-2 ${styles.add}`} aria-label="add tag" aria-pressed={articleTag.selected}></button>
 								</div>
 							)}
 						</div>
@@ -114,4 +114,4 @@ function Chatter() {
 	);
 }
 
-export default Chatter;
+export default Topics;
