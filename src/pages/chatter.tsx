@@ -1,7 +1,7 @@
 import { useAuthContext } from '@/store/store';
 import { Key, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { query, collection, onSnapshot,DocumentData } from 'firebase/firestore';
+import { query, collection, onSnapshot, DocumentData } from 'firebase/firestore';
 import { firebaseStore } from '@/firebase/config';
 import { ArticleProps } from '@/types/index';
 import useInteraction from '@/hooks/useInteraction';
@@ -41,7 +41,7 @@ function Chatter() {
 	return (
 		<>
 			<FeedLayout>
-				<main className={`md:w-4/6`}>
+				<main className={`w-full lg:w-4/6`}>
 					{isloading && <>loading...</>}
 					{feeds
 						&&
