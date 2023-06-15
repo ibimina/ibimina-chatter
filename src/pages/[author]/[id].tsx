@@ -32,23 +32,42 @@ import FeedLayout from "@/container/feedslayout";
 export default function SingleArticle() {
     const { state } = useAuthContext();
     const router = useRouter();
-    const { id } = router.query;
-    const [article, setArticle] = useState({} as ArticleProps);
+    const { id, author } = router.query;
+
+    const [article, setArticle] = useState<ArticleProps>({} as ArticleProps);
+    const [isliked, setIsLiked] = useState(false)
+    const [isbookmarked, setIsBookmarked] = useState(false)
     const [comment, setComment] = useState('');
     const [shareUrl, setShareUrl] = useState('');
     const [isShared, setIsShared] = useState(false);
-    const { snap } = useCollectionSnap('articles', "author.uid",state?.user?.uid);
+    const { snap } = useCollectionSnap('articles', "author.uid", `${author}`);
 
     useEffect(() => {
         const getArticle = async () => {
-            const article = snap?.find((article: ArticleProps) => {
+            const doc = snap?.find((article: ArticleProps) => {
                 return article.id === id
             })
-            setArticle(article as ArticleProps);
+            const time = new Date(doc?.timestamp?.seconds * 1000).toDateString();
+            setArticle({ ...doc, timestamp: time });
+            const like = article?.likes?.find((like) => like?.uid === state?.user?.uid)
+            const bookmark = article?.bookmarks?.find((bookmark) => bookmark?.user_uid === state?.user?.uid)
+            if (like !== undefined) {
+                setIsLiked(true)
+            } else {
+
+                setIsLiked(false)
+            }
+            if (bookmark !== undefined) {
+                setIsBookmarked(true)
+            } else {
+
+                setIsBookmarked(false)
+            }
         };
         getArticle();
 
-    }, [id, snap]);
+        // 
+    }, [article?.bookmarks, article?.likes, id, snap, state?.user?.uid]);
     useEffect(() => {
         (async () => {
 
@@ -76,11 +95,11 @@ export default function SingleArticle() {
                     timestamp: timestamp
                 }]
         }, { merge: true });
-        if (state?.user.uid !== article?.author?.uid) await addNotification('commented', article)
+        await addNotification('commented', article)
         setComment("")
     }
-     const handleRoute = () => {
-    router.back();    
+    const handleRoute = () => {
+        router.back();
     }
     return (
         <>
@@ -100,7 +119,7 @@ export default function SingleArticle() {
                 <meta name="twitter:site" content="@chatter" />
                 <meta name="twitter:creator" content="@chatter" />
             </Head>
-            <FeedLayout>    
+            <FeedLayout>
                 <main className={` md:w-10/12 mx-auto lg:w-9/12 `}>
                     <div className="flex items-center mb-6 gap-4">
                         <button
@@ -109,28 +128,41 @@ export default function SingleArticle() {
                             aria-label='menu'
                         ></button>   <h1 className="font-bold text-3xl">Article</h1>
                     </div>
-                    
+                    {
+                        article?.id?.length === undefined && <>loading...</>
+                    }
                     {article?.coverImageUrl?.length > 2 &&
                         <div className={`relative h-96 mb-4`}>
                             <Image src={article?.coverImageUrl} alt={article?.title} fill sizes="(max-width: 768px) 100vw,(max-width: 1200px) 50vw,  33vw"
                             />
                         </div>
                     }
-                    <h1 className={`text-2xl text-center mb-6 font-bold`}>{article?.title}</h1>
-                    <Link href={`/${encodeURIComponent(article?.author?.uid)}`} className={`flex items-center gap-1 mb-8`}>
-                        {article?.author?.image?.length > 2 &&
-                            <Image className={`rounded-full`} src={article?.author?.image} width={30} height={30} alt="author avatar" />
 
-                        }
-                        {article?.author?.image === null &&
-                            <Image className={`rounded-full`} src={"/images/icons8-user-64.png"} width={30} height={30} alt="author avatar" />
+                    <h1 className={`text-2xl text-center lg:text-left mb-2 font-bold`}>{article?.title}</h1>
+                    <h1 className={`text-xl text-center lg:text-left mb-6 font-medium`}>{article?.subtitle}</h1>
+                    <Link href={`/${encodeURIComponent(article?.author?.uid)}`} className={`flex flex-col lg:flex-row lg:items-center lg:gap-2 mb-8`}>
+                        <div className="flex items-center gap-1">
+                            {article?.author?.image?.length > 2 &&
+                                <Image className={`rounded-full`} src={article?.author?.image} width={30} height={30} alt="author avatar" />
 
+                            }
+                            {article?.author?.image === null &&
+                                <Image className={`rounded-full`} src={"/images/icons8-user-64.png"} width={30} height={30} alt="author avatar" />
+                            }
+                            <span>{article?.author?.name}</span>
+                        </div>
+                        {
+                            article?.title?.length > 1 &&
+                            <div className="flex items-center gap-1">
+                                <span>{article?.timestamp}</span>
+                                <span>{article?.readingTime} min read</span>
+                            </div>
                         }
-                        <span>{article?.author?.name}</span>
+
                     </Link>
                     <ReactMarkdown remarkPlugins={[remarkGfm]}
                         components={{ a: LinkRenderer }}
-                        className={` prose prose-headings:m-0 prose-p:m-0.6  prose-li:m-0 prose-ol:m-0 prose-ul:m-0 prose-ul:leading-3
+                        className={` prose prose-headings:m-0 prose-p:my-0  prose-li:m-0 prose-ol:m-0 prose-ul:m-0 prose-ul:leading-6
                             hr-black prose-hr:border-solid prose-hr:border prose-hr:border-black
                              marker:text-gray-700  break-words whitespace-pre-wrap`} >
                         {article?.article}
@@ -139,14 +171,38 @@ export default function SingleArticle() {
                         <button
                             onClick={() => increaseLike(article?.id!, article?.likes!, article)}
                             className={`flex items-center gap-1`}>
-                            <Image src='/images/icons8-like-50.png' height={24} width={24} alt="like" />
-                            {article?.likes?.length}
+                            {
+                                isliked ?
+                                    <>
+                                        <Image src='/images/icons8-love-48.png' height={24} width={24} alt="like" />
+                                        <p className="text-red">  {article?.likes?.length}</p>
+                                    </>
+
+                                    : <>
+                                        <Image src='/images/icons8-like-50.png' height={24} width={24} alt="like" />
+                                        <p className="text-current">  {article?.likes?.length}</p>
+                                    </>
+                            }
+
+
                         </button>
                         <button
                             onClick={() => addBookmark(article?.id!, article?.bookmarks)}
-                            className='flex items-center gap-2'>
-                            <Image src='/images/icons8-add-bookmark.svg' height={24} width={24} alt="bookmark" />
-                            {article?.bookmarks?.length}
+                            className='flex items-center gap-1'>
+                            {
+                                isbookmarked ?
+                                    <>
+                                        <Image src='/images/icons8-isbookmark.png' height={24} width={24} alt="like" />
+                                        <p className="text-">    {article?.bookmarks?.length}</p>
+                                    </>
+
+                                    : <>
+                                        <Image src='/images/icons8-add-bookmark.svg' height={24} width={24} alt="bookmark" />
+                                        <p className="text-current">   {article?.bookmarks?.length} </p>
+                                    </>
+                            }
+
+
                         </button>
                         <button className='flex items-center gap-1'>
                             <Image src="/images/icons8-chart-24.png" height={18} width={18} alt="views chart" />
