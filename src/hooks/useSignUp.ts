@@ -4,6 +4,7 @@ import { useAuthContext } from '@/store/store';
 import { SignUpProps } from '@/types/signup';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
+import Cookies from 'js-cookie';
 import { useState } from 'react';
 
 export default function useSignUp() {
@@ -23,11 +24,19 @@ export default function useSignUp() {
 				displayName: username
 			});
 			const userRef = userCredential.user;
-			const userInfo = { uid: userRef?.uid, displayName: userRef?.displayName, email: userRef?.email, photoURL: userRef?.photoURL, tags: [] };
+			const userInfo = {
+				uid: userRef?.uid, displayName: userRef?.displayName,
+				email: userRef?.email, photoURL: userRef?.photoURL,
+				tags: [], profile_tagline: "", location: "",
+				bio: "", twitter: "", github: "", instagram: "",
+				website: "", linkedin: "", youtube: "", facebook: ""
+			};
 			await setDoc(doc(firebaseStore, "users", userCredential?.user?.uid), userInfo);
 			// Signed in
+			Cookies.set("loggedin", "true");	
 			dispatch(signIn(userInfo));
 			setIsLoading(false);
+			
 		} catch (error: any) {
 			setError(error.message);
 			setIsLoading(false);

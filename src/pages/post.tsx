@@ -1,29 +1,23 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { EditorHeader, Editor } from '@/components/index';
 import useEditor from '@/hooks/useEditor';
-import router from 'next/router';
-import { useAuthContext } from '@/store/store';
 
 const MarkdownEditor = () => {
     const { articleDetails, handleValueChange,
         uploadImage, isUnsplashVisible, toggleUnsplash,
         unsplashSearch, getUnsplashTerm, insertMarkdown, getUnSplashUrl,
-        publishArticleInFirebase, changeRoute,
-        isvisible, toggleVisible
+        publishArticleInFirebase, changeRoute, removeTag,
+        isvisible, toggleVisible, isPublishing, togglePublishing, addTag
     } = useEditor()
-    const { state } = useAuthContext();
-    useEffect(() => {
-        if (state?.user === null) {
-            router.push('/');
-        }
-    }, [state?.user]);
+   
     return (
         <>
             <EditorHeader
                 isvisible={isvisible}
                 handleVisible={toggleVisible}
                 changeRoute={changeRoute}
-                publishArticleInFirebase={publishArticleInFirebase} />
+                togglePublishing={togglePublishing}
+            />
             <Editor
                 articleDetails={articleDetails}
                 isvisible={isvisible}
@@ -36,6 +30,11 @@ const MarkdownEditor = () => {
                 handleValueChange={handleValueChange}
                 insertMarkdown={insertMarkdown}
                 getUnSplashUrl={getUnSplashUrl}
+                publishArticleInFirebase={publishArticleInFirebase}
+                isPublishing={isPublishing}
+                togglePublishing={togglePublishing}
+                addTag={addTag}
+                removeTag={removeTag}
             />
         </>
     );

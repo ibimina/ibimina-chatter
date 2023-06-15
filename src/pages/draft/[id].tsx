@@ -7,7 +7,7 @@ import { useAuthContext } from '@/store/store';
 const MarkdownEditor = () => {
     const { state } = useAuthContext();
     const{articleDetails,handleValueChange,uploadImage,
-        isUnsplashVisible,toggleUnsplash,unsplashSearch,
+        isUnsplashVisible,toggleUnsplash,unsplashSearch,togglePublishing,isPublishing,addTag,removeTag,
         getUnsplashTerm,insertMarkdown,getUnSplashUrl,changeRoute,
         updateArticleInFirebase, isvisible, toggleVisible}=useEditor()
 
@@ -22,7 +22,8 @@ const MarkdownEditor = () => {
                 isvisible={isvisible}
                 handleVisible={toggleVisible}
                 changeRoute={changeRoute}
-                publishArticleInFirebase={updateArticleInFirebase} />
+                togglePublishing={togglePublishing}
+              />
             <Editor
                 isvisible={isvisible}
                 handleVisible={toggleVisible}
@@ -35,6 +36,11 @@ const MarkdownEditor = () => {
                 handleValueChange={handleValueChange}
                 insertMarkdown={insertMarkdown}
                 getUnSplashUrl={getUnSplashUrl}
+                togglePublishing={togglePublishing}
+                removeTag={removeTag}
+                isPublishing={isPublishing}
+                addTag={addTag}
+                publishArticleInFirebase={updateArticleInFirebase} 
             />
         </>
     );

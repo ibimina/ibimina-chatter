@@ -1,11 +1,12 @@
 import { firebaseAuth, firebaseStore, googleAuthProvider } from "@/firebase/config";
-import { googleAuth } from "@/store/action";
+import { signIn } from "@/store/action";
 import { useAuthContext } from "@/store/store";
 import { signInWithPopup } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import Cookies from "js-cookie";
 import { useRouter } from 'next/router';
 
-export const useGoogleSignin = () => {
+const useGoogleSignin = () => {
     const { dispatch } = useAuthContext()
     const router = useRouter()
 
@@ -16,14 +17,19 @@ export const useGoogleSignin = () => {
             const docRef = doc(firebaseStore, "users", user.uid);
             const docSnap = await getDoc(docRef);
             if (docSnap.exists()) {
-                dispatch(googleAuth(docSnap.data()))
+                dispatch(signIn(docSnap.data()))
                 router.push('/chatter');
             } else {
-                const userInfo = { uid: user?.uid, displayName: user?.displayName, email: user?.email, photoURL: user?.photoURL }
+                const userInfo = {
+                    uid: user?.uid, displayName: user?.displayName, email: user?.email, photoURL: user?.photoURL, profile_tagline: "", location: "",
+                    bio: "", twitter: "", github: "", instagram: "", tags: [],
+                    website: "", linkedin: "", youtube: "", facebook: ""
+                }
                 await setDoc(doc(firebaseStore, "users", user?.uid), userInfo);
-                dispatch(googleAuth(userInfo))
+                dispatch(signIn(userInfo))
                 router.push('/tags');
             }
+            Cookies.set("loggedin", "true");
         } catch (error: any) {
             // Handle Errors here.
             const errorCode = error.code;
@@ -37,3 +43,4 @@ export const useGoogleSignin = () => {
     }
     return { google }
 }
+export default useGoogleSignin

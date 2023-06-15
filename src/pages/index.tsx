@@ -1,25 +1,19 @@
 import Link from 'next/link';
 import styles from '../styles/index.module.css';
-import { useEffect, useState } from 'react';
-import { useAuthContext } from '@/store/store';
+import {useState } from 'react';
+import { useGoogleSignin, useGitHubSignin, useLogin } from '@/hooks';
 import { useRouter } from 'next/router';
-import useLogin from '@/hooks/useLogin';
-import { useGoogleSignin } from '@/hooks/useGoogleSignin';
-import { useGitHubSignin } from '@/hooks/useGithubSigin';
-import { firebaseStore } from '@/firebase/config';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 
 export default function Home() {
+const router = useRouter()
 	const [loginDetails, setLoginDetails] = useState({
 		email: '',
 		password: '',
 	});
 	const [emailExists, setEmailExists] = useState<boolean | null>(null);
 	const [passwordLimit, setPasswordLimit] = useState<boolean | null>(null);
-	const { state } = useAuthContext();
 	const { loginUser, error, isLoading } = useLogin();
-	const router = useRouter();
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setLoginDetails({
 			...loginDetails,
@@ -49,6 +43,8 @@ export default function Home() {
 		} else if (error === "Firebase: Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later. (auth/too-many-requests).") {
 			setEmailExists(null)
 			setPasswordLimit(true)
+		}else{
+			router.push("/chatter")
 		}
 	}
 

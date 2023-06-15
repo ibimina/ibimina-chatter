@@ -41,9 +41,9 @@ function Buttons({ handleClick, toggleEmojiPicker, showEmojiPicker, selectEmoji 
             })
             }
             <div className={`relative`}>
-                <button onClick={() => toggleEmojiPicker()}>😊</button>
+                <button onClick={() => toggleEmojiPicker()} className={` border-2 border-gray-700 p-1`}>😊</button>
                 {showEmojiPicker && (
-                    <div className={`absolute top-8 right`}>
+                    <div className={`absolute top-8 right-0`}>
                         <Picker
                             onEmojiClick={selectEmoji}
                         />

@@ -24,7 +24,7 @@ function Article() {
            </div>
             <ReactMarkdown remarkPlugins={[remarkGfm]}
                 components={{ a: LinkRenderer }}
-                className={` prose prose-headings:m-0 prose-p:m-0.6 prose-li:m-0 prose-ol:m-0 prose-ul:m-0 prose-ul:leading-3
+                className={` prose prose-headings:m-0 prose-p:m-0.6 prose-li:m-0 prose-ol:m-0 prose-ul:m-0 prose-ul:leading-6
                             hr-black prose-hr:border-solid prose-hr:border prose-hr:border-black
                              marker:text-gray-400 ${styles['markdownPreview']}`} >
                 {articleDetails.article}

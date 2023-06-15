@@ -1,17 +1,16 @@
 import { firebaseStore } from "@/firebase/config";
-import { useAuthContext } from "@/store/store";
 import { DocumentData, collection, onSnapshot, orderBy, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
 
 
-function useCollectionSnap( c: string, queyRef?: string) {
-    const {state}= useAuthContext()
+function useCollectionSnap( c: string, queyRef: string,id:string) {
     const [snap, setSnap] = useState<DocumentData>()
+    const [loading, setLoading] = useState(false)
     const [error, setError] = useState("")
 
     useEffect(() => {
-
-        let ref = query(collection(firebaseStore, c),where(queyRef!,"==",state?.user?.uid));
+        setLoading(true);
+        let ref = query(collection(firebaseStore, c),where(queyRef!,"==",`${id}`));
         const unsub = onSnapshot(ref, (snapshot) => {
             if (snapshot?.empty) {
                 setError("No documents found");
@@ -22,12 +21,16 @@ function useCollectionSnap( c: string, queyRef?: string) {
                 });
            
                 setSnap(result);
+                setLoading(false);
+                setError("");
             }
         }, (err) => {
             setError(err.message);
+            setLoading(false);
         });
+        setLoading(false);
         return () => {unsub();}
-    }, [c, queyRef, state?.user?.uid])
-    return { snap,error }
+    }, [c, id, queyRef])
+    return { snap,error,loading }
 }
 export default useCollectionSnap;

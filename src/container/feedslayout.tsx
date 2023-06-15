@@ -14,9 +14,9 @@ function FeedLayout({ children }: { children: React.ReactNode }) {
         <>
             <Header handleNav={handleNav} />
             <section
-                className={`relative md:flex md:gap-9 p-4  ${styles.grid}`}>
-                <aside className={` ${styles.aside} md:w-3/12 lg:w-3/12`} data-visible={isvisible}>
-                    <ul  className={`h-full w-9/12 md:w-full  p-5 pt-12 bg-gray-100 md:rounded-xl ${styles.ul}`}>
+                className={`relative md:flex md:gap-9 p-4  lg:items-start`}>
+                <aside className={` ${styles.aside} md:w-full  lg:w-3/12`} data-visible={isvisible}>
+                    <ul className={`h-full w-9/12 lg:w-full p-5 pt-12 md:w-5/12 bg-gray-100 lg:rounded-xl ${styles.ul}`}>
                         <li className={`mb-3 font-medium`}>
                             <Link href='/chatter' className={`flex items-center gap-2`}>
                                 <Image
@@ -36,7 +36,7 @@ function FeedLayout({ children }: { children: React.ReactNode }) {
                                     width={34}
                                     alt='notification'
                                 />
-                              Explore
+                                Explore
                             </Link>
                         </li>
                         <li className={`mb-3 font-medium`}>
@@ -72,7 +72,7 @@ function FeedLayout({ children }: { children: React.ReactNode }) {
                                 Bookmark
                             </Link>
                         </li>
-                        <li className={`flex items-center gap-2 font-medium`}>
+                        {/* <li className={`flex items-center gap-2 font-medium`}>
                             <Image
                                 src='/images/icons8-message-50.png'
                                 height={44}
@@ -80,11 +80,11 @@ function FeedLayout({ children }: { children: React.ReactNode }) {
                                 alt='notification'
                             />
                             Message
-                        </li>
+                        </li> */}
                     </ul>
                     <button
                         aria-label='close'
-                        className={` top-1 brightness-100 invert right-2 absolute md:hidden ${styles.close}`}
+                        className={` top-1 brightness-100 invert right-2 absolute lg:hidden ${styles.close}`}
                         onClick={() => seIsVisible(!isvisible)}></button>
                 </aside>
                 {children}

@@ -1,31 +1,36 @@
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
-import { DocumentData, collection, doc, setDoc, addDoc } from "firebase/firestore";
+import { DocumentData, collection, doc, setDoc, addDoc, getDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { firebaseStore, firebaseAuth, firebaseStorage,timestamp } from "@/firebase/config";
+import { firebaseStore, firebaseAuth, firebaseStorage, timestamp } from "@/firebase/config";
 import useCollection from "./useCollection";
 import { useAuthContext } from "@/store/store";
-import { ArticleProps, CommentProps, BookmarkProps, LikeProps } from "@/types";
+import { ArticleProps, CommentProps, UserBookmarkProps, LikeProps } from "@/types";
 
 function useEditor() {
     const router = useRouter()
     const id = router.query.id
     const { state } = useAuthContext()
+    const { displayName, photoURL, uid } = state.user
     const { data } = useCollection("articles", id?.toString()!)
+    const [author, setAuthor] = useState({ name: "", uid: "", image: "" })
+
     const [unsplashSearch, setUnsplashSearch] = useState<string>('Inspiration');
     const [isUnsplashVisible, setIsUnsplashVisible] = useState<boolean>(false);
     const [isvisible, setIsVisible] = useState<boolean>(false);
+    const [isPublishing, setIsPublishing] = useState<boolean>(false);
     const [articleDetails, setArticleDetails] = useState<DocumentData | ArticleProps>({
         title: "",
         subtitle: "",
         coverImageUrl: "",
         article: "",
         createdat: "",
-        tags: [],
+        readingTime: 0,
+        topics: [] as string[],
         published: false,
         likes: [] as LikeProps[],
         views: 0,
-        bookmarks: [] as BookmarkProps[],
+        bookmarks: [] as UserBookmarkProps[],
         comments: [] as CommentProps[],
         timestamp: timestamp,
     })
@@ -40,18 +45,21 @@ function useEditor() {
         const before = text.substring(0, start);
         const after = text.substring(end, text.length);
         textarea.value = (before + markdownSyntax + after);
-        console.log(textarea.value)
         setArticleDetails({ ...articleDetails, article: textarea.value })
         textarea.focus();
     };
     const toggleVisible = () => {
         setIsVisible(!isvisible)
     }
+    const togglePublishing = () => {
+        setIsPublishing(!isPublishing)
+    }
 
     useEffect(() => {
+        setAuthor({ name: displayName, uid: uid, image: photoURL })
         if (id) return setArticleDetails(data);
 
-    }, [id, data])
+    }, [id, data, displayName, uid, photoURL])
 
     const publishArticleInFirebase = async (e: React.MouseEvent) => {
         e.preventDefault();
@@ -60,14 +68,34 @@ function useEditor() {
         } else if (articleDetails.title.trim().length < 9) {
             return alert("Title is too short")
         } else if (articleDetails.article.trim().length > 9 && articleDetails.title.trim() !== "") {
-            const author = {
-                name: state?.user?.displayName,
-                uid: state?.user?.uid,
-                image: state?.user?.photoURL
-            }
-          const docRef =  await addDoc(collection(firebaseStore, "articles"), { ...articleDetails, published: true, author });
-               router.push(`/article/${docRef.id}`)
+            const wpm = 225;
+            const words = articleDetails.article.trim().split(/\s+/).length;
+            const time = Math.ceil(words / wpm);
+            await countTopics()
+            const docRef = await addDoc(collection(firebaseStore, "articles"), { ...articleDetails, published: true, author,readingTime: time  });          
+            router.push(`/article/${docRef.id}`)
         }
+    }
+
+
+    const countTopics = async () => {
+        const chatterTopics = getDoc(doc(firebaseStore, "topics", `${process.env.NEXT_PUBLIC_TOPICS_DATABASE_ID}`))
+        const realTime: { name: string; count: number; }[] = []
+        const ft: { name: string; count: number; }[] = (await chatterTopics)?.data()?.topics
+        articleDetails?.topics.forEach(async (topic: string) => {
+            const existing = ft?.find((t: { name: string,count:number }) =>  t.name === topic   )
+        if (existing) {
+            console.log(existing)
+             await setDoc(doc(firebaseStore, "topics", `${process.env.NEXT_PUBLIC_TOPICS_DATABASE_ID}`), {
+                topics: ft?.map((t: { name: string, count: number }) => t.name === topic ? { ...t, count: t.count + 1 } : t)
+            }, { merge: true })
+        } else {
+            realTime.push({ name: topic, count: 1 })
+            let topics = [...ft, ...realTime]
+            console.log(realTime)
+            await setDoc(doc(firebaseStore, "topics", `${process.env.NEXT_PUBLIC_TOPICS_DATABASE_ID}`),{topics})
+        }
+         })
     }
 
     const updateArticleInFirebase = async (e: React.MouseEvent) => {
@@ -78,15 +106,29 @@ function useEditor() {
             return alert("Title is too short")
         } else if (articleDetails.article.trim().length > 9 && articleDetails.title.trim() !== "") {
             const userRef = doc(firebaseStore, 'articles', id?.toString()!);
+            await countTopics()
             setDoc(userRef, {
                 ...articleDetails,
+                published: true
             }, { merge: true });
-            //    router.push(`/article/${docRef.id}`)
-            console.log("Document update with: ", articleDetails);
+            router.push(`/article/${id}`)
         }
     }
     const handleValueChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setArticleDetails({ ...articleDetails, [e.target.name]: e.target.value })
+    }
+    const addTag = (e: React.FormEvent) => {
+        e.preventDefault();
+        let forms = e.currentTarget as HTMLFormElement
+        let topic = (e.currentTarget.childNodes[0] as HTMLInputElement).value
+        if (topic.trim() !== "" && articleDetails.topics.length < 5) {
+            setArticleDetails({ ...articleDetails, topics: [...articleDetails.topics, topic] })
+
+            forms.reset()
+        }
+    }
+    const removeTag = (topic: string) => {
+        setArticleDetails({ ...articleDetails, topics: articleDetails.topics.filter((t: string) => t !== topic) })
     }
     const getUnSplashUrl = (url: string) => {
         toggleUnsplash()
@@ -106,15 +148,11 @@ function useEditor() {
 
 
     const autoSaveDraft = async () => {
-        const author = {
-            name: state?.user?.displayName,
-            uid: state?.user?.uid,
-            image: state?.user?.photoURL
-        }
         if (articleDetails?.article?.trim() !== "" && articleDetails?.published === false) {
             await addDoc(collection(firebaseStore, "articles"), { ...articleDetails, author })
         }
     }
+
     const changeRoute = async (route: string) => {
         await autoSaveDraft()
         router.push(`/${route}`)
@@ -133,7 +171,11 @@ function useEditor() {
         toggleUnsplash,
         unsplashSearch,
         insertMarkdown,
-        uploadImage
+        uploadImage,
+        isPublishing,
+        togglePublishing,
+        addTag,
+        removeTag,
     };
 }
 
