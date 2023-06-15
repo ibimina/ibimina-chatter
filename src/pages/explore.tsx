@@ -12,7 +12,7 @@ export default function Explore() {
     const [topics, setTopics] = useState<topic[] | null>(null)
     const [userTopics, setUserTopics] = useState<string[]>([])
     const { state } = useAuthContext()
-    // const docRef = doc(firebaseStore, 'users', state?.user?.uid);
+
     useEffect(() => {
         const getTopics = async () => {
             const firebaseTopics = getDoc(doc(firebaseStore, "topics", `${process.env.NEXT_PUBLIC_TOPICS_DATABASE_ID}`))
@@ -22,7 +22,7 @@ export default function Explore() {
             if (state.user.uid.length > 1) {
                 const userRef = doc(firebaseStore, 'users', state.user.uid);
                 const usertag = await getDoc(userRef)
-                setUserTopics(usertag.data()?.tags)
+                setUserTopics(usertag.data()?.topics)
             }
         };
         getTopics()
@@ -43,7 +43,7 @@ export default function Explore() {
             else {
                 setUserTopics([...userTopics!, tag])
                 setDoc(userRef, {
-                    tags: [...userTopics, tag]
+                    topics: [...userTopics, tag]
                 }, { merge: true });
             }
         }
