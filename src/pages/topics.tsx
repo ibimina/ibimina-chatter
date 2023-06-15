@@ -2,8 +2,7 @@ import Link from "next/link";
 import { firebaseStore } from "@/firebase/config";
 import { useAuthContext } from "@/store/store";
 import { setDoc, doc } from "firebase/firestore";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styles from '../styles/tags.module.css'
 import useCollection from "@/hooks/useCollection";
 
@@ -13,7 +12,6 @@ function Topics() {
 	const { data } = useCollection("users",state?.user?.uid)
 	const [arr,setArr] = useState(data?.topics || [])
 	const [topic, setTopic] = useState("")
-	const router = useRouter();
 
 	const [articleTags, setArticleTags] = useState([
 		{ topic: "JavaScript", selected: false },
@@ -77,11 +75,6 @@ function Topics() {
 			}, { merge: true });
 		}
 	}
-	useEffect(() => {
-		if (state?.user === null) {
-			router.push('/')
-		}
-	}, [router, state]);
 	return (
 		<>
 			<section>
