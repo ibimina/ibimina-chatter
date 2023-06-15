@@ -7,13 +7,10 @@ import { ArticleProps } from '@/types/index';
 import useInteraction from '@/hooks/useInteraction';
 import FeedLayout from '@/container/feedslayout';
 import ArticleCard from '@/components/articlecard';
-import Cookies from 'js-cookie';
 
 
 function Chatter() {
 	const { state } = useAuthContext();
-	const cook = Cookies
-	console.log(state.user,cook.get("loggedin"))
 	const [feeds, setFeeds] = useState<DocumentData | null>(null);
 	const [isloading, setIsLoading] = useState(false)
 
@@ -28,7 +25,7 @@ function Chatter() {
 				const isUserTopic = state?.user?.topics?.some((topic) => {
 					return doc?.data()?.topics?.includes(topic);
 				});
-				if (state?.user?.uid === doc?.data().author?.uid && doc.data().published || isUserTopic) {
+				if (state?.user?.uid === (doc?.data().author?.uid && doc.data().published) || isUserTopic) {
 					articles.push({ ...doc.data(), id: doc.id });
 				}
 			});
@@ -63,7 +60,7 @@ function Chatter() {
 								<p>Why not write your own article? It&apos;s a great way to contribute and engage with the community</p>
 								<p className='font-medium mt-2 text-violet-700'>Happy exploring!</p>
 								<Link href='/explore' className='text-center font-medium block my-12 bg-violet-900 text-slate-200 max-w-max mx-auto  px-4 py-2'>
-									Explore more tags
+									Explore more topics
 								</Link>
 							</div>
 						</div>
