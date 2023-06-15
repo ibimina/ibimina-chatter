@@ -6,7 +6,7 @@ export default function middleware(req: NextRequest) {
     let verify = req.cookies.get("loggedin");
     let url = req.url
 
-    if (verify === undefined && url.includes('/settings') || url.includes('/chatter') || url.includes('/topics') || url.includes('/bookmarks') || url.includes('/explore') || url.includes('/post')) {
+    if (!verify && url.includes('/settings') || !verify && url.includes('/chatter') || !verify && url.includes('/topics') || !verify && url.includes('/bookmarks') || !verify && url.includes('/explore') || !verify && url.includes('/post')) {
         let url = req.nextUrl.clone()
         url.pathname = '/'
         return NextResponse.redirect(url);
@@ -21,5 +21,5 @@ export default function middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/', '/bookmarks', '/chatter', '/explore', '/post', '/settings', '/topics',],
+    matcher: [ '/bookmarks', '/chatter', '/explore', '/post', '/settings',"/signup", '/topics'],
 }
