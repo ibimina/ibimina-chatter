@@ -33,9 +33,10 @@ export default function useSignUp() {
 			};
 			await setDoc(doc(firebaseStore, "users", userCredential?.user?.uid), userInfo);
 			// Signed in
+			Cookies.set("loggedin", "true");	
 			dispatch(signIn(userInfo));
 			setIsLoading(false);
-			Cookies.set("loggedin", "true");
+			
 		} catch (error: any) {
 			setError(error.message);
 			setIsLoading(false);

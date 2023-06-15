@@ -4,12 +4,14 @@ import useSignUp from '@/hooks/useSignUp';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuthContext } from '@/store/store';
+import Cookies from 'js-cookie';
 
 function SignUp() {
 	const [emailExists, setEmailExists] = useState<boolean | null>(null);
 	const [isPasswordShort, setIsPasswordShort] = useState<boolean | null>(null);
 	const { createUser, error, isLoading } = useSignUp();
 	const { state } = useAuthContext();
+	const cookie =Cookies.get("loggedin")
 
 	const router = useRouter();
 	const { user } = state;
@@ -20,11 +22,6 @@ function SignUp() {
 		tags: [],
 	});
 
-	useEffect(() => {
-		if (state?.user?.uid?.length! > 0) {
-			router.push('/topics');
-		}
-	}, [router, state?.user, user]);
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setUserDetails({ ...userDetails, [e.target.name]: e.target.value });
@@ -48,7 +45,11 @@ function SignUp() {
 			setIsPasswordShort(true);
 		}
 	};
-
+	useEffect(() => {
+		if (state?.user?.uid?.length > 2 && cookie==="true") {
+			router.push("/topics")
+		}
+	}, [cookie, router, state?.user?.uid?.length, user])
 	return (
 		<>
 			<main className={`lg:flex lg:flex-row-reverse`}>

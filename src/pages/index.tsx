@@ -2,11 +2,11 @@ import Link from 'next/link';
 import styles from '../styles/index.module.css';
 import {useState } from 'react';
 import { useGoogleSignin, useGitHubSignin, useLogin } from '@/hooks';
-import Cookies from 'js-cookie';
+import { useRouter } from 'next/router';
 
 
 export default function Home() {
-
+const router = useRouter()
 	const [loginDetails, setLoginDetails] = useState({
 		email: '',
 		password: '',
@@ -20,7 +20,6 @@ export default function Home() {
 			[e.target.name]: e.target.value,
 		});
 	};
-	console.log(Cookies.get("loggedin"))
 	const { google } = useGoogleSignin();
 	const { github } = useGitHubSignin()
 	const handleGithubLogin = async (e: React.MouseEvent) => {
@@ -44,6 +43,8 @@ export default function Home() {
 		} else if (error === "Firebase: Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later. (auth/too-many-requests).") {
 			setEmailExists(null)
 			setPasswordLimit(true)
+		}else{
+			router.push("/chatter")
 		}
 	}
 

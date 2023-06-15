@@ -26,7 +26,7 @@ export default function useLogin() {
             dispatch(signIn(docSnap?.data()!));
             setIsLoading(false);
             Cookies.set("loggedin", "true");
-            router.push("/chatter")
+        
         } catch (error: any) {
             setError(error.message);
             setIsLoading(false);
