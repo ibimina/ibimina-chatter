@@ -135,9 +135,9 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,
                             selectEmoji={handleEmojiSelect}
                         />}
 
-                        <div className={`flex w-full gap-2 ${styles.markdownWrapper}`}>
+                        <div className={`grid grid-cols-2 w-full gap-2 ${styles.markdownWrapper}`}>
                             {
-                                hide && <div className={`${styles.markdown} w-full`}>
+                                hide && <div className={`w-full`}>
                                     <h1 className={`font-medium  max-w-max p-2 rounded-lg`}>Editor</h1>
                                     <textarea
                                         name="article"
@@ -151,19 +151,19 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,
                                 </div>
 
                             }
-                            <div className={`w-full `}>
+                            <div className={`${hide ? "col-span-1" : "col-span-2"}`}>
                                 <div className={`flex items-center gap-2 mb-2`}>
                                     {hide && <h2 className={` font-medium  max-w-max p-2 rounded-lg`}>Preview</h2>}
                                     <button
                                         onClick={() => setHide(!hide)}
                                         className={`border-2 border-violet-400 font-medium
                                           max-w-max py-1 px-6 rounded-3xl`}>
-                                        {hide && router ? "close editor" : "edit"}</button>
+                                        {hide && router ? "close" : "edit"}</button>
                                 </div>
 
                                 <ReactMarkdown remarkPlugins={[remarkGfm]}
                                     components={{ a: LinkRenderer }}
-                                    className={` prose prose-headings:m-0 prose-p:m-0.6 prose-li:m-0 prose-ol:m-0 prose-ul:m-0 prose-ul:leading-3
+                                    className={` prose prose-headings:m-0 prose-p:mt-0 prose-p:mb-1 prose-li:m-0 prose-li:mb-1 prose-ol:m-0 prose-ul:m-0 prose-ul:leading-6
                             hr-black prose-hr:border-solid prose-hr:border prose-hr:border-black
                              marker:text-gray-400 ${styles['markdownPreview']}`} >
                                     {articleDetails.article}
@@ -191,17 +191,17 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,
                             <input type="text" name="tags" className="block p-2 border-2 w-9/12 border-gray border-solid rounded-md" />
                             <button type="submit" className="bg-violet-500 cursor-pointer text-gray-100 p-2 rounded-md">Add topic</button>
                         </form>
-                            <p className="mb-8">Topics are optional, but they help surface your story to the right readers</p>
+                        <p className="mb-8">Topics are optional, but they help surface your story to the right readers</p>
 
-                        <div className="flex items-center gap-3">
-                                {articleDetails?.tags &&
-                                    articleDetails?.tags?.map((tag: string, index: number) => {
-                                        return <button onClick={() => removeTag(tag)} key={index} className={`bg-gray-300 flex items-center gap-2 p-2 rounded-xl`}>
-                                            {tag}
-                                            <Image src="/images/icons8-close.svg" width={15} height={15} alt="close"/>
-                                        </button>
-                                    })
-                                }
+                        <div className="flex items-center gap-3 flex-wrap">
+                            {articleDetails?.topics &&
+                                articleDetails?.topics?.map((topic: string, index: number) => {
+                                    return <button onClick={() => removeTag(topic)} key={index} className={`bg-gray-300 flex items-center gap-2 p-2 rounded-xl`}>
+                                        {topic}
+                                        <Image src="/images/icons8-close.svg" width={15} height={15} alt="close" />
+                                    </button>
+                                })
+                            }
                         </div>
                     </div>
                 </div>

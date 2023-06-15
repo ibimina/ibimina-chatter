@@ -9,7 +9,7 @@ function ArticleSide({ isvisible, handleVisible }: { isvisible: boolean, handleV
     const publishedLength = snap?.filter((doc: any) => doc.published === true).length;
     const draftLength = snap?.filter((doc: any) => doc.published === false).length;
     return (
-        <aside className={` px-3 pt-5 lg:block lg:col-span-2 bg-gray-100 z-50 shadow-inner lg:rounded-lg ${styles.articlesSection}`}
+        <aside className={` px-3 pt-5 lg:block lg:col-span-2 bg-gray-100 shadow-inner lg:rounded-lg ${styles.articlesSection}`}
             data-visible={isvisible}>
             <button className='absolute top-1 lg:hidden' onClick={handleVisible}>close</button>
             <div className={`mb-12`}>
