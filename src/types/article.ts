@@ -9,7 +9,7 @@ export interface ArticleProps {
     published: boolean,
     likes: LikeProps[],
     views: number,
-    bookmarks: BookmarkProps[],
+    bookmarks: UserBookmarkProps[],
     comments: CommentProps[],
     author: {
         name: string,
@@ -17,6 +17,7 @@ export interface ArticleProps {
         image: string
     },
     timestamp: string,
+    readingTime:number
 }
 
 export interface CommentProps{
@@ -26,8 +27,12 @@ export interface CommentProps{
     comment: string,
     timestamp: string,
 }
+export interface UserBookmarkProps {
+    user_uid: string,
+}
+
 export interface BookmarkProps {
-    uid: string,
+    article_uid: string,
 }
 
 export interface LikeProps {
