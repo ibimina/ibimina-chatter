@@ -1,47 +1,48 @@
 import { useAuthContext } from '@/store/store';
-import {  useEffect, useState } from 'react';
-import {  doc, DocumentData, getDoc } from 'firebase/firestore';
+import { useEffect, useState } from 'react';
+import { doc, DocumentData, getDoc } from 'firebase/firestore';
 import { firebaseStore } from '@/firebase/config';
 import FeedLayout from '@/container/feedslayout';
-import { ArticleProps, BookmarkProps } from '@/types/index';
+import { ArticleProps, UserBookmarkProps } from '@/types/index';
 import { Key } from 'react';
 import { useCollection, useInteraction } from '@/hooks';
 import ArticleCard from '@/components/articlecard';
 
+
 function Bookmarks() {
     const { state } = useAuthContext();
     const [feeds, setFeeds] = useState<DocumentData>([]);
-    const [isloading, setIsLoading] = useState(false)
+    // const [isloading, setIsLoading] = useState(false)
     const { data } = useCollection("bookmarks", state.user.uid)
-
+   console.log(data)
 
 
     useEffect(() => {
-        let r: DocumentData = []
-        data?.bookmarks?.forEach(async (bookmark: { uid: string }) => {
-            setIsLoading(true)
-            console.log(bookmark)
-            const ref = await getDoc(doc(firebaseStore, "articles", bookmark.uid))
-            r.push({ ...ref.data(), id: ref.id });
-            setFeeds(r)
+ 
+        let arr: DocumentData = []
+
+        data?.bookmarks?.forEach(async (bookmark: { article_uid: string }) => {
+            const ref = await getDoc(doc(firebaseStore, "articles", bookmark.article_uid))
+            arr.push({ ...ref.data(), id: ref.id });
+            setFeeds(arr)
         })
+   
 
-        setIsLoading(false)
-
-    }, [data, data.bookmarks]);
+    }, [data?.bookmarks]);
 
 
     const { addBookmark } = useInteraction()
-    const update = (id: string, bookmark: BookmarkProps[]) => {
-        setFeeds(feeds!.filter((feed: { id: string; }) => feed.id !== id))
+    const update = (id: string, bookmark: UserBookmarkProps[]) => {
+        setFeeds(feeds!.filter((feed: { user_uid: string; }) => feed.user_uid !== id))
         addBookmark(id, bookmark)
+  
     }
     return (
         <>
             <FeedLayout>
                 <main className={`md:w-4/6`}>
                     <ul className={`p-2`}>
-                        {isloading && <>loading...</>}
+                        {/* {isloading && <>loading...</>} */}
                         {feeds &&
                             feeds.map((feed: ArticleProps, index: Key) => {
                                 return (
