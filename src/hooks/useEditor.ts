@@ -5,7 +5,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { firebaseStore, firebaseAuth, firebaseStorage, timestamp } from "@/firebase/config";
 import useCollection from "./useCollection";
 import { useAuthContext } from "@/store/store";
-import { ArticleProps, CommentProps, BookmarkProps, LikeProps } from "@/types";
+import { ArticleProps, CommentProps, UserBookmarkProps, LikeProps } from "@/types";
 
 function useEditor() {
     const router = useRouter()
@@ -26,11 +26,11 @@ function useEditor() {
         article: "",
         createdat: "",
         readingTime: 0,
-        topics: [],
+        topics: [] as string[],
         published: false,
         likes: [] as LikeProps[],
         views: 0,
-        bookmarks: [] as BookmarkProps[],
+        bookmarks: [] as UserBookmarkProps[],
         comments: [] as CommentProps[],
         timestamp: timestamp,
     })
@@ -68,34 +68,34 @@ function useEditor() {
         } else if (articleDetails.title.trim().length < 9) {
             return alert("Title is too short")
         } else if (articleDetails.article.trim().length > 9 && articleDetails.title.trim() !== "") {
-            readingTime()
-            const docRef = await addDoc(collection(firebaseStore, "articles"), { ...articleDetails, published: true, author });
+            const wpm = 225;
+            const words = articleDetails.article.trim().split(/\s+/).length;
+            const time = Math.ceil(words / wpm);
             await countTopics()
+            const docRef = await addDoc(collection(firebaseStore, "articles"), { ...articleDetails, published: true, author,readingTime: time  });          
             router.push(`/article/${docRef.id}`)
         }
     }
-    function readingTime() {
-        const wpm = 225;
-        const words = articleDetails.article.trim().split(/\s+/).length;
-        const time = Math.ceil(words / wpm);
-        setArticleDetails({ ...articleDetails, readingTime: time })
-    }
+
 
     const countTopics = async () => {
         const chatterTopics = getDoc(doc(firebaseStore, "topics", `${process.env.NEXT_PUBLIC_TOPICS_DATABASE_ID}`))
-        const ft = (await chatterTopics)?.data()?.tags
-        articleDetails?.topics.forEach(async (tag: string) => {
-            const existing = ft?.find((t: { name: string }) => t.name === tag)
-            if (existing) {
-                await setDoc(doc(firebaseStore, "topics", `${process.env.NEXT_PUBLIC_TOPICS_DATABASE_ID}`), {
-                    topics: ft?.map((t: { name: string, count: number }) => t.name === tag ? { ...t, count: t.count + 1 } : t)
-                }, { merge: true })
-            } else {
-                await setDoc(doc(firebaseStore, "topics", `${process.env.NEXT_PUBLIC_TOPICS_DATABASE_ID}`), {
-                    topics: [...ft, { name: tag, count: 1 }]
-                }, { merge: true })
-            }
-        })
+        const realTime: { name: string; count: number; }[] = []
+        const ft: { name: string; count: number; }[] = (await chatterTopics)?.data()?.topics
+        articleDetails?.topics.forEach(async (topic: string) => {
+            const existing = ft?.find((t: { name: string,count:number }) =>  t.name === topic   )
+        if (existing) {
+            console.log(existing)
+             await setDoc(doc(firebaseStore, "topics", `${process.env.NEXT_PUBLIC_TOPICS_DATABASE_ID}`), {
+                topics: ft?.map((t: { name: string, count: number }) => t.name === topic ? { ...t, count: t.count + 1 } : t)
+            }, { merge: true })
+        } else {
+            realTime.push({ name: topic, count: 1 })
+            let topics = [...ft, ...realTime]
+            console.log(realTime)
+            await setDoc(doc(firebaseStore, "topics", `${process.env.NEXT_PUBLIC_TOPICS_DATABASE_ID}`),{topics})
+        }
+         })
     }
 
     const updateArticleInFirebase = async (e: React.MouseEvent) => {
@@ -106,6 +106,7 @@ function useEditor() {
             return alert("Title is too short")
         } else if (articleDetails.article.trim().length > 9 && articleDetails.title.trim() !== "") {
             const userRef = doc(firebaseStore, 'articles', id?.toString()!);
+            await countTopics()
             setDoc(userRef, {
                 ...articleDetails,
                 published: true
@@ -120,9 +121,9 @@ function useEditor() {
         e.preventDefault();
         let forms = e.currentTarget as HTMLFormElement
         let topic = (e.currentTarget.childNodes[0] as HTMLInputElement).value
-
         if (topic.trim() !== "" && articleDetails.topics.length < 5) {
-            setArticleDetails({ ...articleDetails, tags: [...articleDetails.topics, topic] })
+            setArticleDetails({ ...articleDetails, topics: [...articleDetails.topics, topic] })
+
             forms.reset()
         }
     }
