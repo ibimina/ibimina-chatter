@@ -14,28 +14,21 @@ function Bookmarks() {
     const [feeds, setFeeds] = useState<DocumentData>([]);
     // const [isloading, setIsLoading] = useState(false)
     const { data } = useCollection("bookmarks", state.user.uid)
-   console.log(data)
 
 
     useEffect(() => {
- 
         let arr: DocumentData = []
-
         data?.bookmarks?.forEach(async (bookmark: { article_uid: string }) => {
             const ref = await getDoc(doc(firebaseStore, "articles", bookmark.article_uid))
             arr.push({ ...ref.data(), id: ref.id });
             setFeeds(arr)
         })
-   
-
     }, [data?.bookmarks]);
-
 
     const { addBookmark } = useInteraction()
     const update = (id: string, bookmark: UserBookmarkProps[]) => {
         setFeeds(feeds!.filter((feed: { user_uid: string; }) => feed.user_uid !== id))
         addBookmark(id, bookmark)
-  
     }
     return (
         <>
@@ -61,7 +54,6 @@ function Bookmarks() {
 
                             </div>
                         </div>
-
                     }
                 </main>
             </FeedLayout>
