@@ -71,7 +71,7 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,
     }, [router.pathname, state?.user?.uid])
     return (
         <>
-            <main className={`lg:grid lg:grid-cols-9 gap-6 px-4  ${styles.editorGrid}`}>
+            <main className={`lg:grid lg:grid-cols-9 gap-6 px-4 md:px-8 ${styles.editorGrid}`}>
                 <ArticleSide isvisible={isvisible} handleVisible={handleVisible} />
                 <section className={`col-start-3  ${styles.editSection}`} data-shrink={isvisible}>
                     {
@@ -82,7 +82,7 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,
                             </div>
                             : <button className={`mb-3 font-medium`}>Add cover image</button>
                     }
-                    <div className={`px-3 md:px-5 lg:px-0`}>
+                    <div>
                         <div className={`relative`}>
                             {hide && <div className={`flex items-center mb-1 gap-2`}>
                                 <label className={`${styles.fileInput}`}>
@@ -177,7 +177,7 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,
             {
                 isPublishing &&
                 <div className={`fixed top-0 left-0 w-full h-full bg-slate-900 bg-opacity-50`}>
-                    <div className={`bg-white p-4 w-5/12 ml-auto h-full relative`}>
+                    <div className={`bg-white p-4 w-full md:w-9/12  ml-auto h-full relative`}>
                         <div className="flex items-center justify-between mb-6">
                             <button className={`mb-2`} onClick={togglePublishing}>Close</button>
                             <button className="p-2 rounded-2xl text-white bg-violet-900" onClick={publishArticleInFirebase}>Publish now</button>
@@ -189,7 +189,7 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,
                             className="flex items-center mb-2 gap-2 w-full"
                         >
                             <input type="text" name="tags" className="block p-2 border-2 w-9/12 border-gray border-solid rounded-md" />
-                            <button type="submit" className="bg-violet-500 cursor-pointer text-gray-100 p-2 rounded-md">Add topic</button>
+                            <button type="submit" className="bg-violet-500 cursor-pointer text-gray-100 p-2 rounded-md">Add</button>
                         </form>
                         <p className="mb-8">Topics are optional, but they help surface your story to the right readers</p>
 
