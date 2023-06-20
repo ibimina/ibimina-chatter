@@ -69,13 +69,12 @@ Screenshot of the project architecture:
 - Next.js
 - TypeScript
 - Module CSS
+- Tailwind CSS
 - React Query
 - React Hook Form
 - React Markdown
-- React Syntax Highlighter
+- Cypress 
 - React Share
-- React Infinite Scroll
-- React Timeago
 
 ### Project status
 
