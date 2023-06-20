@@ -70,12 +70,14 @@ export default function SingleArticle() {
     }, [article?.bookmarks, article?.likes, id, snap, state?.user?.uid]);
     useEffect(() => {
         (async () => {
-            if (id === undefined || id.length > 0) return;
-            const docRef = doc(firebaseStore, "articles", `${id}`);
-            const docSnap = await getDoc(docRef);
-            await setDoc(docRef, {
-                views: docSnap.data()?.views + 1
-            }, { merge: true });
+            if (id! !== undefined){
+                console.log("u")
+                const docRef = doc(firebaseStore, "articles", `${id}`);
+                const docSnap = await getDoc(docRef);
+                await setDoc(docRef, {
+                    views: docSnap.data()?.views + 1
+                }, { merge: true });
+            }         
         })();
     }, [id]);
     const { addBookmark, increaseLike, addNotification } = useInteraction();
