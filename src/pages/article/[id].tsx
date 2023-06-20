@@ -1,4 +1,4 @@
-import { LinkRenderer } from "@/components";
+import { Header, LinkRenderer } from "@/components";
 import useEditor from "@/hooks/useEditor";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -10,6 +10,10 @@ function Article() {
     const { articleDetails } = useEditor()
 
     return ( <>
+
+        <Header handleNav={function (): void {
+            throw new Error("Function not implemented.");
+        }} />
         <div className={`w-11/12 mx-auto`}>
             <Link href="/chatter">home</Link>
             <div className={`flex items-center gap-2 mb-2`}>
