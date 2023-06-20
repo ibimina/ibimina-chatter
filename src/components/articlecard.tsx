@@ -19,32 +19,33 @@ function ArticleCard({ feed, update }: { feed: ArticleProps, update: (id: string
         if (like !== undefined) {
             setIsLiked(true)
         } else {
-
             setIsLiked(false)
         }
         if (bookmark !== undefined) {
             setIsBookmarked(true)
         } else {
-
             setIsBookmarked(false)
         }
     }, [feed, feed?.bookmarks, feed?.likes, state?.user?.uid])
     return (
         <li className={`mb-8`}>
-            <Link href={`/${encodeURIComponent(feed?.author?.uid)}`} className={`flex items-center gap-1 mb-2`}>
-                <Image className={`rounded-full`} src={feed?.author?.image === null ? "/images/icons8-user.svg" : feed?.author?.image} width={30} height={30} alt="author avatar" />
-                <span>{feed?.author?.name}</span>
-            </Link>
+            <div className="flex items-center gap-2 mb-2">
+                <Link href={`/${encodeURIComponent(feed?.author?.uid)}`} className={`flex items-center gap-1 `}>
+                    <Image className={`rounded-full`} src={feed?.author?.image === null ? "/images/icons8-user.svg" : feed?.author?.image} width={30} height={30} alt="author avatar" />
+                    <span>{feed?.author?.name}</span>
+                </Link>
+                {
+                    feed?.title?.length > 1 &&
+                    <div className="flex items-center gap-1">
+                        <span>{feed?.readingTime} min read</span>
+                    </div>
+                }
+            </div>
             <Link className={`grid grid-cols-5 items-center`} href={`/${encodeURIComponent(feed?.author?.uid)}/${encodeURIComponent(feed?.id!)}`}>
                 <div className={`col-span-5 lg:col-span-3 mb-2`}>
                     <h1 className={`text-lg font-bold`}>{feed?.title}</h1>
                     <p className={`text-sm`}>{feed?.subtitle}</p>
-                    {
-                        feed?.title?.length > 1 &&
-                        <div className="flex items-center gap-1">
-                            <span>{feed?.readingTime} min read</span>
-                        </div>
-                    }
+
                     <ReactMarkdown remarkPlugins={[remarkGfm]}
                         components={{ a: LinkRenderer }}
                         className={` prose prose-headings:m-0 prose-p:m-0.6 
