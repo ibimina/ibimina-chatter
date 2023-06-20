@@ -99,11 +99,11 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,
                                         {fetchedData &&
                                             fetchedData.map((item, index) => {
                                                 return <button key={index} className={`relative ${styles.imageContainer}`}
-                                                    onClick={() => getUnSplashUrl(item.urls.regular)}>
+                                                    onClick={() => getUnSplashUrl(item?.urls?.regular)}>
                                                     <Image src={item?.urls?.full} fill sizes="(max-width: 768px) 100vw,
                                                 (max-width: 1200px) 50vw,  33vw" className={`${styles.unsplashImage}`}
                                                         alt={item.alt_description} />
-                                                    <span className={`absolute bottom-2 text-slate-200 `}>{item.user.name}</span>
+                                                    <span className={`absolute bottom-2 text-slate-200 `}>{item?.user?.name}</span>
                                                 </button>
                                             })
                                         }
@@ -114,18 +114,18 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,
                         {
                             hide ?
                                 <textarea placeholder='Title' name="title" rows={1}
-                                    value={articleDetails.title} className={`block mb-2 w-full p-2`}
+                                    value={articleDetails?.title} className={`block mb-2 w-full p-2`}
                                     onChange={handleValueChange} /> :
-                                <h1 className={`font-bold text-3xl mb-4`}>{articleDetails.title}</h1>
+                                <h1 className={`font-bold text-3xl mb-4`}>{articleDetails?.title}</h1>
 
                         }
                         {
                             hide ?
                                 <textarea placeholder='subtitle' name="subtitle" rows={1}
-                                    value={articleDetails.subtitle} className={`block mb-2 w-full p-2`}
+                                    value={articleDetails?.subtitle} className={`block mb-2 w-full p-2`}
                                     onChange={handleValueChange}
                                 />
-                                : <h2 className={`font-medium text-2xl mb-4`}>{articleDetails.subtitle}</h2>
+                                : <h2 className={`font-medium text-2xl mb-4`}>{articleDetails?.subtitle}</h2>
                         }
 
                         {hide && <Buttons
@@ -143,7 +143,7 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,
                                         name="article"
                                         id="markdownTextarea"
                                         rows={10}
-                                        value={articleDetails.article}
+                                        value={articleDetails?.article}
                                         onChange={(e) => handleValueChange(e)}
                                         placeholder="Enter Markdown text"
                                         className={` ${styles.textarea} w-full p-3 border-2 border-solid border-current`}
@@ -166,7 +166,7 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,
                                     className={` prose prose-headings:m-0 prose-p:mt-0 prose-p:mb-1 prose-li:m-0 prose-li:mb-1 prose-ol:m-0 prose-ul:m-0 prose-ul:leading-6
                             hr-black prose-hr:border-solid prose-hr:border prose-hr:border-black
                              marker:text-gray-400 ${styles['markdownPreview']}`} >
-                                    {articleDetails.article}
+                                    {articleDetails?.article}
                                 </ReactMarkdown>
                             </div>
                         </div>
