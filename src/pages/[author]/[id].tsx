@@ -71,7 +71,6 @@ export default function SingleArticle() {
     useEffect(() => {
         (async () => {
             if (id! !== undefined){
-                console.log("u")
                 const docRef = doc(firebaseStore, "articles", `${id}`);
                 const docSnap = await getDoc(docRef);
                 await setDoc(docRef, {
