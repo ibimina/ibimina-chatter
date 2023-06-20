@@ -5,20 +5,26 @@ import styles from '@/styles/chatter.module.css';
 import useLogOut from '@/hooks/useLogout';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+
 function Header({ handleNav }: { handleNav: () => void }) {
     const [isClicked, setIsClicked] = useState(false)
     const router = useRouter();
     const { state } = useAuthContext();
     const author = state?.user?.uid
     const { logoutUser } = useLogOut();
-
+    const getSearchAndRedirect = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const input = e.currentTarget.childNodes[0] as HTMLInputElement
+        const search = input.value
+        router.push(`/search?q=${search}`)      
+    }
     return (
         <>
             <header
                 className={`grid grid-cols-3 lg:grid-cols-7 items-center py-4 px-4`}
             >
                 <div className={`flex items-center gap-3 col-span-2 md:col-span-1`}>
-                    {router.pathname !== '/settings' &&
+                    {router.pathname !== '/settings'  &&
                         <button
                             onClick={handleNav}
                             className={`lg:hidden ${styles.menu}`}
@@ -29,6 +35,7 @@ function Header({ handleNav }: { handleNav: () => void }) {
                 </div>
                 {router.pathname !== '/settings' &&
                     <form
+                        onSubmit={getSearchAndRedirect}
                         className={`col-span-4 row-start-2 mt-5 lg:mt-0 lg:col-span-3 lg:row-start-1 lg:col-start-3`}
                     >
                         <input
