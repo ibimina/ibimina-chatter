@@ -48,6 +48,9 @@ function useEditor() {
         setArticleDetails({ ...articleDetails, article: textarea.value })
         textarea.focus();
     };
+    const handleValueChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setArticleDetails({ ...articleDetails, [e.target.name]: e.target.value })
+    }
     const toggleVisible = () => {
         setIsVisible(!isvisible)
     }
@@ -68,34 +71,12 @@ function useEditor() {
         } else if (articleDetails.title.trim().length < 9) {
             return alert("Title is too short")
         } else if (articleDetails.article.trim().length > 9 && articleDetails.title.trim() !== "") {
-            const wpm = 225;
             const words = articleDetails.article.trim().split(/\s+/).length;
-            const time = Math.ceil(words / wpm);
+            const time = Math.ceil(words / 225);
             await countTopics()
-            const docRef = await addDoc(collection(firebaseStore, "articles"), { ...articleDetails, published: true, author,readingTime: time  });          
+            const docRef = await addDoc(collection(firebaseStore, "articles"), { ...articleDetails, published: true, author, readingTime: time });
             router.push(`/article/${docRef.id}`)
         }
-    }
-
-
-    const countTopics = async () => {
-        const chatterTopics = getDoc(doc(firebaseStore, "topics", `${process.env.NEXT_PUBLIC_TOPICS_DATABASE_ID}`))
-        const realTime: { name: string; count: number; }[] = []
-        const ft: { name: string; count: number; }[] = (await chatterTopics)?.data()?.topics
-        articleDetails?.topics.forEach(async (topic: string) => {
-            const existing = ft?.find((t: { name: string,count:number }) =>  t.name === topic   )
-        if (existing) {
-            console.log(existing)
-             await setDoc(doc(firebaseStore, "topics", `${process.env.NEXT_PUBLIC_TOPICS_DATABASE_ID}`), {
-                topics: ft?.map((t: { name: string, count: number }) => t.name === topic ? { ...t, count: t.count + 1 } : t)
-            }, { merge: true })
-        } else {
-            realTime.push({ name: topic, count: 1 })
-            let topics = [...ft, ...realTime]
-            console.log(realTime)
-            await setDoc(doc(firebaseStore, "topics", `${process.env.NEXT_PUBLIC_TOPICS_DATABASE_ID}`),{topics})
-        }
-         })
     }
 
     const updateArticleInFirebase = async (e: React.MouseEvent) => {
@@ -107,23 +88,41 @@ function useEditor() {
         } else if (articleDetails.article.trim().length > 9 && articleDetails.title.trim() !== "") {
             const userRef = doc(firebaseStore, 'articles', id?.toString()!);
             await countTopics()
+            const words = articleDetails.article.trim().split(/\s+/).length;
+            const time = Math.ceil(words / 225);
             setDoc(userRef, {
                 ...articleDetails,
-                published: true
+                published: true,
+                readingTime: time
             }, { merge: true });
             router.push(`/article/${id}`)
         }
     }
-    const handleValueChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setArticleDetails({ ...articleDetails, [e.target.name]: e.target.value })
+
+    const countTopics = async () => {
+        const chatterTopics = getDoc(doc(firebaseStore, "topics", `${process.env.NEXT_PUBLIC_TOPICS_DATABASE_ID}`))
+        const realTime: { name: string; count: number; }[] = []
+        const ft: { name: string; count: number; }[] = (await chatterTopics)?.data()?.topics
+        articleDetails?.topics.forEach(async (topic: string) => {
+            const existing = ft?.find((t: { name: string, count: number }) => t.name === topic)
+            if (existing) {
+                await setDoc(doc(firebaseStore, "topics", `${process.env.NEXT_PUBLIC_TOPICS_DATABASE_ID}`), {
+                    topics: ft?.map((t: { name: string, count: number }) => t.name === topic ? { ...t, count: t.count + 1 } : t)
+                }, { merge: true })
+            } else {
+                realTime.push({ name: topic, count: 1 })
+                let topics = [...ft, ...realTime]
+                await setDoc(doc(firebaseStore, "topics", `${process.env.NEXT_PUBLIC_TOPICS_DATABASE_ID}`), { topics })
+            }
+        })
     }
+
     const addTag = (e: React.FormEvent) => {
         e.preventDefault();
         let forms = e.currentTarget as HTMLFormElement
         let topic = (e.currentTarget.childNodes[0] as HTMLInputElement).value
         if (topic.trim() !== "" && articleDetails.topics.length < 5) {
             setArticleDetails({ ...articleDetails, topics: [...articleDetails.topics, topic] })
-
             forms.reset()
         }
     }
@@ -134,9 +133,11 @@ function useEditor() {
         toggleUnsplash()
         setArticleDetails({ ...articleDetails, coverImageUrl: url })
     }
+
     const toggleUnsplash = () => {
         setIsUnsplashVisible(!isUnsplashVisible)
     }
+
     const uploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files![0];
         const uploadpath = `thumbnails/articles/${firebaseAuth.currentUser?.uid}/${file.name}`
@@ -146,9 +147,14 @@ function useEditor() {
         setArticleDetails({ ...articleDetails, coverImageUrl: photoUrl })
     }
 
-
     const autoSaveDraft = async () => {
-        if (articleDetails?.article?.trim() !== "" && articleDetails?.published === false) {
+        if (articleDetails?.id?.length > 0) {
+            const userRef = doc(firebaseStore, 'articles', id?.toString()!);
+            await setDoc(userRef, {
+                ...articleDetails,
+                published: false
+            }, { merge: true });
+        } else if (articleDetails?.article?.trim() !== "" && articleDetails?.published === false) {
             await addDoc(collection(firebaseStore, "articles"), { ...articleDetails, author })
         }
     }
