@@ -5,6 +5,7 @@ import { setDoc, doc } from "firebase/firestore";
 import { useState } from "react";
 import styles from '../styles/tags.module.css'
 import useCollection from "@/hooks/useCollection";
+import Head from "next/head";
 
 
 function Topics() {
@@ -77,6 +78,13 @@ function Topics() {
 	}
 	return (
 		<>
+			<Head>
+				<title>Add topics  on chatter</title>
+				<meta charSet="UTF-8" />
+				<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+				<meta http-equiv="X-UA-Compatible" content="IE=7" />
+				<meta name="description" content="Add topics to personalise your feeds" />
+			</Head>
 			<section>
 				<h1 className={`text-3xl font-bold underline ml-5 my-4 md:px-2`}>Chatter</h1>
 				<div className={`pb-3`}>

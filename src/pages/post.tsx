@@ -1,6 +1,7 @@
 import React from 'react';
 import { EditorHeader, Editor } from '@/components/index';
 import useEditor from '@/hooks/useEditor';
+import Head from 'next/head';
 
 const MarkdownEditor = () => {
     const { articleDetails, handleValueChange,
@@ -12,6 +13,13 @@ const MarkdownEditor = () => {
    
     return (
         <>
+            <Head>
+                <title>Create an Article  on chatter</title>
+                <meta charSet="UTF-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                <meta http-equiv="X-UA-Compatible" content="IE=7" />
+                <meta name="description" content="Create a new Article" />
+            </Head>
             <EditorHeader
                 isvisible={isvisible}
                 handleVisible={toggleVisible}

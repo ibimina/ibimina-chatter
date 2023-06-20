@@ -3,6 +3,7 @@ import { EditorHeader, Editor } from '@/components/index';
 import useEditor from '@/hooks/useEditor';
 import router from 'next/router';
 import { useAuthContext } from '@/store/store';
+import Head from 'next/head';
 
 const MarkdownEditor = () => {
     const { state } = useAuthContext();
@@ -11,13 +12,15 @@ const MarkdownEditor = () => {
         getUnsplashTerm,insertMarkdown,getUnSplashUrl,changeRoute,
         updateArticleInFirebase, isvisible, toggleVisible}=useEditor()
 
-    useEffect(() => {
-        if (state?.user === null || state?.user?.uid === "") {
-            router.push('/');
-        }
-    }, [state?.user]);
     return (
         <>
+            <Head>
+                <title>Editing Article on chatter</title>
+                <meta charSet="UTF-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                <meta http-equiv="X-UA-Compatible" content="IE=7" />
+                <meta name="description" content={`Editing "${articleDetails.title}"`} />
+            </Head>
             <EditorHeader
                 isvisible={isvisible}
                 handleVisible={toggleVisible}

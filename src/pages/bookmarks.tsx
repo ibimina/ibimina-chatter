@@ -7,6 +7,7 @@ import { ArticleProps, UserBookmarkProps } from '@/types/index';
 import { Key } from 'react';
 import { useCollection, useInteraction } from '@/hooks';
 import ArticleCard from '@/components/articlecard';
+import Head from 'next/head';
 
 
 function Bookmarks() {
@@ -32,7 +33,15 @@ function Bookmarks() {
     }
     return (
         <>
+            <Head>
+                <title>Bookmarks - chatter</title>
+                <meta charSet="UTF-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                <meta http-equiv="X-UA-Compatible" content="IE=7" />
+                <meta name="description" content="Your bookmarked articles" />
+            </Head>
             <FeedLayout>
+             
                 <main className={`md:w-4/6`}>
                     <ul className={`p-2`}>
                         {/* {isloading && <>loading...</>} */}

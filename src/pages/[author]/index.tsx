@@ -1,8 +1,9 @@
-import { useState } from "react";
-import { Key, useEffect } from "react";
+import { Key, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from 'next/link';
+import Head from "next/head";
 import { useRouter } from "next/router";
+
 import { useCollection, useCollectionSnap, useInteraction } from "@/hooks";
 import { DocumentData } from "firebase/firestore";
 
@@ -12,6 +13,7 @@ import { ArticleCard, LinkIcon } from "@/components";
 import FeedLayout from "@/container/feedslayout";
 import { useAuthContext } from "@/store/store";
 
+
 function ViewProfile() {
     const author = useRouter().query.author
     const { state } = useAuthContext()
@@ -19,12 +21,18 @@ function ViewProfile() {
     const { data } = useCollection("users", `${author}`)
     const [articles, setArticles] = useState<DocumentData>()
     const { addBookmark } = useInteraction()
-    console.log(articles, state.user)
     useEffect(() => {
         setArticles(snap?.filter((doc: { published: boolean; }) => doc.published === true));
     }, [snap])
 
     return (<>
+        <Head>
+            <title>{`${data?.displayName} profile`}</title>
+            <meta charSet="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <meta http-equiv="X-UA-Compatible" content="IE=7" />
+            <meta name="description" content="" />
+        </Head>
         <FeedLayout>
             <main className={` md:w-8/12 mx-auto `}>
                 <div className="flex items-center mb-6 gap-4">

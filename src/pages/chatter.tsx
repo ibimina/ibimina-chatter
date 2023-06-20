@@ -7,6 +7,7 @@ import { ArticleProps } from '@/types/index';
 import useInteraction from '@/hooks/useInteraction';
 import FeedLayout from '@/container/feedslayout';
 import ArticleCard from '@/components/articlecard';
+import Head from 'next/head';
 
 
 function Chatter() {
@@ -40,6 +41,13 @@ function Chatter() {
 
 	return (
 		<>
+			<Head>
+				<title>Chatter</title>
+				<meta charSet="UTF-8" />
+				<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+				<meta http-equiv="X-UA-Compatible" content="IE=7" />
+				<meta name="description" content="Chatter feeds page" />
+			</Head>
 			<FeedLayout>
 				<main className={`w-full lg:w-4/6`}>
 					{isloading && <>loading...</>}

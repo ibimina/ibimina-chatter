@@ -1,3 +1,4 @@
+import Head from 'next/head';
 import Link from 'next/link';
 import styles from '../styles/signup.module.css';
 import useSignUp from '@/hooks/useSignUp';
@@ -5,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuthContext } from '@/store/store';
 import Cookies from 'js-cookie';
+
 
 function SignUp() {
 	const [emailExists, setEmailExists] = useState<boolean | null>(null);
@@ -52,6 +54,13 @@ function SignUp() {
 	}, [cookie, router, state?.user?.uid?.length, user])
 	return (
 		<>
+			<Head>
+				<title>Sign up on chatter</title>
+				<meta charSet="UTF-8" />
+				<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+				<meta http-equiv="X-UA-Compatible" content="IE=7" />
+				<meta name="description" content="Create a account on chatter"/>
+			</Head>	
 			<main className={`lg:flex lg:flex-row-reverse`}>
 				<section
 					className={`hidden bg-slate-300 lg:w-full  lg:block lg:h-screen lg:basis-2/5 `}

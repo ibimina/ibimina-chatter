@@ -4,6 +4,7 @@ import { useAuthContext } from "@/store/store";
 import { getDoc, doc, setDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import styles from '../styles/tags.module.css'
+import Head from "next/head";
 interface topic {
     name: string,
     count: number
@@ -60,6 +61,13 @@ export default function Explore() {
 
     return (
         <>
+            <Head>
+                <title>Explore popular topics on chatter</title>
+                <meta charSet="UTF-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                <meta http-equiv="X-UA-Compatible" content="IE=7" />
+                <meta name="description" content="Explore more topics" />
+            </Head>
             <FeedLayout>
                 <main className={`md:w-4/6`}>
                     <h1>
