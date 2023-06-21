@@ -120,8 +120,13 @@ export const authReducer = (
             authState: true,
             user: { ...state?.user, topics: [...state?.user?.topics,action.payload] },
         };
+    } if (action.type === "PHOTO") {
+        return {
+            ...state,
+            authState: true,
+            user: { ...state?.user, photoURL:  action.payload },
+        };
     }
-
 
     return state;
 };
