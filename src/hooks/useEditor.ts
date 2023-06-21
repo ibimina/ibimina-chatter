@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { DocumentData, collection, doc, setDoc, addDoc, getDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { firebaseStore, firebaseAuth, firebaseStorage, timestamp } from "@/firebase/config";
+import { firebaseStore, firebaseAuth, firebaseStorage } from "@/firebase/config";
 import useCollection from "./useCollection";
 import { useAuthContext } from "@/store/store";
 import { ArticleProps, CommentProps, UserBookmarkProps, LikeProps } from "@/types";
@@ -32,7 +32,7 @@ function useEditor() {
         views: 0,
         bookmarks: [] as UserBookmarkProps[],
         comments: [] as CommentProps[],
-        timestamp: timestamp,
+        timestamp: JSON.stringify(new Date()),
     })
     const getUnsplashTerm = (e: React.ChangeEvent<HTMLInputElement>) => {
         setUnsplashSearch(e.target.value.trim())

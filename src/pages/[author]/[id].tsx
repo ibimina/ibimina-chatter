@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-import { firebaseStore, timestamp } from "@/firebase/config";
+import { firebaseStore } from "@/firebase/config";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 
 import ReactMarkdown from "react-markdown";
@@ -46,9 +46,8 @@ export default function SingleArticle() {
         const getArticle = async () => {
             const doc = snap?.find((article: ArticleProps) => {
                 return article.id === id
-            })
-            const time = new Date(doc?.timestamp?.seconds * 1000).toDateString();
-            setArticle({ ...doc, timestamp: time });
+            })  
+            setArticle({...doc});
             const like = article?.likes?.find((like) => like?.uid === state?.user?.uid)
             const bookmark = article?.bookmarks?.find((bookmark) => bookmark?.user_uid === state?.user?.uid)
             if (like !== undefined) {
@@ -92,7 +91,7 @@ export default function SingleArticle() {
                     name: state?.user?.displayName,
                     image: state?.user?.photoURL,
                     comment: comment,
-                    timestamp: timestamp
+                    timestamp: JSON.stringify( new Date())
                 }]
         }, { merge: true });
         await addNotification('commented', article)
