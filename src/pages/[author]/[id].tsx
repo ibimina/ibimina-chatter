@@ -16,7 +16,7 @@ import styles from "@/styles/editor.module.css"
 import { ArticleProps } from "@/types/article";
 import { useAuthContext } from "@/store/store";
 import { useCollectionSnap, useInteraction } from "@/hooks";
-
+import { formatDistanceStrict } from "date-fns";
 
 import {
     EmailShareButton,
@@ -153,7 +153,7 @@ export default function SingleArticle() {
                         {
                             article?.title?.length > 1 &&
                             <div className="flex items-center gap-1">
-                                <span>{article?.timestamp}</span>
+                                <span>{formatDistanceStrict(new Date(), new Date(article?.timestamp))} ago</span>
                                 <span>{article?.readingTime} min read</span>
                             </div>
                         }

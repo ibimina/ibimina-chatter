@@ -7,6 +7,7 @@ import { ArticleProps, UserBookmarkProps } from "@/types";
 import styles from '@/styles/chatter.module.css';
 import { useEffect, useState } from "react";
 import { useAuthContext } from "@/store/store";
+import { formatDistanceStrict } from "date-fns";
 
 function ArticleCard({ feed, update }: { feed: ArticleProps, update: (id: string, bookmark: UserBookmarkProps[]) => void }) {
     const [isliked, setIsLiked] = useState(false)
@@ -37,6 +38,7 @@ function ArticleCard({ feed, update }: { feed: ArticleProps, update: (id: string
                 {
                     feed?.title?.length > 1 &&
                     <div className="flex items-center gap-1">
+                        <span>{formatDistanceStrict(new Date(), new Date(feed?.timestamp))} ago</span>
                         <span>{feed?.readingTime} min read</span>
                     </div>
                 }
