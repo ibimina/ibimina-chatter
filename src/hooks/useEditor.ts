@@ -24,7 +24,6 @@ function useEditor() {
         subtitle: "",
         coverImageUrl: "",
         article: "",
-        createdat: "",
         readingTime: 0,
         topics: [] as string[],
         published: false,
@@ -121,8 +120,8 @@ function useEditor() {
         e.preventDefault();
         let forms = e.currentTarget as HTMLFormElement
         let topic = (e.currentTarget.childNodes[0] as HTMLInputElement).value
-        if (topic.trim() !== "" && articleDetails.topics.length < 5) {
-            setArticleDetails({ ...articleDetails, topics: [...articleDetails.topics, topic] })
+        if (topic.trim() !== "" && articleDetails?.topics?.length < 5) {
+            setArticleDetails({ ...articleDetails, topics: [...articleDetails?.topics, topic] })
             forms.reset()
         }
     }
