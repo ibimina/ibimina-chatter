@@ -5,6 +5,7 @@ import { getDoc, doc, setDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import styles from '../styles/tags.module.css'
 import Head from "next/head";
+import Link from "next/link";
 interface topic {
     name: string,
     count: number
@@ -12,7 +13,7 @@ interface topic {
 export default function Explore() {
     const [topics, setTopics] = useState<topic[] | null>(null)
     const [userTopics, setUserTopics] = useState<string[]>([])
-    const { state } = useAuthContext()
+    const { state,dispatch } = useAuthContext()
 
     useEffect(() => {
         const getTopics = async () => {
@@ -20,10 +21,10 @@ export default function Explore() {
             const response = (await firebaseTopics)?.data()?.topics
             setTopics(response.sort((a: topic, b: topic) => b.count - a.count))
 
-            if (state.user.uid.length > 1) {
-                const userRef = doc(firebaseStore, 'users', state.user.uid);
+            if (state?.user?.uid?.length > 1) {
+                const userRef = doc(firebaseStore, 'users', state?.user?.uid);
                 const usertag = await getDoc(userRef)
-                setUserTopics(usertag.data()?.topics)
+                setUserTopics(usertag?.data()?.topics)
             }
         };
         getTopics()
@@ -32,30 +33,28 @@ export default function Explore() {
     const addUserTopic = async (e: React.MouseEvent, tag: string) => {
         e.preventDefault();
         let addBtn = e.currentTarget.getAttribute('aria-pressed');
+        const userRef = doc(firebaseStore, 'users', `${state?.user?.uid}`);  
         if (addBtn === 'false') {
-            const userRef = doc(firebaseStore, 'users', state?.user?.uid);
-            e.currentTarget.setAttribute('aria-pressed', 'true');
-            const exist = userTopics!.find((articleTag: string) => {
+            e.currentTarget.setAttribute('aria-pressed', 'true');               
+            const exist = userTopics!?.find((articleTag: string) => {
                 return articleTag.toLowerCase() === tag.toLowerCase()
             })
-            if (exist) {
-                return
-            }
-            else {
+            if (!exist) {
                 setUserTopics([...userTopics!, tag])
                 setDoc(userRef, {
                     topics: [...userTopics, tag]
                 }, { merge: true });
+                dispatch({ type:"AUTH_STATE_CHANGED",payload:{...state?.user,topics:[...userTopics, tag]}})
             }
         }
         else {
-            const userRef = doc(firebaseStore, 'users', state?.user?.uid);
             e.currentTarget.setAttribute('aria-pressed', 'false');
             const updateArray = userTopics.filter((userTag: string) => userTag !== tag)
             setUserTopics(updateArray)
             setDoc(userRef, {
-                tags: updateArray
+               topics: updateArray
             }, { merge: true });
+            dispatch({ type:"AUTH_STATE_CHANGED",payload:{...state?.user,topics:updateArray}})  
         }
     }
 
@@ -81,8 +80,8 @@ export default function Explore() {
                     </ul>
                     <div className={`grid md:grid-cols-2 lg:grid-cols-3 gap-3 my-8`}>
                         {topics && topics.map((topic, index) =>
-                            <div key={index} className={`flex justify-between items-center bg-stone-200 hover:bg-zinc-500 hover:text-slate-100 cursor-pointer`} aria-selected='false'>
-                                <p className={`px-4 py-3 font-medium`}>{topic.name} </p>
+                            <div key={index} className={`flex justify-between items-center bg-stone-200 hover:bg-zinc-300  cursor-pointer`} aria-selected='false'>
+                                <Link className={`px-4 py-3 font-medium`} href={`/n?q=${topic?.name}`}>{topic.name} </Link>
                                 <button
                                     onClick={(e) => addUserTopic(e, topic.name)}
                                     className={`bg-contain bg-no-repeat bg-center w-5 h-5 m-2 ${styles.add}`} aria-label="add tag" aria-pressed={userTopics?.includes(topic.name)! ? "true" : "false"}>
