@@ -1,36 +1,14 @@
-import { useAuthContext } from '@/store/store';
-import { useEffect, useState } from 'react';
-import { doc, DocumentData, getDoc } from 'firebase/firestore';
-import { firebaseStore } from '@/firebase/config';
 import FeedLayout from '@/container/feedslayout';
-import { ArticleProps, UserBookmarkProps } from '@/types/index';
+import { ArticleProps } from '@/types/index';
 import { Key } from 'react';
-import { useCollection, useInteraction } from '@/hooks';
 import ArticleCard from '@/components/articlecard';
 import Head from 'next/head';
+import useBookmarks from '@/hooks/useBookmarks';
 
 
 function Bookmarks() {
-    const { state } = useAuthContext();
-    const [feeds, setFeeds] = useState<DocumentData>([]);
-    // const [isloading, setIsLoading] = useState(false)
-    const { data } = useCollection("bookmarks", state.user.uid)
+    const {feeds,update,loading} = useBookmarks()
 
-
-    useEffect(() => {
-        let arr: DocumentData = []
-        data?.bookmarks?.forEach(async (bookmark: { article_uid: string }) => {
-            const ref = await getDoc(doc(firebaseStore, "articles", bookmark.article_uid))
-            arr.push({ ...ref.data(), id: ref.id });
-            setFeeds(arr)
-        })
-    }, [data?.bookmarks]);
-
-    const { addBookmark } = useInteraction()
-    const update = (id: string, bookmark: UserBookmarkProps[]) => {
-        setFeeds(feeds!.filter((feed: { user_uid: string; }) => feed.user_uid !== id))
-        addBookmark(id, bookmark)
-    }
     return (
         <>
             <Head>
@@ -43,8 +21,13 @@ function Bookmarks() {
             <FeedLayout>
              
                 <main className={`md:w-4/6`}>
+                    {loading && 
+                        <div className={`flex items-center justify-center font-normal max-h-screen h-96`}>
+                            <div className='max-w-md text-center'>
+                                <p className='text-center'>Loading...</p></div>
+                        </div>}
                     <ul className={`p-2`}>
-                        {/* {isloading && <>loading...</>} */}
+                       
                         {feeds &&
                             feeds.map((feed: ArticleProps, index: Key) => {
                                 return (
@@ -54,7 +37,7 @@ function Bookmarks() {
                             )}
                     </ul>
                     {
-                        feeds?.length === 0 &&
+                        feeds?.length === 0 && !loading &&
                         <div className={`flex items-center justify-center font-normal max-h-screen h-96`}>
                             <div className='max-w-md text-center'>
                                 <p className='text-center'>No articles found in your bookmarks.</p>
