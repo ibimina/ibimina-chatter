@@ -1,12 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { EditorHeader, Editor } from '@/components/index';
 import useEditor from '@/hooks/useEditor';
-import router from 'next/router';
-import { useAuthContext } from '@/store/store';
 import Head from 'next/head';
 
-const MarkdownEditor = () => {
-    const { state } = useAuthContext();
+const MarkdownEditor = () => {  
     const{articleDetails,handleValueChange,uploadImage,
         isUnsplashVisible,toggleUnsplash,unsplashSearch,togglePublishing,isPublishing,addTag,removeTag,
         getUnsplashTerm,insertMarkdown,getUnSplashUrl,changeRoute,
