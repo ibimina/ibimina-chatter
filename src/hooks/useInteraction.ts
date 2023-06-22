@@ -1,7 +1,7 @@
 import { firebaseStore } from "@/firebase/config";
 import { useAuthContext } from "@/store/store";
 import { ArticleProps, BookmarkProps, LikeProps, UserBookmarkProps } from "@/types";
-import { DocumentData, collection, doc, getDoc, onSnapshot, query, setDoc } from "firebase/firestore";
+import { DocumentData,  doc, getDoc, setDoc } from "firebase/firestore";
 import { useState } from "react";
 
 function useInteraction() {
@@ -83,7 +83,7 @@ function useInteraction() {
         if (docSnap.exists()) {
             await setDoc(docRef, {
                 notification: [
-                    ...docSnap.data()?.notification,
+                    ...docSnap?.data()?.notification,
                     {
                         event_user: state?.user?.uid,
                         event_username: state?.user?.displayName,

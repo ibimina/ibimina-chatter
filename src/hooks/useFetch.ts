@@ -13,8 +13,8 @@ function useFetch(url: string) {
   }
   useEffect(() => {
     getData()
-    return () => { }
-  }, [url])
+    return () => { getData()}
+  })
 
   return { fetchedData, getData };
 }
