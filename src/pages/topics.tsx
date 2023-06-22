@@ -32,12 +32,10 @@ function Topics() {
 			const exist = articleTags.find((articleTag) => {
 				return articleTag.topic.toLowerCase() === topic.toLowerCase()
 			})
-			if (exist) {
-				return
-			} else {
+			if (!exist) {
 				arr.push(topic)
 				setDoc(userRef, {
-					tags: arr
+					topics: arr
 				}, { merge: true });
 				setArticleTags([...articleTags, { topic, selected: true }])
 				setTopic("")
@@ -56,10 +54,7 @@ function Topics() {
 			const exist = arr.find((articleTag: string) => {
 				return articleTag.toLowerCase() === topic.toLowerCase()
 			})
-			if (exist) {
-				return
-			}
-			else {
+			if (!exist) {
 				arr.push(topic)
 				setDoc(userRef, {
 					topics: arr
