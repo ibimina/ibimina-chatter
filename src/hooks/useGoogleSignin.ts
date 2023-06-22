@@ -18,18 +18,20 @@ const useGoogleSignin = () => {
             const docSnap = await getDoc(docRef);
             if (docSnap.exists()) {
                 dispatch(signIn(docSnap.data()))
+                Cookies.set("loggedin", "true");
                 router.push('/chatter');
             } else {
                 const userInfo = {
                     uid: user?.uid, displayName: user?.displayName, email: user?.email, photoURL: user?.photoURL, profile_tagline: "", location: "",
-                    bio: "", twitter: "", github: "", instagram: "", tags: [],
+                    bio: "", twitter: "", github: "", instagram: "", topics: [],
                     website: "", linkedin: "", youtube: "", facebook: ""
                 }
                 await setDoc(doc(firebaseStore, "users", user?.uid), userInfo);
                 dispatch(signIn(userInfo))
+                Cookies.set("loggedin", "true");
                 router.push('/tags');
             }
-            Cookies.set("loggedin", "true");
+          
         } catch (error: any) {
             // Handle Errors here.
             const errorCode = error.code;
