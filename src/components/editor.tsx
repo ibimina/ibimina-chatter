@@ -90,12 +90,12 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,
                                     <span>upload image</span>
                                 </label>
                                 <button onClick={toggleUnsplash} className={`${styles.unsplash}`} >Unsplash</button>
-                                <div data-visible={isUnsplashVisible} className={`${styles.unsplashDropdown}`} onScroll={onScroll}>
-                                    <form onSubmit={getPicturesFromUnsplash}>
+                                <div data-visible={isUnsplashVisible} className={`${styles.unsplashDropdown} bg-gray-100 mt-3`} onScroll={onScroll}>
+                                    <form onSubmit={getPicturesFromUnsplash} className="p-2">
                                         <input value={unsplashSearch} onChange={getUnsplashTerm} type="text"
-                                            placeholder='Search Unsplash Image' name="" className={`block w-full`} />
+                                            placeholder='Search Unsplash Image' name="" className={`block w-full border-2 px-2 py-1 border-violet-200 rounded-lg`} />
                                     </form>
-                                    <div className={`grid grid-cols-2  ${styles.pictures}`}>
+                                    <div className={`grid grid-cols-2 bg-gray-200`}>
                                         {fetchedData &&
                                             fetchedData.map((item, index) => {
                                                 return <button key={index} className={`relative ${styles.imageContainer}`}
@@ -206,7 +206,6 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,
                     </div>
                 </div>
             }
-
         </>);
 }
 
