@@ -18,14 +18,7 @@ import { useAuthContext } from "@/store/store";
 import { useCollectionSnap, useInteraction } from "@/hooks";
 import { formatDistanceStrict } from "date-fns";
 
-import {
-    EmailShareButton,
-    FacebookShareButton,
-    LinkedinShareButton,
-    TelegramShareButton,
-    TwitterShareButton,
-    WhatsappShareButton,
-} from "react-share";
+import {   EmailShareButton,  FacebookShareButton, LinkedinShareButton, TelegramShareButton, TwitterShareButton, WhatsappShareButton,} from "react-share";
 import Head from "next/head";
 import FeedLayout from "@/container/feedslayout";
 
@@ -200,8 +193,6 @@ export default function SingleArticle() {
                                         <p className="text-current">   {article?.bookmarks?.length} </p>
                                     </>
                             }
-
-
                         </button>
                         <button className='flex items-center gap-1'>
                             <Image src="/images/icons8-chart-24.png" height={18} width={18} alt="views chart" />
@@ -262,16 +253,14 @@ export default function SingleArticle() {
                             ({article?.comments?.length})
                         </h2>
                         <Link href={`/${encodeURIComponent(article?.author?.uid)}`} className={`flex items-center gap-1 mb-8`}>
-                            {/* <Image className={`rounded-full`} src={state?.user?.photoURL === null ? "/images/icons8-user-64.png" : state?.user?.photoURL} width={30} height={30} alt="author avatar" /> */}
                             {state?.user?.photoURL?.length > 2 &&
                                 <Image className={`rounded-full`} src={state?.user?.photoURL} width={30} height={30} alt="author avatar" />
-
                             }
                             {state?.user?.photoURL === null &&
                                 <Image className={`rounded-full`} src={"/images/icons8-user-64.png"} width={30} height={30} alt="author avatar" />
 
                             }
-                            <span>{article?.author?.name}</span>
+                            <span>{state?.user?.displayName ? state?.user?.displayName :"anonymous"}</span>
                         </Link>
                         <form onSubmit={postComment}>
                             <input value={comment} onChange={(e) => setComment(e.target.value)} className="block border-solid border-2 rounded-lg border-violet-400 w-full p-2 mb-6 outline-0 focus:shadow-violet-500/50 focus:shadow-lg" type="text" placeholder="Ask a question to spark a conversation" name="comment" />
