@@ -1,42 +1,13 @@
-import { useAuthContext } from '@/store/store';
-import { Key, useEffect, useState } from 'react';
+import { Key } from 'react';
 import Link from 'next/link';
-import { query, collection, onSnapshot, DocumentData } from 'firebase/firestore';
-import { firebaseStore } from '@/firebase/config';
 import { ArticleProps } from '@/types/index';
-import useInteraction from '@/hooks/useInteraction';
+import { useFeeds, useInteraction } from '@/hooks/index';
 import FeedLayout from '@/container/feedslayout';
 import ArticleCard from '@/components/articlecard';
 import Head from 'next/head';
 
-
 function Chatter() {
-	const { state } = useAuthContext();
-	const [feeds, setFeeds] = useState<DocumentData | null>(null);
-	const [isloading, setIsLoading] = useState(false)
-
-
-	useEffect(() => {
-
-		const q = query(collection(firebaseStore, 'articles'));
-		const unsubscribe = onSnapshot(q, (querySnapshot) => {
-			setIsLoading(true)
-			const articles: DocumentData = [];
-			querySnapshot.forEach((doc) => {
-				const isUserTopic = state?.user?.topics?.some((topic) => {
-					return doc?.data()?.topics?.includes(topic);
-				});
-				if (state?.user?.uid === (doc?.data().author?.uid && doc.data().published) || isUserTopic) {
-					articles.push({ ...doc.data(), id: doc.id });
-				}
-			});
-			setFeeds(articles);
-			setIsLoading(false)
-		});
-
-		return () => unsubscribe();
-	}, [state?.user, state?.user?.uid]);
-
+	const { feeds, isLoading } = useFeeds();
 	const { addBookmark } = useInteraction()
 
 	return (
@@ -50,7 +21,15 @@ function Chatter() {
 			</Head>
 			<FeedLayout>
 				<main className={`w-full lg:w-4/6`}>
-					{isloading && <>loading...</>}
+					{
+						isLoading && (
+							<div className={`flex items-center justify-center font-normal max-h-screen h-96`}>
+								<div className='max-w-md text-center'>
+									<p className='text-center'>Loading...</p></div>
+							</div>
+
+						)
+					}
 					{feeds
 						&&
 						<ul className={`p-2`}>
@@ -61,7 +40,7 @@ function Chatter() {
 							})}
 						</ul>
 					}
-					{feeds?.length === 0 &&
+					{feeds?.length === 0 && !isLoading &&
 						<div className={`flex items-center justify-center font-normal max-h-screen h-96`}>
 							<div className='max-w-md text-center'>
 								<p className='text-center'>No articles found matching your preferred tags.</p>
