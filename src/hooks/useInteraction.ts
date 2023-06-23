@@ -74,7 +74,7 @@ function useInteraction() {
             countLikes += like?.timestamp?.length
         })
         if (hasLiked) {
-            await setDoc(docRef, { likes: updateLike, likesCount: countLikes},{ merge: true });
+            await setDoc(docRef, { likes: updateLike, likesCount: countLikes }, { merge: true });
         } else if (likes.length === 0 || hasLiked === undefined) {
             await setDoc(docRef, {
                 likes: [...likes, {
@@ -103,6 +103,7 @@ function useInteraction() {
                         event: event,
                         articleId: article?.id,
                         articleTitle: article?.title,
+                        timestamp: JSON.stringify(new Date())
                     }]
             }, { merge: true });
         } else {
