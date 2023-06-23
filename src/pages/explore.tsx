@@ -12,49 +12,40 @@ interface topic {
 }
 export default function Explore() {
     const [topics, setTopics] = useState<topic[] | null>(null)
-    const [userTopics, setUserTopics] = useState<string[]>([])
-    const { state,dispatch } = useAuthContext()
+    const { state, dispatch } = useAuthContext()
 
     useEffect(() => {
         const getTopics = async () => {
             const firebaseTopics = getDoc(doc(firebaseStore, "topics", `${process.env.NEXT_PUBLIC_TOPICS_DATABASE_ID}`))
             const response = (await firebaseTopics)?.data()?.topics
             setTopics(response.sort((a: topic, b: topic) => b.count - a.count))
-
-            if (state?.user?.uid?.length > 1) {
-                const userRef = doc(firebaseStore, 'users', state?.user?.uid);
-                const usertag = await getDoc(userRef)
-                setUserTopics(usertag?.data()?.topics)
-            }
-        };
+        }
         getTopics()
         return () => { getTopics }
     }, [state, state?.user?.uid])
     const addUserTopic = async (e: React.MouseEvent, tag: string) => {
         e.preventDefault();
         let addBtn = e.currentTarget.getAttribute('aria-pressed');
-        const userRef = doc(firebaseStore, 'users', `${state?.user?.uid}`);  
+        const userRef = doc(firebaseStore, 'users', `${state?.user?.uid}`);
         if (addBtn === 'false') {
-            e.currentTarget.setAttribute('aria-pressed', 'true');               
-            const exist = userTopics!?.find((articleTag: string) => {
+            e.currentTarget.setAttribute('aria-pressed', 'true');
+            const exist = state.user.topics?.find((articleTag: string) => {
                 return articleTag.toLowerCase() === tag.toLowerCase()
             })
             if (!exist) {
-                setUserTopics([...userTopics!, tag])
+                dispatch({ type: "ADDTAG", payload: tag })
                 setDoc(userRef, {
-                    topics: [...userTopics, tag]
+                    topics: state?.user?.topics
                 }, { merge: true });
-                dispatch({ type:"AUTH_STATE_CHANGED",payload:{...state?.user,topics:[...userTopics, tag]}})
             }
         }
         else {
             e.currentTarget.setAttribute('aria-pressed', 'false');
-            const updateArray = userTopics.filter((userTag: string) => userTag !== tag)
-            setUserTopics(updateArray)
+            dispatch({ type: "REMOVETAG", payload: tag })
             setDoc(userRef, {
-               topics: updateArray
+                topics: state?.user?.topics
             }, { merge: true });
-            dispatch({ type:"AUTH_STATE_CHANGED",payload:{...state?.user,topics:updateArray}})  
+            
         }
     }
 
@@ -81,10 +72,10 @@ export default function Explore() {
                     <div className={`grid md:grid-cols-2 lg:grid-cols-3 gap-3 my-8`}>
                         {topics && topics.map((topic, index) =>
                             <div key={index} className={`flex justify-between items-center bg-stone-200 hover:bg-zinc-300  cursor-pointer`} aria-selected='false'>
-                                <Link className={`px-4 py-3 font-medium`} href={`/n?q=${topic?.name}`}>{topic.name} </Link>
+                                <Link className={`px-4 py-3 font-medium`} href={`/n?q=${topic?.name}`}>{topic?.name} </Link>
                                 <button
                                     onClick={(e) => addUserTopic(e, topic.name)}
-                                    className={`bg-contain bg-no-repeat bg-center w-5 h-5 m-2 ${styles.add}`} aria-label="add tag" aria-pressed={userTopics?.includes(topic.name)! ? "true" : "false"}>
+                                    className={`bg-contain bg-no-repeat bg-center w-5 h-5 m-2 ${styles.add}`} aria-label="add tag" aria-pressed={state?.user?.topics?.includes(topic?.name!)! ? "true" : "false"}>
                                 </button>
 
                             </div>
