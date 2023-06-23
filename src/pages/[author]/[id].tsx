@@ -167,16 +167,13 @@ export default function SingleArticle() {
                                 isliked ?
                                     <>
                                         <Image src='/images/icons8-love-48.png' height={24} width={24} alt="like" />
-                                        <p className="text-red">  {article?.likes?.length}</p>
+                                        <p className="text-red-500">  {article?.likesCount}</p>
                                     </>
-
                                     : <>
                                         <Image src='/images/icons8-like-50.png' height={24} width={24} alt="like" />
-                                        <p className="text-current">  {article?.likes?.length}</p>
+                                        <p className="text-current">  {article?.likesCount}</p>
                                     </>
                             }
-
-
                         </button>
                         <button
                             onClick={() => addBookmark(article?.id!, article?.bookmarks)}

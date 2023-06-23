@@ -74,11 +74,11 @@ function ArticleCard({ feed, update }: { feed: ArticleProps, update: (id: string
                         isliked ?
                             <>
                                 <Image src='/images/icons8-love-48.png' height={24} width={24} alt="like" />
-                                <p className="text-red-500">  {feed?.likes?.length}</p>
+                                <p className="text-red-500">  {feed?.likesCount}</p>
                             </>
                             : <>
                                 <Image src='/images/icons8-like-50.png' height={24} width={24} alt="like" />
-                                <p className="text-current">  {feed?.likes?.length}</p>
+                                <p className="text-current">  {feed?.likesCount}</p>
                             </>
                     }
                 </Link>
