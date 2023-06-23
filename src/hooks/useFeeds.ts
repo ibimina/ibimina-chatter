@@ -21,7 +21,7 @@ function useFeeds() {
                     articles.push({ ...doc.data(), id: doc.id });
                 }
             });
-            setFeeds(articles);
+            setFeeds(articles.sort((a: { timestamp: any }, b: { timestamp: any }) => new Date(b?.timestamp).getTime() - new Date(a?.timestamp).getTime()));
             setIsLoading(false)
         });
 
