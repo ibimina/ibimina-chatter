@@ -10,6 +10,7 @@ const sampleFeed = {
   topics: ["Javascript"],
   published: true,
   likes: [],
+  likesCount:0,
   views: 2,
   bookmarks: [{ user_uid: "1ew828hndnfed83" }],
   comments: [{ uid: "112345678hhgddgvd", image: "/images/icons8-user.svg", name: "sis", comment: "how are you", timestamp: "" }],
