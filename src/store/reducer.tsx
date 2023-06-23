@@ -10,7 +10,7 @@ export const InitialState = {
         email: '',
         displayName: '',
         photoURL: '',
-        topics: [],
+        topics: [] as string[],
         profile_tagline: "",
         location: "",
         bio: "",
