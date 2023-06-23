@@ -1,7 +1,7 @@
 import { firebaseStore } from "@/firebase/config";
 import { useAuthContext } from "@/store/store";
 import { ArticleProps, BookmarkProps, LikeProps, UserBookmarkProps } from "@/types";
-import { DocumentData,  doc, getDoc, setDoc } from "firebase/firestore";
+import { DocumentData, doc, getDoc, setDoc } from "firebase/firestore";
 import { useState } from "react";
 
 function useInteraction() {
@@ -52,35 +52,47 @@ function useInteraction() {
             }, { merge: true });
         }
     }
+
     const increaseLike = async (id: string, likes: LikeProps[], article: ArticleProps) => {
         const hasLiked = likes.find((like: LikeProps) => {
             return like?.uid === state?.user?.uid
         })
         const docRef = doc(firebaseStore, 'articles', id);
+        const docSnap = await getDoc(docRef);
+        const updateLike = likes?.map((like: LikeProps) => {
+            if (like?.uid === state?.user?.uid) {
+                return {
+                    ...like,
+                    timestamp: [...like?.timestamp, JSON.stringify(new Date())]
+                }
+            } else {
+                return like
+            }
+        })
+        let countLikes = 0
+        updateLike?.forEach((like: LikeProps) => {
+            countLikes += like?.timestamp?.length
+        })
         if (hasLiked) {
-            await setDoc(docRef, {
-                likes: likes.filter((like: LikeProps) => {
-                    return like?.uid !== state?.user?.uid
-                })
-            }, { merge: true });
+            await setDoc(docRef, { likes: updateLike, likesCount: countLikes},{ merge: true });
         } else if (likes.length === 0 || hasLiked === undefined) {
             await setDoc(docRef, {
-                likes: [...
-                    likes, {
+                likes: [...likes, {
                     uid: state?.user?.uid,
                     name: state?.user?.displayName,
-                    image: state?.user?.photoURL
-                }]
+                    image: state?.user?.photoURL,
+                    timestamp: [JSON.stringify(new Date())]
+                }],
+                likesCount: docSnap?.data()?.likesCount + 1
             }, { merge: true });
             await addNotification('liked', article)
         }
     }
 
     const addNotification = async (event: string, article: ArticleProps) => {
-        const docRef = doc(firebaseStore, 'notifications', article?.author?.uid);
+        const docRef = doc(firebaseStore, 'notifications', `${article?.author?.uid}`);
         const docSnap = await getDoc(docRef);
-       
-        if (docSnap.exists()) {
+       if (docSnap.exists()) {
             await setDoc(docRef, {
                 notification: [
                     ...docSnap?.data()?.notification,
@@ -110,7 +122,7 @@ function useInteraction() {
     }
     const [feeds, setFeeds] = useState<DocumentData>([]);
     const [isLoading, setIsLoading] = useState<boolean | null>(null)
-    
+
     const update = (id: string, bookmark: UserBookmarkProps[]) => {
         setFeeds(feeds.filter((feed: { id: string; }) => feed.id !== id))
         addBookmark(id, bookmark)
