@@ -18,9 +18,11 @@ function User() {
     const author = { name: displayName, image: photoURL, uid }
     const updateInfo = async (e: React.FormEvent) => {
         e.preventDefault()
-        const { user } = state      
+        const { user } = state 
+        //update user name and image in user     
         const userRef = doc(firebaseStore, 'users', state?.user?.uid);
         await setDoc(userRef, { ...user }, { merge: true });
+        //update user name and image in article
         const updateAuthorInArticle = query(collection(firebaseStore, "articles"), where("author.uid", "==", uid))
         const a = await getDocs(updateAuthorInArticle)
         a.forEach(async (docc) => {
@@ -36,7 +38,7 @@ function User() {
         })
         const updateNoti = collection(firebaseStore, "notifications")
         const querySnap = await getDocs(updateNoti)
-
+//update user image and name in notification
         querySnap.forEach(async element => {
             const u = element.data().notification.map((n: any) => {
                 if (n.event_user === uid) {
