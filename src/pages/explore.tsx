@@ -75,7 +75,7 @@ export default function Explore() {
                                 <Link className={`px-4 py-3 font-medium`} href={`/n?q=${topic?.name}`}>{topic?.name} </Link>
                                 <button
                                     onClick={(e) => addUserTopic(e, topic.name)}
-                                    className={`bg-contain bg-no-repeat bg-center w-5 h-5 m-2 ${styles.add}`} aria-label="add tag" aria-pressed={state?.user?.topics?.includes(topic?.name!)! ? "true" : "false"}>
+                                    className={`bg-contain bg-no-repeat bg-center w-5 h-5 m-2 ${styles.add}`} aria-label="add tag" aria-pressed={state?.user.topics.includes(topic?.name) ? "true" : "false"}>
                                 </button>
 
                             </div>
