@@ -61,7 +61,8 @@ function Header({ handleNav }: { handleNav: () => void }) {
                                 <span className={`hidden md:block`}>write</span>
                             </Link>
                         </li>
-                        <li >
+                        <li>
+                            <Link href='/notifications'>
                             <Image
                                 src='/images/icons8-notifications-78.png'
                                 height={44}
@@ -69,6 +70,7 @@ function Header({ handleNav }: { handleNav: () => void }) {
                                 alt='notification'
                             />
                             <span className={`hidden`}>notification</span>
+                            </Link>
                         </li>
                         <li
                             className='cursor-pointer'
