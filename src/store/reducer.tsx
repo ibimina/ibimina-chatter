@@ -120,7 +120,15 @@ export const authReducer = (
             authState: true,
             user: { ...state?.user, topics: [...state?.user?.topics,action.payload] },
         };
-    } if (action.type === "PHOTO") {
+    }
+    if (action.type === "REMOVETAG") {
+        return {
+            ...state,
+            authState: true,
+            user: { ...state?.user, topics: state?.user?.topics.filter((item) => item !== action.payload) },
+        };
+    }
+    if (action.type === "PHOTO") {
         return {
             ...state,
             authState: true,
