@@ -32,12 +32,11 @@ function NotificationCard({ notification }: {
                         }
                     </Link>
 
-                    <div className="flex items-center gap-1 text-sm">
-                        <p className="text-gray-900 leading-none font-bold">@{notification?.event_username}</p>
-                        <p className="text-gray-600">{notification?.event} {notification?.event === "liked"? "your article" : "on your article"}</p>
+                    <p className="text-sm">
+                        <span className="text-gray-900 leading-none font-bold">@{notification?.event_username}  </span>
+                        <span className="text-gray-600">{notification?.event} {notification?.event === "liked"? "your article" : "on your article"}  </span>
                         <Link className="text-gray-600 font-medium" href={`/${encodeURIComponent(author)}/${encodeURIComponent(id)}`}>{notification?.articleTitle}</Link>
-                    </div>
-
+                    </p>
                 </div>
             </div>
         </>);
