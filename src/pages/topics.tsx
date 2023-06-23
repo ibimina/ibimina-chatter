@@ -9,9 +9,9 @@ import Head from "next/head";
 
 
 function Topics() {
-	const { state } = useAuthContext();
-	const { data } = useCollection("users",state?.user?.uid)
-	const [arr,setArr] = useState(data?.topics || [])
+	const { state, dispatch } = useAuthContext();
+	const { data } = useCollection("users", state?.user?.uid)
+	const [arr, setArr] = useState(data?.topics || [])
 	const [topic, setTopic] = useState("")
 
 	const [articleTags, setArticleTags] = useState([
@@ -38,6 +38,8 @@ function Topics() {
 					topics: arr
 				}, { merge: true });
 				setArticleTags([...articleTags, { topic, selected: true }])
+				//dispatch to add to user topics
+				dispatch({ type: "ADDTAG", payload: topic })
 				setTopic("")
 			}
 		}
@@ -59,6 +61,8 @@ function Topics() {
 				setDoc(userRef, {
 					topics: arr
 				}, { merge: true });
+				//dispatch to add to user topics
+				dispatch({ type: "ADDTAG", payload: topic })
 			}
 		}
 		else {
@@ -69,6 +73,8 @@ function Topics() {
 			setDoc(userRef, {
 				topics: arr
 			}, { merge: true });
+			//remove from user topics
+			dispatch({ type: "REMOVETAG", payload: topic })
 		}
 	}
 	return (
