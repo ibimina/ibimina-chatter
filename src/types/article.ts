@@ -4,7 +4,6 @@ export interface ArticleProps {
     subtitle: string,
     coverImageUrl: string,
     article: string,
-    createdat: string,
     topics: string[],
     published: boolean,
     likes: LikeProps[],
@@ -18,6 +17,7 @@ export interface ArticleProps {
     },
     timestamp: string,
     readingTime:number
+    likesCount: number,
 }
 
 export interface CommentProps{
@@ -39,4 +39,5 @@ export interface LikeProps {
     uid: string,
     image: string,
     name: string,
+    timestamp: string[]
 }

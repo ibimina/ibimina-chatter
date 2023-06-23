@@ -32,6 +32,7 @@ function useEditor() {
         bookmarks: [] as UserBookmarkProps[],
         comments: [] as CommentProps[],
         timestamp: JSON.stringify(new Date()),
+        likesCount: 0,
     })
     const getUnsplashTerm = (e: React.ChangeEvent<HTMLInputElement>) => {
         setUnsplashSearch(e.target.value.trim())
