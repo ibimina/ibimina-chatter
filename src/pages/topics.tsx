@@ -4,14 +4,11 @@ import { useAuthContext } from "@/store/store";
 import { setDoc, doc } from "firebase/firestore";
 import { useState } from "react";
 import styles from '../styles/tags.module.css'
-import useCollection from "@/hooks/useCollection";
 import Head from "next/head";
 
 
 function Topics() {
 	const { state, dispatch } = useAuthContext();
-	const { data } = useCollection("users", state?.user?.uid)
-	const [arr, setArr] = useState(data?.topics || [])
 	const [topic, setTopic] = useState("")
 
 	const [articleTags, setArticleTags] = useState([
@@ -33,13 +30,11 @@ function Topics() {
 				return articleTag.topic.toLowerCase() === topic.toLowerCase()
 			})
 			if (!exist) {
-				arr.push(topic)
+				dispatch({ type: "ADDTAG", payload: topic })
 				setDoc(userRef, {
-					topics: arr
+					topics: state?.user?.topics
 				}, { merge: true });
 				setArticleTags([...articleTags, { topic, selected: true }])
-				//dispatch to add to user topics
-				dispatch({ type: "ADDTAG", payload: topic })
 				setTopic("")
 			}
 		}
@@ -53,28 +48,24 @@ function Topics() {
 		if (addBtn === 'false') {
 			const userRef = doc(firebaseStore, 'users', state?.user?.uid);
 			e.currentTarget.setAttribute('aria-pressed', 'true');
-			const exist = arr.find((articleTag: string) => {
+			const exist = state?.user?.topics.find((articleTag: string) => {
 				return articleTag.toLowerCase() === topic.toLowerCase()
 			})
 			if (!exist) {
-				arr.push(topic)
-				setDoc(userRef, {
-					topics: arr
-				}, { merge: true });
-				//dispatch to add to user topics
 				dispatch({ type: "ADDTAG", payload: topic })
+				setDoc(userRef, {
+					topics: state?.user?.topics
+				}, { merge: true });
 			}
 		}
 		else {
 			const userRef = doc(firebaseStore, 'users', state?.user?.uid);
 			e.currentTarget.setAttribute('aria-pressed', 'false');
-			const updateArray = arr.filter((userTag: string) => userTag !== topic)
-			setArr(updateArray)
-			setDoc(userRef, {
-				topics: arr
-			}, { merge: true });
-			//remove from user topics
 			dispatch({ type: "REMOVETAG", payload: topic })
+			setDoc(userRef, {
+				topics: state?.user?.topics
+			}, { merge: true });
+			
 		}
 	}
 	return (
