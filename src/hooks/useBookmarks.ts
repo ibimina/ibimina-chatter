@@ -9,26 +9,25 @@ function useBookmarks() {
     const { state } = useAuthContext();
     const { data } = useCollection("bookmarks", state?.user?.uid)
     const [feeds, setFeeds] = useState<DocumentData>([]);
-    const [loading, setLoading] = useState<boolean>(true);
+    const [loading, setLoading] = useState<boolean>(false);
     useEffect(() => {
-        let arr: DocumentData = []
-        if (!data?.bookmarks) {
+        setLoading(true)
+      //get user bookmarks
+        const getBookmarks = async () => {
+            const bookmarks = await Promise.all(data?.bookmarks?.map(async (bookmark: { article_uid: string; }) => {
+                const docRef = doc(firebaseStore, "articles", bookmark?.article_uid);
+                const docSnap = await getDoc(docRef);
+                return { ...docSnap.data(), id: docSnap.id };
+            }))
+            setFeeds(bookmarks)
             setLoading(false)
-            return
-        } else {
-            data?.bookmarks?.forEach(async (bookmark: { article_uid: string }) => {
-                const ref = await getDoc(doc(firebaseStore, "articles", bookmark?.article_uid))
-                arr.push({ ...ref.data(), id: ref.id });
-                setFeeds(arr)
-                setLoading(false)
-            })
         }
+        if (data?.bookmarks)getBookmarks()
     }, [data?.bookmarks]);
 
     const { addBookmark } = useInteraction()
     const update = (id: string, bookmark: UserBookmarkProps[]) => {
         setFeeds(feeds!.filter((feed: { id: string; }) => feed?.id !== id))
-        console.log(id, feeds)
         addBookmark(id, bookmark)
     }
     return { feeds, update, loading }
