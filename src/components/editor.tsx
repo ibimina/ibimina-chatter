@@ -28,9 +28,10 @@ interface NewType {
     togglePublishing: (e: React.MouseEvent) => void;
     addTag: (e: React.FormEvent) => void;
     removeTag: (tag: string) => void;
+    isDiasbled: boolean;
 }
 
-function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,
+function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,isDiasbled,
     toggleUnsplash, getUnsplashTerm, removeTag, isPublishing, togglePublishing,
     articleDetails, handleValueChange, insertMarkdown, getUnSplashUrl, handleVisible, publishArticleInFirebase, addTag }: NewType) {
 
@@ -48,10 +49,12 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,
         setShowEmojiPicker(false);
         insertMarkdown(`${emoji.emoji} `);
     };
-    const { fetchedData, getData } = useFetch(`https://api.unsplash.com/search/photos?query=${unsplashSearch}&client_id=${process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY}&page=${page}`)
+
+    const { fetchedData,getSearchData } = useFetch(unsplashSearch,page)
     const getPicturesFromUnsplash = async (e: React.FormEvent) => {
         e.preventDefault();
-        getData()
+        setPage(1)
+        getSearchData()
     };
     const increasePage = () => {
         setPage(page + 1)
@@ -59,10 +62,9 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,
     const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
         const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
         if (scrollHeight - scrollTop === clientHeight) {
-            increasePage()
+            setPage((page)=> page + 1)
         }
     }
-
 
     useEffect(() => {
         if (router.pathname.includes("/edit") && state?.user?.uid) {
@@ -93,7 +95,7 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,
                                 <div data-visible={isUnsplashVisible} className={`${styles.unsplashDropdown} bg-gray-100 mt-3`} onScroll={onScroll}>
                                     <form onSubmit={getPicturesFromUnsplash} className="p-2">
                                         <input value={unsplashSearch} onChange={getUnsplashTerm} type="text"
-                                            placeholder='Search Unsplash Image' name="" className={`block w-full border-2 px-2 py-1 border-violet-200 rounded-lg`} />
+                                            placeholder='Search Unsplash Image' className={`block w-full border-2 px-2 py-1 border-violet-200 rounded-lg`} />
                                     </form>
                                     <div className={`grid grid-cols-2 bg-gray-200`}>
                                         {fetchedData &&
@@ -180,7 +182,7 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,
                     <div className={`bg-white p-4 w-full md:w-9/12  ml-auto h-full relative`}>
                         <div className="flex items-center justify-between mb-6">
                             <button className={`mb-2`} onClick={togglePublishing}>Close</button>
-                            <button className="p-2 rounded-2xl text-white bg-violet-900" onClick={publishArticleInFirebase}>Publish now</button>
+                                <button className={`p-2 rounded-2xl ${isDiasbled ? "bg-violet-200 text-black" : "text-white bg-violet-900"}`} disabled={isDiasbled} onClick={publishArticleInFirebase}> {`${isDiasbled ? "Publishing" :"Publish now"}`}</button>
                         </div>
                         <p className="mb-8">Add or change topics (up to 5) so readers know what your story is about</p>
 
