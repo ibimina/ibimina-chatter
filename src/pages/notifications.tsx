@@ -1,41 +1,15 @@
 import { NotificationCard } from "@/components";
 import FeedLayout from "@/container/feedslayout";
-import { useCollection } from "@/hooks";
-import { useAuthContext } from "@/store/store";
-import { DocumentData } from "firebase/firestore";
-import { Key, useEffect, useState } from "react";
+import useNotification from "@/hooks/useNotification";
+import { Key, useEffect } from "react";
 
 
 function Notifications() {
-    const [notifications, setNotifications] = useState<DocumentData | null>(null)
-    const [isLoading, setIsLoading] = useState<boolean>(true)
-    const { state } = useAuthContext()
-    const { data } = useCollection("notifications", `${state?.user?.uid}`)
+    const { notifications, isLoading, markasRead } = useNotification()
 
     useEffect(() => {
-        //get user doc notifications
-        setIsLoading(true)
-        const getNotifications = async () => {
-            let notificationsArr: DocumentData = []
-            if (data?.notification?.length > 0) {
-                data?.notification?.forEach((notification: any) => {
-                    if (notification?.event_user !== state?.user?.uid) {
-                        notificationsArr.push(notification)
-                    }
-                })
-                notificationsArr.sort((a: { timestamp: any }, b: { timestamp: any }) => new Date(b?.timestamp).getTime() - new Date(a?.timestamp).getTime())
-                setNotifications(notificationsArr)
-            } else {
-                setNotifications([])
-            }
-            setIsLoading(false)
-        }
-
-        getNotifications()
-
-        return () => { getNotifications }
-
-    }, [data, state?.user?.uid])
+        markasRead()
+    })
 
     return (<>
 
@@ -46,7 +20,7 @@ function Notifications() {
                 </h1>
                 {isLoading && <p className="h-56 flex items-center justify-center">Loading...</p>}
                 {!isLoading && notifications?.length === 0 && <p className="text-center text-2xl h-56 flex items-center justify-center">No notifications</p>}
-                {
+                {notifications &&
                     notifications?.map((notification: {
                         event: string,
                         event_username: string,
@@ -54,6 +28,7 @@ function Notifications() {
                         event_user: string,
                         articleTitle: string,
                         articleId: string
+                        read: boolean
 
                     }, index: Key) => {
                         return (
