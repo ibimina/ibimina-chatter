@@ -7,6 +7,7 @@ import useCollection from "./useCollection";
 import { useAuthContext } from "@/store/store";
 import { ArticleProps, CommentProps, UserBookmarkProps, LikeProps } from "@/types";
 
+
 function useEditor() {
     const router = useRouter()
     const id = router.query.id
@@ -19,6 +20,7 @@ function useEditor() {
     const [isUnsplashVisible, setIsUnsplashVisible] = useState<boolean>(false);
     const [isvisible, setIsVisible] = useState<boolean>(false);
     const [isPublishing, setIsPublishing] = useState<boolean>(false);
+    const [isDiasbled, setIsDisabled] = useState<boolean>(false);
     const [articleDetails, setArticleDetails] = useState<DocumentData | ArticleProps>({
         title: "",
         subtitle: "",
@@ -31,7 +33,7 @@ function useEditor() {
         views: 0,
         bookmarks: [] as UserBookmarkProps[],
         comments: [] as CommentProps[],
-        timestamp: JSON.stringify(new Date()),
+        timestamp: '',
         likesCount: 0,
     })
     const getUnsplashTerm = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,10 +73,11 @@ function useEditor() {
         } else if (articleDetails.title.trim().length < 9) {
             return alert("Title is too short")
         } else if (articleDetails.article.trim().length > 9 && articleDetails.title.trim() !== "") {
+            setIsDisabled(true)
             const words = articleDetails.article.trim().split(/\s+/).length;
             const time = Math.ceil(words / 225);
             await countTopics()
-            const docRef = await addDoc(collection(firebaseStore, "articles"), { ...articleDetails, published: true, author, readingTime: time });
+            const docRef = await addDoc(collection(firebaseStore, "articles"), { ...articleDetails, timestamp: new Date().toISOString(), published: true, author, readingTime: time });
             router.push(`/article/${docRef.id}`)
         }
     }
@@ -86,6 +89,7 @@ function useEditor() {
         } else if (articleDetails.title.trim().length < 9) {
             return alert("Title is too short")
         } else if (articleDetails.article.trim().length > 9 && articleDetails.title.trim() !== "") {
+            setIsDisabled(true)
             const userRef = doc(firebaseStore, 'articles', id?.toString()!);
             await countTopics()
             const words = articleDetails.article.trim().split(/\s+/).length;
@@ -93,7 +97,8 @@ function useEditor() {
             setDoc(userRef, {
                 ...articleDetails,
                 published: true,
-                readingTime: time
+                readingTime: time,
+                timestamp: new Date().toISOString(),
             }, { merge: true });
             router.push(`/article/${id}`)
         }
@@ -152,7 +157,7 @@ function useEditor() {
             const userRef = doc(firebaseStore, 'articles', id?.toString()!);
             await setDoc(userRef, {
                 ...articleDetails,
-                published: false
+                published: false,
             }, { merge: true });
         } else if (articleDetails?.article?.trim() !== "" && articleDetails?.published === false) {
             await addDoc(collection(firebaseStore, "articles"), { ...articleDetails, author })
@@ -182,6 +187,7 @@ function useEditor() {
         togglePublishing,
         addTag,
         removeTag,
+        isDiasbled
     };
 }
 
