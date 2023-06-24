@@ -7,7 +7,7 @@ const MarkdownEditor = () => {
     const { articleDetails, handleValueChange,
         uploadImage, isUnsplashVisible, toggleUnsplash,
         unsplashSearch, getUnsplashTerm, insertMarkdown, getUnSplashUrl,
-        publishArticleInFirebase, changeRoute, removeTag,
+        publishArticleInFirebase, changeRoute, removeTag,isDiasbled,
         isvisible, toggleVisible, isPublishing, togglePublishing, addTag
     } = useEditor()
    
@@ -43,6 +43,7 @@ const MarkdownEditor = () => {
                 togglePublishing={togglePublishing}
                 addTag={addTag}
                 removeTag={removeTag}
+                isDiasbled={isDiasbled}
             />
         </>
     );

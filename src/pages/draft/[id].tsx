@@ -4,7 +4,7 @@ import useEditor from '@/hooks/useEditor';
 import Head from 'next/head';
 
 const MarkdownEditor = () => {  
-    const{articleDetails,handleValueChange,uploadImage,
+    const{articleDetails,handleValueChange,uploadImage,isDiasbled,
         isUnsplashVisible,toggleUnsplash,unsplashSearch,togglePublishing,isPublishing,addTag,removeTag,
         getUnsplashTerm,insertMarkdown,getUnSplashUrl,changeRoute,
         updateArticleInFirebase, isvisible, toggleVisible}=useEditor()
@@ -41,6 +41,7 @@ const MarkdownEditor = () => {
                 isPublishing={isPublishing}
                 addTag={addTag}
                 publishArticleInFirebase={updateArticleInFirebase} 
+                isDiasbled={isDiasbled}
             />
         </>
     );
