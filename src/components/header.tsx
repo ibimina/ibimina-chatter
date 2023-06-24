@@ -5,6 +5,7 @@ import styles from '@/styles/chatter.module.css';
 import useLogOut from '@/hooks/useLogout';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import { useNotification } from '@/hooks';
 
 function Header({ handleNav }: { handleNav: () => void }) {
     const [isClicked, setIsClicked] = useState(false)
@@ -12,6 +13,7 @@ function Header({ handleNav }: { handleNav: () => void }) {
     const { state } = useAuthContext();
     const author = state?.user?.uid
     const { logoutUser } = useLogOut();
+    const {notifications} = useNotification()
     const getSearchAndRedirect = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const input = e.currentTarget.childNodes[0] as HTMLInputElement
@@ -65,8 +67,14 @@ function Header({ handleNav }: { handleNav: () => void }) {
                                 <span className={`hidden md:block`}>write</span>
                             </Link>
                         </li>
-                        <li>
-                            <Link href='/notifications'>
+                        <li >
+                            {/* signify user of unread notifications if any notifications has a read value of false */}
+                          
+
+                            <Link href='/notifications' className='relative'>
+                                {notifications?.some((notification: { read: boolean }) => notification.read === false) &&
+                                    <span className={`absolute top-1 right-1 bg-red-500 rounded-full h-2 w-2`}></span>
+                                }
                             <Image
                                 src='/images/icons8-notifications-78.png'
                                 height={44}
