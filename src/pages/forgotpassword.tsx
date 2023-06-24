@@ -4,6 +4,7 @@ import styles from '../styles/forgotpassword.module.css';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { firebaseAuth } from '@/firebase/config';
 import { useState } from 'react';
+import Head from 'next/head';
 
 
 function ForgotPassword() {
@@ -34,6 +35,13 @@ function ForgotPassword() {
 	return (
 
 		<>
+			<Head>
+				<title>Forgot password - chatter</title>
+				<meta charSet="UTF-8" />
+				<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+				<meta http-equiv="X-UA-Compatible" content="IE=7" />
+				<meta name="description" content="Enter your email to retrieve your account" />
+			</Head>
 			<main className={`lg:flex lg:flex-row-reverse`}>
 				<section
 					className={`hidden bg-slate-300 lg:w-full  lg:block lg:h-screen lg:basis-2/5 `}

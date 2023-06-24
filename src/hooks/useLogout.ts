@@ -20,8 +20,6 @@ export default function useLogOut() {
         
         } catch (error: any) {
             setError(error.message);
-      
-            console.log(error);
         }
     };
     return { logoutUser,error };

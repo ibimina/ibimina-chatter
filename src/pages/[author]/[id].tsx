@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-import { firebaseStore, timestamp } from "@/firebase/config";
+import { firebaseStore } from "@/firebase/config";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 
 import ReactMarkdown from "react-markdown";
@@ -16,16 +16,9 @@ import styles from "@/styles/editor.module.css"
 import { ArticleProps } from "@/types/article";
 import { useAuthContext } from "@/store/store";
 import { useCollectionSnap, useInteraction } from "@/hooks";
+import { formatDistanceStrict } from "date-fns";
 
-
-import {
-    EmailShareButton,
-    FacebookShareButton,
-    LinkedinShareButton,
-    TelegramShareButton,
-    TwitterShareButton,
-    WhatsappShareButton,
-} from "react-share";
+import {   EmailShareButton,  FacebookShareButton, LinkedinShareButton, TelegramShareButton, TwitterShareButton, WhatsappShareButton,} from "react-share";
 import Head from "next/head";
 import FeedLayout from "@/container/feedslayout";
 
@@ -46,9 +39,8 @@ export default function SingleArticle() {
         const getArticle = async () => {
             const doc = snap?.find((article: ArticleProps) => {
                 return article.id === id
-            })
-            const time = new Date(doc?.timestamp?.seconds * 1000).toDateString();
-            setArticle({ ...doc, timestamp: time });
+            })  
+            setArticle({...doc});
             const like = article?.likes?.find((like) => like?.uid === state?.user?.uid)
             const bookmark = article?.bookmarks?.find((bookmark) => bookmark?.user_uid === state?.user?.uid)
             if (like !== undefined) {
@@ -65,19 +57,19 @@ export default function SingleArticle() {
             }
         };
         getArticle();
-
+        setShareUrl(window?.location?.href);
         // 
     }, [article?.bookmarks, article?.likes, id, snap, state?.user?.uid]);
     useEffect(() => {
         (async () => {
-
-            const docRef = doc(firebaseStore, "articles", `${id}`);
-            const docSnap = await getDoc(docRef);
-            await setDoc(docRef, {
-                views: docSnap.data()?.views + 1
-            }, { merge: true });
+            if (id! !== undefined){
+                const docRef = doc(firebaseStore, "articles", `${id}`);
+                const docSnap = await getDoc(docRef);
+                await setDoc(docRef, {
+                    views: docSnap.data()?.views + 1
+                }, { merge: true });
+            }         
         })();
-        setShareUrl(window?.location?.href);
     }, [id]);
     const { addBookmark, increaseLike, addNotification } = useInteraction();
 
@@ -92,7 +84,7 @@ export default function SingleArticle() {
                     name: state?.user?.displayName,
                     image: state?.user?.photoURL,
                     comment: comment,
-                    timestamp: timestamp
+                    timestamp: new Date().toISOString()
                 }]
         }, { merge: true });
         await addNotification('commented', article)
@@ -154,7 +146,7 @@ export default function SingleArticle() {
                         {
                             article?.title?.length > 1 &&
                             <div className="flex items-center gap-1">
-                                <span>{article?.timestamp}</span>
+                                <span>{formatDistanceStrict(new Date(), new Date(article?.timestamp))} ago</span>
                                 <span>{article?.readingTime} min read</span>
                             </div>
                         }
@@ -175,16 +167,13 @@ export default function SingleArticle() {
                                 isliked ?
                                     <>
                                         <Image src='/images/icons8-love-48.png' height={24} width={24} alt="like" />
-                                        <p className="text-red">  {article?.likes?.length}</p>
+                                        <p className="text-red-500">  {article?.likesCount}</p>
                                     </>
-
                                     : <>
                                         <Image src='/images/icons8-like-50.png' height={24} width={24} alt="like" />
-                                        <p className="text-current">  {article?.likes?.length}</p>
+                                        <p className="text-current">  {article?.likesCount}</p>
                                     </>
                             }
-
-
                         </button>
                         <button
                             onClick={() => addBookmark(article?.id!, article?.bookmarks)}
@@ -201,8 +190,6 @@ export default function SingleArticle() {
                                         <p className="text-current">   {article?.bookmarks?.length} </p>
                                     </>
                             }
-
-
                         </button>
                         <button className='flex items-center gap-1'>
                             <Image src="/images/icons8-chart-24.png" height={18} width={18} alt="views chart" />
@@ -263,16 +250,14 @@ export default function SingleArticle() {
                             ({article?.comments?.length})
                         </h2>
                         <Link href={`/${encodeURIComponent(article?.author?.uid)}`} className={`flex items-center gap-1 mb-8`}>
-                            {/* <Image className={`rounded-full`} src={state?.user?.photoURL === null ? "/images/icons8-user-64.png" : state?.user?.photoURL} width={30} height={30} alt="author avatar" /> */}
                             {state?.user?.photoURL?.length > 2 &&
                                 <Image className={`rounded-full`} src={state?.user?.photoURL} width={30} height={30} alt="author avatar" />
-
                             }
                             {state?.user?.photoURL === null &&
                                 <Image className={`rounded-full`} src={"/images/icons8-user-64.png"} width={30} height={30} alt="author avatar" />
 
                             }
-                            <span>{article?.author?.name}</span>
+                            <span>{state?.user?.displayName ? state?.user?.displayName :"anonymous"}</span>
                         </Link>
                         <form onSubmit={postComment}>
                             <input value={comment} onChange={(e) => setComment(e.target.value)} className="block border-solid border-2 rounded-lg border-violet-400 w-full p-2 mb-6 outline-0 focus:shadow-violet-500/50 focus:shadow-lg" type="text" placeholder="Ask a question to spark a conversation" name="comment" />

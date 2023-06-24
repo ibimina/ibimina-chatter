@@ -1,47 +1,53 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { EditorHeader, Editor } from '@/components/index';
 import useEditor from '@/hooks/useEditor';
-import router from 'next/router';
-import { useAuthContext } from '@/store/store';
+import Head from 'next/head';
 
 const MarkdownEditor = () => {
-    const { state } = useAuthContext();
-    const { articleDetails, handleValueChange, uploadImage, changeRoute, togglePublishing,isPublishing,
+  
+    const { articleDetails, handleValueChange, uploadImage, changeRoute, togglePublishing,isPublishing,isDiasbled,
         isUnsplashVisible, toggleUnsplash, unsplashSearch, isvisible, toggleVisible, removeTag, addTag,
         getUnsplashTerm, insertMarkdown, getUnSplashUrl, updateArticleInFirebase } = useEditor()
 
-    useEffect(() => {
-        if (state?.user === null || state?.user?.uid === "") {
-            router.push('/');
-        }
-    }, [state?.user]);
+   
     return (
-        <main>
-            <EditorHeader
-                changeRoute={changeRoute}
-                isvisible={isvisible}
-                handleVisible={toggleVisible}
-                togglePublishing={togglePublishing}
-            />
-            <Editor
-                isvisible={isvisible}
-                handleVisible={toggleVisible}
-                articleDetails={articleDetails}
-                uploadImage={uploadImage}
-                isUnsplashVisible={isUnsplashVisible}
-                toggleUnsplash={toggleUnsplash}
-                unsplashSearch={unsplashSearch}
-                getUnsplashTerm={getUnsplashTerm}
-                handleValueChange={handleValueChange}
-                insertMarkdown={insertMarkdown}
-                getUnSplashUrl={getUnSplashUrl}
-                togglePublishing={togglePublishing}
-                removeTag={removeTag}
-                isPublishing={isPublishing}
-                addTag={addTag}
-                publishArticleInFirebase={updateArticleInFirebase}
-            />
-        </main>
+        <>
+        <Head>
+                <title>Edit on chatter</title>
+                <meta charSet="UTF-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                <meta http-equiv="X-UA-Compatible" content="IE=7" />
+                <meta name="description" content={`Editing "${articleDetails.title}"`} />
+        </Head>
+            <main>
+                <EditorHeader
+                    changeRoute={changeRoute}
+                    isvisible={isvisible}
+                    handleVisible={toggleVisible}
+                    togglePublishing={togglePublishing}
+                />
+                <Editor
+                    isvisible={isvisible}
+                    handleVisible={toggleVisible}
+                    articleDetails={articleDetails}
+                    uploadImage={uploadImage}
+                    isUnsplashVisible={isUnsplashVisible}
+                    toggleUnsplash={toggleUnsplash}
+                    unsplashSearch={unsplashSearch}
+                    getUnsplashTerm={getUnsplashTerm}
+                    handleValueChange={handleValueChange}
+                    insertMarkdown={insertMarkdown}
+                    getUnSplashUrl={getUnSplashUrl}
+                    togglePublishing={togglePublishing}
+                    removeTag={removeTag}
+                    isPublishing={isPublishing}
+                    addTag={addTag}
+                    publishArticleInFirebase={updateArticleInFirebase}
+                    isDiasbled={isDiasbled}
+                />
+            </main>
+        </>
+      
     );
 };
 export default MarkdownEditor;

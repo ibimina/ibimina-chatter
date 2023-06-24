@@ -3,6 +3,7 @@ import styles from '../styles/index.module.css';
 import {useState } from 'react';
 import { useGoogleSignin, useGitHubSignin, useLogin } from '@/hooks';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 
 
 export default function Home() {
@@ -50,12 +51,19 @@ const router = useRouter()
 
 	return (
 		<>
+			<Head>
+				<title>Log in on chatter</title>
+				<meta charSet="UTF-8" />
+				<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+				<meta http-equiv="X-UA-Compatible" content="IE=7" />
+				<meta name="description" content="Log in to your account" />
+			</Head>
 			<main className={`lg:flex lg:flex-row-reverse`}>
-				<section className={`hidden bg-slate-300 lg:w-full  lg:block lg:h-screen lg:basis-2/5 `}></section>
-				<section className={`basis-3/5 p-8 pt-3`}>
-					<h1 className={`text-3xl font-bold underline`}>Chatter</h1>
+				<section className={`hidden bg-slate-300 lg:w-full  lg:block lg:min-h-screen lg:basis-2/5 `}></section>
+				<section className={`basis-3/5`}>
+					<h1 className={`text-3xl font-bold underline p-8 pt-3`}>Chatter</h1>
 					<div
-						className={`lg:w-3/5 lg:m-auto lg:mt-7 flex flex-col justify-center ${styles.loginCard}`}>
+						className={`lg:w-3/5 lg:m-auto lg:mt-7 pb-2 flex flex-col justify-center ${styles.loginCard}`}>
 						<div className={`mb-8`}>
 							<p className={`font-semibold text-3xl mb-2`}>Welcome back</p>
 							<p className={`text-base  text-slate-400`}>
@@ -103,7 +111,7 @@ const router = useRouter()
 								<Link href='signup'>Create one</Link>{' '}
 							</p>
 						</form>
-						<p className={`mb-10`}>or continue with ______________</p>
+						<p className={`mb-7`}>or continue with ______________</p>
 						<div className={`flex items-center justify-center gap-4`}>
 							<button
 								onClick={handleGoogleLogin}

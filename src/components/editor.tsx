@@ -28,9 +28,10 @@ interface NewType {
     togglePublishing: (e: React.MouseEvent) => void;
     addTag: (e: React.FormEvent) => void;
     removeTag: (tag: string) => void;
+    isDiasbled: boolean;
 }
 
-function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,
+function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,isDiasbled,
     toggleUnsplash, getUnsplashTerm, removeTag, isPublishing, togglePublishing,
     articleDetails, handleValueChange, insertMarkdown, getUnSplashUrl, handleVisible, publishArticleInFirebase, addTag }: NewType) {
 
@@ -48,10 +49,12 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,
         setShowEmojiPicker(false);
         insertMarkdown(`${emoji.emoji} `);
     };
-    const { fetchedData, getData } = useFetch(`https://api.unsplash.com/search/photos?query=${unsplashSearch}&client_id=${process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY}&page=${page}`)
+
+    const { fetchedData,getSearchData } = useFetch(unsplashSearch,page)
     const getPicturesFromUnsplash = async (e: React.FormEvent) => {
         e.preventDefault();
-        getData()
+        setPage(1)
+        getSearchData()
     };
     const increasePage = () => {
         setPage(page + 1)
@@ -59,10 +62,9 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,
     const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
         const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
         if (scrollHeight - scrollTop === clientHeight) {
-            increasePage()
+            setPage((page)=> page + 1)
         }
     }
-
 
     useEffect(() => {
         if (router.pathname.includes("/edit") && state?.user?.uid) {
@@ -71,7 +73,7 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,
     }, [router.pathname, state?.user?.uid])
     return (
         <>
-            <main className={`lg:grid lg:grid-cols-9 gap-6 px-4  ${styles.editorGrid}`}>
+            <main className={`lg:grid lg:grid-cols-9 gap-6 px-4 md:px-8 ${styles.editorGrid}`}>
                 <ArticleSide isvisible={isvisible} handleVisible={handleVisible} />
                 <section className={`col-start-3  ${styles.editSection}`} data-shrink={isvisible}>
                     {
@@ -82,7 +84,7 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,
                             </div>
                             : <button className={`mb-3 font-medium`}>Add cover image</button>
                     }
-                    <div className={`px-3 md:px-5 lg:px-0`}>
+                    <div>
                         <div className={`relative`}>
                             {hide && <div className={`flex items-center mb-1 gap-2`}>
                                 <label className={`${styles.fileInput}`}>
@@ -90,20 +92,20 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,
                                     <span>upload image</span>
                                 </label>
                                 <button onClick={toggleUnsplash} className={`${styles.unsplash}`} >Unsplash</button>
-                                <div data-visible={isUnsplashVisible} className={`${styles.unsplashDropdown}`} onScroll={onScroll}>
-                                    <form onSubmit={getPicturesFromUnsplash}>
+                                <div data-visible={isUnsplashVisible} className={`${styles.unsplashDropdown} bg-gray-100 mt-3`} onScroll={onScroll}>
+                                    <form onSubmit={getPicturesFromUnsplash} className="p-2">
                                         <input value={unsplashSearch} onChange={getUnsplashTerm} type="text"
-                                            placeholder='Search Unsplash Image' name="" className={`block w-full`} />
+                                            placeholder='Search Unsplash Image' className={`block w-full border-2 px-2 py-1 border-violet-200 rounded-lg`} />
                                     </form>
-                                    <div className={`grid grid-cols-2  ${styles.pictures}`}>
+                                    <div className={`grid grid-cols-2 bg-gray-200`}>
                                         {fetchedData &&
                                             fetchedData.map((item, index) => {
                                                 return <button key={index} className={`relative ${styles.imageContainer}`}
-                                                    onClick={() => getUnSplashUrl(item.urls.regular)}>
+                                                    onClick={() => getUnSplashUrl(item?.urls?.regular)}>
                                                     <Image src={item?.urls?.full} fill sizes="(max-width: 768px) 100vw,
                                                 (max-width: 1200px) 50vw,  33vw" className={`${styles.unsplashImage}`}
                                                         alt={item.alt_description} />
-                                                    <span className={`absolute bottom-2 text-slate-200 `}>{item.user.name}</span>
+                                                    <span className={`absolute bottom-2 text-slate-200 `}>{item?.user?.name}</span>
                                                 </button>
                                             })
                                         }
@@ -114,18 +116,18 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,
                         {
                             hide ?
                                 <textarea placeholder='Title' name="title" rows={1}
-                                    value={articleDetails.title} className={`block mb-2 w-full p-2`}
+                                    value={articleDetails?.title} className={`block mb-2 w-full p-2`}
                                     onChange={handleValueChange} /> :
-                                <h1 className={`font-bold text-3xl mb-4`}>{articleDetails.title}</h1>
+                                <h1 className={`font-bold text-3xl mb-4`}>{articleDetails?.title}</h1>
 
                         }
                         {
                             hide ?
                                 <textarea placeholder='subtitle' name="subtitle" rows={1}
-                                    value={articleDetails.subtitle} className={`block mb-2 w-full p-2`}
+                                    value={articleDetails?.subtitle} className={`block mb-2 w-full p-2`}
                                     onChange={handleValueChange}
                                 />
-                                : <h2 className={`font-medium text-2xl mb-4`}>{articleDetails.subtitle}</h2>
+                                : <h2 className={`font-medium text-2xl mb-4`}>{articleDetails?.subtitle}</h2>
                         }
 
                         {hide && <Buttons
@@ -143,7 +145,7 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,
                                         name="article"
                                         id="markdownTextarea"
                                         rows={10}
-                                        value={articleDetails.article}
+                                        value={articleDetails?.article}
                                         onChange={(e) => handleValueChange(e)}
                                         placeholder="Enter Markdown text"
                                         className={` ${styles.textarea} w-full p-3 border-2 border-solid border-current`}
@@ -166,7 +168,7 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,
                                     className={` prose prose-headings:m-0 prose-p:mt-0 prose-p:mb-1 prose-li:m-0 prose-li:mb-1 prose-ol:m-0 prose-ul:m-0 prose-ul:leading-6
                             hr-black prose-hr:border-solid prose-hr:border prose-hr:border-black
                              marker:text-gray-400 ${styles['markdownPreview']}`} >
-                                    {articleDetails.article}
+                                    {articleDetails?.article}
                                 </ReactMarkdown>
                             </div>
                         </div>
@@ -177,10 +179,10 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,
             {
                 isPublishing &&
                 <div className={`fixed top-0 left-0 w-full h-full bg-slate-900 bg-opacity-50`}>
-                    <div className={`bg-white p-4 w-5/12 ml-auto h-full relative`}>
+                    <div className={`bg-white p-4 w-full md:w-9/12  ml-auto h-full relative`}>
                         <div className="flex items-center justify-between mb-6">
                             <button className={`mb-2`} onClick={togglePublishing}>Close</button>
-                            <button className="p-2 rounded-2xl text-white bg-violet-900" onClick={publishArticleInFirebase}>Publish now</button>
+                                <button className={`p-2 rounded-2xl ${isDiasbled ? "bg-violet-200 text-black" : "text-white bg-violet-900"}`} disabled={isDiasbled} onClick={publishArticleInFirebase}> {`${isDiasbled ? "Publishing" :"Publish now"}`}</button>
                         </div>
                         <p className="mb-8">Add or change topics (up to 5) so readers know what your story is about</p>
 
@@ -189,7 +191,7 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,
                             className="flex items-center mb-2 gap-2 w-full"
                         >
                             <input type="text" name="tags" className="block p-2 border-2 w-9/12 border-gray border-solid rounded-md" />
-                            <button type="submit" className="bg-violet-500 cursor-pointer text-gray-100 p-2 rounded-md">Add topic</button>
+                            <button type="submit" className="bg-violet-500 cursor-pointer text-gray-100 p-2 rounded-md">Add</button>
                         </form>
                         <p className="mb-8">Topics are optional, but they help surface your story to the right readers</p>
 
@@ -206,7 +208,6 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,
                     </div>
                 </div>
             }
-
         </>);
 }
 

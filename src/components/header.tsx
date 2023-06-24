@@ -5,20 +5,32 @@ import styles from '@/styles/chatter.module.css';
 import useLogOut from '@/hooks/useLogout';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import { useNotification } from '@/hooks';
+
 function Header({ handleNav }: { handleNav: () => void }) {
     const [isClicked, setIsClicked] = useState(false)
     const router = useRouter();
     const { state } = useAuthContext();
     const author = state?.user?.uid
     const { logoutUser } = useLogOut();
-
+    const {notifications} = useNotification()
+    const getSearchAndRedirect = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const input = e.currentTarget.childNodes[0] as HTMLInputElement
+        const search = input.value
+        router.push(`/search?q=${search}`)      
+    }
+    const handleLogout = async () => {
+        await logoutUser()
+        router.push('/')
+    }
     return (
         <>
             <header
                 className={`grid grid-cols-3 lg:grid-cols-7 items-center py-4 px-4`}
             >
                 <div className={`flex items-center gap-3 col-span-2 md:col-span-1`}>
-                    {router.pathname !== '/settings' &&
+                    {router.pathname !== '/settings'  &&
                         <button
                             onClick={handleNav}
                             className={`lg:hidden ${styles.menu}`}
@@ -29,6 +41,7 @@ function Header({ handleNav }: { handleNav: () => void }) {
                 </div>
                 {router.pathname !== '/settings' &&
                     <form
+                        onSubmit={getSearchAndRedirect}
                         className={`col-span-4 row-start-2 mt-5 lg:mt-0 lg:col-span-3 lg:row-start-1 lg:col-start-3`}
                     >
                         <input
@@ -55,6 +68,13 @@ function Header({ handleNav }: { handleNav: () => void }) {
                             </Link>
                         </li>
                         <li >
+                            {/* signify user of unread notifications if any notifications has a read value of false */}
+                          
+
+                            <Link href='/notifications' className='relative'>
+                                {notifications?.some((notification: { read: boolean }) => notification.read === false) &&
+                                    <span className={`absolute top-1 right-1 bg-red-500 rounded-full h-2 w-2`}></span>
+                                }
                             <Image
                                 src='/images/icons8-notifications-78.png'
                                 height={44}
@@ -62,6 +82,7 @@ function Header({ handleNav }: { handleNav: () => void }) {
                                 alt='notification'
                             />
                             <span className={`hidden`}>notification</span>
+                            </Link>
                         </li>
                         <li
                             className='cursor-pointer'
@@ -90,7 +111,7 @@ function Header({ handleNav }: { handleNav: () => void }) {
                 </Link>
                 <Link href='/chatter' className='block mb-2 cursor-pointer '>Feeds</Link>
                 <Link href='/settings' className='block mb-2 cursor-pointer '>Account setting</Link>
-                <button onClick={logoutUser} className='block'>Logout</button>
+                <button onClick={handleLogout} className='block'>Logout</button>
             </div>
         </>
     );

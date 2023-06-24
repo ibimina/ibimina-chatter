@@ -1,26 +1,42 @@
+import Head from 'next/head';
 import Link from 'next/link';
 import styles from '../styles/signup.module.css';
 import useSignUp from '@/hooks/useSignUp';
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import { useAuthContext } from '@/store/store';
-import Cookies from 'js-cookie';
+import { useState } from 'react';
+
 
 function SignUp() {
 	const [emailExists, setEmailExists] = useState<boolean | null>(null);
 	const [isPasswordShort, setIsPasswordShort] = useState<boolean | null>(null);
 	const { createUser, error, isLoading } = useSignUp();
-	const { state } = useAuthContext();
-	const cookie =Cookies.get("loggedin")
 
-	const router = useRouter();
-	const { user } = state;
 	const [userDetails, setUserDetails] = useState({
 		username: '',
 		email: '',
 		password: '',
-		tags: [],
+		topics: [],
 	});
+	interface FormErrors {
+		email?: string;
+		name?: string;
+		password?: string;
+	}
+	const [formErrors, setFormErrors] = useState<FormErrors[]>([]) // ["Invalid email", "Username should be at least 3 characters"
+	const validateForm = () => {
+		let validEmailpattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+		if(!validEmailpattern.test(userDetails.email)){
+		setFormErrors([...formErrors, {email:"Invalid email"}])	
+		}if(userDetails.username.length < 3){
+		setFormErrors([...formErrors, {name:"Username should be at least 3 characters"}])
+		}if(userDetails.password.length < 6){
+		setFormErrors([...formErrors, {password:"Password should be at least 6 characters"}])	
+		}
+		if(formErrors.length > 0){
+			return false
+		}else{
+			return true
+		}
+	};
 
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,6 +49,10 @@ function SignUp() {
 
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
+		if(!validateForm()){
+			console.log("form is not valid", formErrors)
+			return
+		}
 		await createUser(userDetails);
 		if (
 			error === 'FirebaseError: Firebase: Error (auth/email-already-in-use)'
@@ -45,13 +65,16 @@ function SignUp() {
 			setIsPasswordShort(true);
 		}
 	};
-	useEffect(() => {
-		if (state?.user?.uid?.length > 2 && cookie==="true") {
-			router.push("/topics")
-		}
-	}, [cookie, router, state?.user?.uid?.length, user])
+
 	return (
 		<>
+			<Head>
+				<title>Sign up on chatter</title>
+				<meta charSet="UTF-8" />
+				<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+				<meta http-equiv="X-UA-Compatible" content="IE=7" />
+				<meta name="description" content="Create a account on chatter" />
+			</Head>
 			<main className={`lg:flex lg:flex-row-reverse`}>
 				<section
 					className={`hidden bg-slate-300 lg:w-full  lg:block lg:h-screen lg:basis-2/5 `}
@@ -80,6 +103,13 @@ function SignUp() {
 									className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
 									onChange={handleInputChange}
 								/>
+								{
+									formErrors.map((error, index) => {
+										if(error.name){
+											return <p key={index} className={`text-red-500 text-sm`}>{error.name}</p>
+										}
+									})
+								}
 							</label>
 							<label className={`block mb-4`}>
 								<input
@@ -90,11 +120,25 @@ function SignUp() {
 									required
 									className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
 								/>
+								{
+									formErrors.map((error, index) => {
+										if(error.email){
+											return <p key={index} className={`text-red-500 text-sm`}>{error.email}</p>
+										}
+									})
+								}
 								{emailExists && (
 									<p className={`text-red-500 text-sm`}>Email already exists</p>
 								)}
 							</label>
 							<label className={`block mb-3`}>
+								{
+									formErrors.map((error, index) => {
+										if(error.password){
+											return <p key={index} className={`text-red-500 text-sm`}>{error.password}</p>
+										}
+									})
+								}
 								{isPasswordShort && (
 									<p className={`text-red-500 text-sm`}>
 										Password should be at least 6 characters

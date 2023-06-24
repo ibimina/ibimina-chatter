@@ -10,7 +10,7 @@ export const InitialState = {
         email: '',
         displayName: '',
         photoURL: '',
-        topics: [],
+        topics: [] as string[],
         profile_tagline: "",
         location: "",
         bio: "",
@@ -121,7 +121,20 @@ export const authReducer = (
             user: { ...state?.user, topics: [...state?.user?.topics,action.payload] },
         };
     }
-
+    if (action.type === "REMOVETAG") {
+        return {
+            ...state,
+            authState: true,
+            user: { ...state?.user, topics: state?.user?.topics.filter((item) => item !== action.payload) },
+        };
+    }
+    if (action.type === "PHOTO") {
+        return {
+            ...state,
+            authState: true,
+            user: { ...state?.user, photoURL:  action.payload },
+        };
+    }
 
     return state;
 };

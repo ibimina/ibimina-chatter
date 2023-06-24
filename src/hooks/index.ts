@@ -7,4 +7,6 @@ export {default as useLogout} from './useLogout';
 export {default as useSignUp} from './useSignUp';
 export {default as useGitHubSignin} from './useGithubSignin';
 export {default as useGoogleSignin} from './useGoogleSignin';
-export {default as useInteraction} from "./useInteraction"
+export {default as useInteraction} from "./useInteraction";
+export {default as useFeeds} from "./useFeeds";
+export {default as useNotification} from "./useNotification";
