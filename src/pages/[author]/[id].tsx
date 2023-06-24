@@ -84,7 +84,7 @@ export default function SingleArticle() {
                     name: state?.user?.displayName,
                     image: state?.user?.photoURL,
                     comment: comment,
-                    timestamp: JSON.stringify( new Date())
+                    timestamp: new Date().toISOString()
                 }]
         }, { merge: true });
         await addNotification('commented', article)
