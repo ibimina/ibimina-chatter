@@ -18,6 +18,10 @@ function Header({ handleNav }: { handleNav: () => void }) {
         const search = input.value
         router.push(`/search?q=${search}`)      
     }
+    const handleLogout = async () => {
+        await logoutUser()
+        router.push('/')
+    }
     return (
         <>
             <header
@@ -99,7 +103,7 @@ function Header({ handleNav }: { handleNav: () => void }) {
                 </Link>
                 <Link href='/chatter' className='block mb-2 cursor-pointer '>Feeds</Link>
                 <Link href='/settings' className='block mb-2 cursor-pointer '>Account setting</Link>
-                <button onClick={logoutUser} className='block'>Logout</button>
+                <button onClick={handleLogout} className='block'>Logout</button>
             </div>
         </>
     );
