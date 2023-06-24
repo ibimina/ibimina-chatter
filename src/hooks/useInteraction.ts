@@ -63,7 +63,7 @@ function useInteraction() {
             if (like?.uid === state?.user?.uid) {
                 return {
                     ...like,
-                    timestamp: [...like?.timestamp, JSON.stringify(new Date())]
+                    timestamp: [...like?.timestamp,new Date().toISOString()]
                 }
             } else {
                 return like
@@ -103,7 +103,7 @@ function useInteraction() {
                         event: event,
                         articleId: article?.id,
                         articleTitle: article?.title,
-                        timestamp: JSON.stringify(new Date())
+                        timestamp: new Date().toISOString()
                     }]
             }, { merge: true });
         } else {
@@ -116,6 +116,7 @@ function useInteraction() {
                         event: event,
                         articleId: article?.id,
                         articleTitle: article?.title,
+                        timestamp: new Date().toISOString()
                     }]
             }, { merge: true });
         }
