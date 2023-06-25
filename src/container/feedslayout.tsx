@@ -68,8 +68,8 @@ function FeedLayout({ children }: { children: React.ReactNode }) {
 
                                 </>
                                 : <>
-                                    <li className={`mb-3 font-medium`}>
-                                        <Link href='/chatter' className={`flex items-center gap-2`}>
+                                    <li className={`mb-3 font-medium hover:scale-105`}>
+                                        <Link href='/chatter' className={`flex items-center gap-2 hover:text-blue-500`}>
                                             <Image
                                                 src='/images/icons8-home-48.png'
                                                 height={44}
@@ -79,8 +79,8 @@ function FeedLayout({ children }: { children: React.ReactNode }) {
                                             Home
                                         </Link>
                                     </li>
-                                    <li className={`mb-3 font-medium`}>
-                                        <Link href='/explore' className={`flex items-center gap-2`}>
+                                    <li className={`mb-3 font-medium hover:scale-105`}>
+                                        <Link href='/explore' className={`flex items-center gap-2 hover:text-blue-500`}>
                                             <Image
                                                 src='/images/icons8-explore-48.png'
                                                 height={44}
@@ -90,8 +90,8 @@ function FeedLayout({ children }: { children: React.ReactNode }) {
                                             Explore
                                         </Link>
                                     </li>
-                                    <li className={`mb-3 font-medium`}>
-                                        <Link href='/post' className={`flex items-center gap-2`}>
+                                    <li className={`mb-3 font-medium hover:scale-105`}>
+                                        <Link href='/post' className={`flex items-center gap-2 hover:text-blue-500`}>
                                             <Image
                                                 src='/images/icons8-article.svg'
                                                 height={44}
@@ -101,8 +101,8 @@ function FeedLayout({ children }: { children: React.ReactNode }) {
                                             My article
                                         </Link>
                                     </li>
-                                    <li className={`flex items-center gap-1 mb-3 font-medium`}>
-                                        <Link href='/post' className={`flex items-center gap-2`}>
+                                    <li className={`flex items-center gap-1 mb-3 font-medium hover:scale-105`}>
+                                        <Link href='/post' className={`flex items-center gap-2 hover:text-blue-500`}>
                                             <Image
                                                 src='/images/icons8-article-50.png'
                                                 height={34}
@@ -112,8 +112,8 @@ function FeedLayout({ children }: { children: React.ReactNode }) {
                                             Drafts
                                         </Link>
                                     </li>
-                                    <li className={`mb-3 font-medium`}>
-                                        <Link href='/bookmarks' className={`flex items-center gap-2`}>
+                                    <li className={`mb-3 font-medium hover:scale-105`}>
+                                        <Link href='/bookmarks' className={`flex items-center gap-2 hover:text-blue-500`}>
                                             <Image
                                                 src='/images/icons8-bookmark-64.png'
                                                 height={24}
