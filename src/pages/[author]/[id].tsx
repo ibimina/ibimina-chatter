@@ -21,14 +21,13 @@ import { formatDistanceStrict } from "date-fns";
 import { EmailShareButton, FacebookShareButton, LinkedinShareButton, TelegramShareButton, TwitterShareButton, WhatsappShareButton, } from "react-share";
 import Head from "next/head";
 import FeedLayout from "@/container/feedslayout";
+import useTime from "@/hooks/useTime";
 
 
 export default function SingleArticle() {
     const { state } = useAuthContext();
     const router = useRouter();
     const { id, author } = router.query;
-    const { title } = router.query
-  
     const [article, setArticle] = useState<ArticleProps>({} as ArticleProps);
     const [isliked, setIsLiked] = useState(false)
     const [isbookmarked, setIsBookmarked] = useState(false)
@@ -36,6 +35,7 @@ export default function SingleArticle() {
     const [shareUrl, setShareUrl] = useState('');
     const [isShared, setIsShared] = useState(false);
     const { snap } = useCollectionSnap('articles', "author.uid", `${author}`);
+    const { published } = useTime(article?.timestamp)
     useEffect(() => {
         const getArticle = async () => {
             const doc = snap?.find((article: ArticleProps) => {
@@ -133,10 +133,10 @@ export default function SingleArticle() {
                         </div>
                     }
 
-                    <h1 className={`text-2xl text-center lg:text-left mb-2 font-bold`}>{article?.title}</h1>
-                    <h1 className={`text-xl text-center lg:text-left mb-6 font-medium`}>{article?.subtitle}</h1>
-                    <Link href={`/${encodeURIComponent(article?.author?.uid)}`} className={`flex flex-col lg:flex-row lg:items-center lg:gap-2 mb-8`}>
-                        <div className="flex items-center gap-1">
+                    <h1 className={`text-2xl text-center  mb-2 font-bold`}>{article?.title}</h1>
+                    <p className={`text-xl text-center  mb-6 font-medium`}>{article?.subtitle}</p>
+                    <Link href={`/${encodeURIComponent(article?.author?.uid)}`} className={`flex flex-col md:flex-row items-center md:justify-center md:gap-4 mb-8`}>
+                        <div className="flex items-center justify-center gap-1 mb-2 md:mb-0">
                             {article?.author?.image?.length > 2 &&
                                 <Image className={`rounded-full`} src={article?.author?.image} width={30} height={30} alt="author avatar" />
 
@@ -144,16 +144,17 @@ export default function SingleArticle() {
                             {article?.author?.image === null &&
                                 <Image className={`rounded-full`} src={"/images/icons8-user-64.png"} width={30} height={30} alt="author avatar" />
                             }
-                            <span>{article?.author?.name}</span>
+                            
+                            <span className="capitalize">{article?.author?.name} </span>
+                           
                         </div>
                         {
                             article?.title?.length > 1 &&
-                            <div className="flex items-center gap-1">
-                                <span>{formatDistanceStrict(new Date(), new Date(article?.timestamp))} ago</span>
-                                <span>{article?.readingTime} min read</span>
+                            <div className="flex items-center justify-center gap-1">
+                                <span>{published}</span>
+                                <div className="flex items-center gap-2"><Image src='/images/icons8-read-30.png' width={24} height={24} alt="opened book" /> {article?.readingTime} min read</div>
                             </div>
                         }
-
                     </Link>
                     <ReactMarkdown remarkPlugins={[remarkGfm]}
                         components={{ a: LinkRenderer }}
@@ -165,7 +166,7 @@ export default function SingleArticle() {
                     <div className='relative flex items-center gap-2 justify-center mt-20 mb-10'>
                         <button
                             onClick={() => increaseLike(article?.id!, article?.likes!, article)}
-                            className={`flex items-center gap-1`}>
+                            className={`flex items-center gap-1`} title="likes">
                             {
                                 isliked ?
                                     <>
@@ -180,7 +181,7 @@ export default function SingleArticle() {
                         </button>
                         <button
                             onClick={() => addBookmark(article?.id!, article?.bookmarks)}
-                            className='flex items-center gap-1'>
+                            className='flex items-center gap-1' title="bookmarks">
                             {
                                 isbookmarked ?
                                     <>
@@ -194,15 +195,15 @@ export default function SingleArticle() {
                                     </>
                             }
                         </button>
-                        <button className='flex items-center gap-1'>
+                        <button className='flex items-center gap-1' title="views">
                             <Image src="/images/icons8-chart-24.png" height={18} width={18} alt="views chart" />
                             {article?.views}
                         </button>
-                        <button className='flex items-center gap-1'>
+                        <button className='flex items-center gap-1' title="comments">
                             <Image src="/images/icons8-comment-24.png" height={24} width={24} alt="comments" />
                             {article?.comments?.length}
                         </button>
-                        <button onClick={() =>
+                        <button title="share" onClick={() =>
                             setIsShared(!isShared)} className={`flex items-center gap-1 ${isShared ? "text-violet-500" : ""}`
                             }>
                             <Image src="/images/icons8-share.svg" height={24} width={24} alt="share" />

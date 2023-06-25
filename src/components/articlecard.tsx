@@ -6,29 +6,14 @@ import { ArticleProps, UserBookmarkProps } from "@/types";
 import styles from '@/styles/chatter.module.css';
 import { useEffect, useState } from "react";
 import { useAuthContext } from "@/store/store";
-import { formatDistanceStrict } from "date-fns";
+import { useTime } from "@/hooks";
 
 function ArticleCard({ feed, update }: { feed: ArticleProps, update: (id: string, bookmark: UserBookmarkProps[]) => void }) {
     const [isliked, setIsLiked] = useState(false)
     const [isbookmarked, setIsBookmarked] = useState(false)
 
     const { state } = useAuthContext()
-    const [published, setPublished] = useState<string | null>(null)
-
-    useEffect(() => {
-        const currentDate = new Date();
-        const articleDate = new Date(feed.timestamp);
-        const timeDifference = currentDate.getTime() - articleDate.getTime();
-        if (timeDifference > 86400000) {
-            const formattedDate = articleDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-            setPublished(formattedDate)
-        } else {
-            const formattedDate = formatDistanceStrict(new Date(), new Date(feed?.timestamp))
-            setPublished(formattedDate)
-        }
-    }, [feed?.timestamp])
-
-
+   const {published} = useTime(feed?.timestamp)
 
     useEffect(() => {
         const like = feed.likes?.find((like) => like?.uid === state?.user?.uid)
@@ -56,7 +41,7 @@ function ArticleCard({ feed, update }: { feed: ArticleProps, update: (id: string
                         feed?.author?.image &&
                         <Image className={`rounded-full`} src={feed?.author?.image} width={30} height={30} alt="author avatar" />
                     }
-                    <span>{feed?.author?.name}</span>
+                    <span className="capitalize font-medium text-blue-500">{feed?.author?.name}</span>
                 </Link>
                 {
                     feed?.title?.length > 1 &&
