@@ -9,84 +9,91 @@ function useInteraction() {
 
 
     const addBookmark = async (id: string, bookmarks: UserBookmarkProps[]) => {
-        if (state?.user === null) {
+        if (state?.user?.uid === '' || state?.user === null ) {
             return alert("Please login to bookmark this article")
-        }
-        const docRef = doc(firebaseStore, 'articles', id);
-        const bookmarkRef = doc(firebaseStore, 'bookmarks', state?.user?.uid);
-        const hasBookmarked = bookmarks?.find((bookmark: UserBookmarkProps) => {
-            return bookmark?.user_uid === state?.user?.uid
-        })
-        const bookmarkSnap = await getDoc(bookmarkRef)
-        const userBookmarks = bookmarkSnap.data()?.bookmarks
+        }else{
+            const docRef = doc(firebaseStore, 'articles', id);
+            const bookmarkRef = doc(firebaseStore, 'bookmarks', state?.user?.uid);
+            const hasBookmarked = bookmarks?.find((bookmark: UserBookmarkProps) => {
+                return bookmark?.user_uid === state?.user?.uid
+            })
+            const bookmarkSnap = await getDoc(bookmarkRef)
+            const userBookmarks = bookmarkSnap.data()?.bookmarks
 
-        if (hasBookmarked === undefined) {
-            await setDoc(docRef, {
-                bookmarks: [
-                    ...bookmarks,
-                    {
-                        user_uid: state?.user?.uid,
-                    }]
-            }, { merge: true });
-            if (userBookmarks === undefined) {
-                await setDoc(bookmarkRef, { bookmarks: [{ article_uid: id }] })
+            if (hasBookmarked === undefined) {
+                await setDoc(docRef, {
+                    bookmarks: [
+                        ...bookmarks,
+                        {
+                            user_uid: state?.user?.uid,
+                        }]
+                }, { merge: true });
+                if (userBookmarks === undefined) {
+                    await setDoc(bookmarkRef, { bookmarks: [{ article_uid: id }] })
+                } else {
+                    await setDoc(bookmarkRef, {
+                        bookmarks: [...userBookmarks, {
+                            article_uid: id,
+                        }]
+                    }, { merge: true });
+                }
             } else {
+                await setDoc(docRef, {
+                    bookmarks: bookmarks?.filter((bookmark: UserBookmarkProps) => {
+                        return bookmark?.user_uid !== state?.user?.uid
+                    })
+
+                }, { merge: true });
+
                 await setDoc(bookmarkRef, {
-                    bookmarks: [...userBookmarks, {
-                        article_uid: id,
-                    }]
+                    bookmarks: userBookmarks?.filter((bookmark: BookmarkProps) => {
+                        return bookmark?.article_uid !== id
+                    })
                 }, { merge: true });
             }
-        } else {
-            await setDoc(docRef, {
-                bookmarks: bookmarks?.filter((bookmark: UserBookmarkProps) => {
-                    return bookmark?.user_uid !== state?.user?.uid
-                })
-
-            }, { merge: true });
-
-            await setDoc(bookmarkRef, {
-                bookmarks: userBookmarks?.filter((bookmark: BookmarkProps) => {
-                    return bookmark?.article_uid !== id
-                })
-            }, { merge: true });
         }
+       
     }
 
     const increaseLike = async (id: string, likes: LikeProps[], article: ArticleProps) => {
-        const hasLiked = likes.find((like: LikeProps) => {
-            return like?.uid === state?.user?.uid
-        })
-        const docRef = doc(firebaseStore, 'articles', id);
-        const docSnap = await getDoc(docRef);
-        const updateLike = likes?.map((like: LikeProps) => {
-            if (like?.uid === state?.user?.uid) {
-                return {
-                    ...like,
-                    timestamp: [...like?.timestamp,new Date().toISOString()]
+        if (state?.user?.uid === '' || state?.user === null) {
+            return alert("Please login to like this article")
+        }else{
+            const hasLiked = likes.find((like: LikeProps) => {
+                return like?.uid === state?.user?.uid
+            })
+            const docRef = doc(firebaseStore, 'articles', id);
+            const docSnap = await getDoc(docRef);
+            const updateLike = likes?.map((like: LikeProps) => {
+                if (like?.uid === state?.user?.uid) {
+                    return {
+                        ...like,
+                        timestamp: [...like?.timestamp, new Date().toISOString()]
+                    }
+                } else {
+                    return like
                 }
-            } else {
-                return like
+            })
+            let countLikes = 0
+            updateLike?.forEach((like: LikeProps) => {
+                countLikes += like?.timestamp?.length
+            })
+            if (hasLiked) {
+                await setDoc(docRef, { likes: updateLike, likesCount: countLikes }, { merge: true });
+            } else if (likes.length === 0 || hasLiked === undefined) {
+                await setDoc(docRef, {
+                    likes: [...likes, {
+                        uid: state?.user?.uid,
+                        name: state?.user?.displayName,
+                        image: state?.user?.photoURL,
+                        timestamp: [JSON.stringify(new Date())]
+                    }],
+                    likesCount: docSnap?.data()?.likesCount + 1
+                }, { merge: true });
+                await addNotification('liked', article)
             }
-        })
-        let countLikes = 0
-        updateLike?.forEach((like: LikeProps) => {
-            countLikes += like?.timestamp?.length
-        })
-        if (hasLiked) {
-            await setDoc(docRef, { likes: updateLike, likesCount: countLikes }, { merge: true });
-        } else if (likes.length === 0 || hasLiked === undefined) {
-            await setDoc(docRef, {
-                likes: [...likes, {
-                    uid: state?.user?.uid,
-                    name: state?.user?.displayName,
-                    image: state?.user?.photoURL,
-                    timestamp: [JSON.stringify(new Date())]
-                }],
-                likesCount: docSnap?.data()?.likesCount + 1
-            }, { merge: true });
-            await addNotification('liked', article)
         }
+        
     }
 
     const addNotification = async (event: string, article: ArticleProps) => {
