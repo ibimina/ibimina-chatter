@@ -237,7 +237,7 @@ export default function SingleArticle() {
                                 <Image src="/images/icons8-linkedin.svg" height={24} width={24} alt="linkedin" />
                                 Share on linkedin
                             </LinkedinShareButton>
-                            <WhatsappShareButton className="flex items-center gap-1" url={shareUrl} title={`${article?.title} by ${article?.author?.name} on  chatter`} >
+                            <WhatsappShareButton className="flex items-center gap-1" url={shareUrl} separator=":: " title={`${article?.title} by ${article?.author?.name} on  chatter`} >
                                 <Image src="/images/icons8-whatsapp.svg" height={24} width={24} alt="whatsapp" />
                                 Share on whatsapp
                             </WhatsappShareButton>
