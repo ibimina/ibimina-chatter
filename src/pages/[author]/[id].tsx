@@ -97,7 +97,6 @@ export default function SingleArticle() {
         <>
             <Head>
                 <title>{`${article?.title} by ${article?.author?.name} on chatter`}</title>
-                <meta name="description" content={article?.subtitle} />
                 <meta name="title" property="og:title" content={`${article?.title} by ${article?.author?.name} on chatter`} />
                 <meta name="image" property="og:image" content={article?.coverImageUrl} />
                 <meta name="description" property="og:description" content={article?.subtitle} />             
