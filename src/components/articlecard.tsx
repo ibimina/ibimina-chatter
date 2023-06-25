@@ -13,6 +13,23 @@ function ArticleCard({ feed, update }: { feed: ArticleProps, update: (id: string
     const [isbookmarked, setIsBookmarked] = useState(false)
 
     const { state } = useAuthContext()
+    const [published, setPublished] = useState<string | null>(null)
+
+    useEffect(() => {
+        const currentDate = new Date();
+        const articleDate = new Date(feed.timestamp);
+        const timeDifference = currentDate.getTime() - articleDate.getTime();
+        if (timeDifference > 86400000) {
+            const formattedDate = articleDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            setPublished(formattedDate)
+        } else {
+            const formattedDate = formatDistanceStrict(new Date(), new Date(feed?.timestamp))
+            setPublished(formattedDate)
+        }
+    }, [feed?.timestamp])
+
+
+
     useEffect(() => {
         const like = feed.likes?.find((like) => like?.uid === state?.user?.uid)
         const bookmark = feed?.bookmarks?.find((bookmark) => bookmark?.user_uid === state?.user?.uid)
@@ -28,11 +45,11 @@ function ArticleCard({ feed, update }: { feed: ArticleProps, update: (id: string
         }
     }, [feed, feed?.bookmarks, feed?.likes, state?.user?.uid])
     return (
-        <li className={`mb-8`}>
+        <li className={`px-5 border-gray-100 border-2 py-4 rounded-lg mb-3 `}>
             <div className="flex items-center gap-2 mb-2">
                 <Link href={`/${encodeURIComponent(feed?.author?.uid)}`} className={`flex items-center gap-1 `}>
                     {
-                        feed?.author?.image === null  &&
+                        feed?.author?.image === null &&
                         <Image className={`rounded-full`} src="/images/icons8-user.svg" width={30} height={30} alt="author avatar" />
                     }
                     {
@@ -44,20 +61,19 @@ function ArticleCard({ feed, update }: { feed: ArticleProps, update: (id: string
                 {
                     feed?.title?.length > 1 &&
                     <div className="flex items-center gap-1">
-                        <span>{formatDistanceStrict(new Date(), new Date(feed?.timestamp))} ago</span>
-                        <span>{feed?.readingTime} min read</span>
+                        <span>{published}</span>
                     </div>
                 }
             </div>
             <Link className={`grid grid-cols-5 items-center`} href={`/${encodeURIComponent(feed?.author?.uid)}/${encodeURIComponent(feed?.id!)}`}>
                 <div className={`col-span-5 lg:col-span-3 mb-2`}>
-                    <h1 className={`text-lg font-bold`}>{feed?.title}</h1>
-                    <p className={`text-sm`}>{feed?.subtitle}</p>
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}             
-                        className={` prose prose-headings:m-0 prose-p:m-0.6 
+                    <h1 className={`text-2xl font-bold mb-1`}>{feed?.title}</h1>
+                    <div className="flex items-center gap-2"><Image src='/images/icons8-read-30.png' width={24} height={24} alt="opened book" /> {feed?.readingTime} min read</div>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}
+                        className={` prose prose-headings:m-0 prose-p:m-0.6 pro prose-headings:text-lg
                             hr-black prose-hr:border-solid prose-hr:border prose-hr:border-black
                              marker:text-sky-400 ${styles['markdownPreview']}`} >
-                        {feed?.article?.slice(0, 100)}
+                        {feed?.article?.slice(0, 150)}
                     </ReactMarkdown>
                 </div>
                 {feed?.coverImageUrl?.length > 2 &&
@@ -67,7 +83,7 @@ function ArticleCard({ feed, update }: { feed: ArticleProps, update: (id: string
                     </div>
                 }
             </Link>
-           
+
             <div className='mt-3 flex items-center gap-2'>
                 <Link href={`/${encodeURIComponent(feed?.author?.uid)}/${encodeURIComponent(feed?.id!)}`}
                     className={`flex items-center gap-1`}>
@@ -89,8 +105,8 @@ function ArticleCard({ feed, update }: { feed: ArticleProps, update: (id: string
                     {
                         isbookmarked ?
                             <>
-                                <Image src='/images/icons8-isbookmark.png' height={24} width={24} alt="like" />
-                                <p className="text-red">    {feed?.bookmarks?.length}</p>
+                                <Image src='/images/icons8-isbookmark.png' className="brightness-150" height={24} width={24} alt="like" />
+                                <p className="text-red">  {feed?.bookmarks?.length}</p>
                             </>
                             : <>
                                 <Image src='/images/icons8-add-bookmark.svg' height={24} width={24} alt="bookmark" />

@@ -7,3 +7,4 @@ export {default as Editor} from './editor';
 export {default as ArticleCard} from './articlecard'
 export {default as LinkIcon} from './linkicon'
 export {default as NotificationCard} from './notificationcard'
+export {default as FallbackRender} from './fallback'

@@ -69,18 +69,18 @@ function SignUp() {
 	return (
 		<>
 			<Head>
-				<title>Sign up on chatter</title>
+				<title>Sign up on InkSpire</title>
 				<meta charSet="UTF-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 				<meta http-equiv="X-UA-Compatible" content="IE=7" />
-				<meta name="description" content="Create a account on chatter" />
+				<meta name="description" content="Create a account on InkSpire" />
 			</Head>
 			<main className={`lg:flex lg:flex-row-reverse`}>
 				<section
 					className={`hidden bg-slate-300 lg:w-full  lg:block lg:h-screen lg:basis-2/5 `}
 				></section>
 				<section className={`basis-3/5 p-8 pt-3`}>
-					<h1 className={`text-3xl font-bold underline`}>Chatter</h1>
+					<h1 className={`font-bold text-3xl font-serif text-transparent bg-clip-text bg-gradient-to-br  from-purple-700 to-blue-400 `}>InkSpire</h1>
 					<div
 						className={`lg:w-3/5 lg:m-auto  flex flex-col justify-center ${styles.signupCard}`}
 					>

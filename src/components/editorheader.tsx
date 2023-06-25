@@ -29,7 +29,7 @@ function EditorHeader({ togglePublishing, changeRoute, handleVisible }: NewType)
             <nav className={`col-start-3 lg:col-start-7 lg:col-end-10`}>
                 <ul className={`flex items-center gap-2 justify-end`}>
                     <li
-                        className={`relative rounded-3xl py-2 px-6 bg-violet-900 font-medium text-slate-50 focus:border-2 focus:border-current`}>
+                        className={`relative rounded-3xl py-2 px-6  bg-gradient-to-br  from-purple-700 to-blue-400 font-medium text-slate-50 focus:border-2 focus:border-current`}>
                         <button
                             onClick={togglePublishing}
                             className={`block`}>

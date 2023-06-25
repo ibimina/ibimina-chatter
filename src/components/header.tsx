@@ -27,7 +27,7 @@ function Header({ handleNav }: { handleNav: () => void }) {
     return (
         <>
             <header
-                className={`grid grid-cols-3 lg:grid-cols-7 items-center py-4 px-4`}
+                className={`grid grid-cols-3 lg:grid-cols-7 shadow-md items-center py-4 px-4`}
             >
                 <div className={`flex items-center gap-3 col-span-2 md:col-span-1`}>
                     {router.pathname !== '/settings'  &&
@@ -37,7 +37,9 @@ function Header({ handleNav }: { handleNav: () => void }) {
                             aria-label='menu'
                         ></button>
                     }
-                    <Link href="/chatter"><h1 className={`text-3xl font-bold underline`}>Chatter</h1></Link>
+                    <Link href="/chatter">
+                        <h1 className={`font-bold text-3xl font-serif text-transparent bg-clip-text bg-gradient-to-br  from-purple-700 to-blue-400 `}>InkSpire</h1>
+                        </Link>
                 </div>
                 {router.pathname !== '/settings' &&
                     <form
@@ -54,7 +56,7 @@ function Header({ handleNav }: { handleNav: () => void }) {
                 <nav className={`col-start-3 lg:col-start-6 lg:col-end-8`}>
                     <ul className={`flex items-center gap-2 justify-end`}>
                         <li
-                            className={`fixed z-50 bottom-10 right-5 md:relative md:bottom-auto bg-violet-900 text-gray-50 p-4 rounded-full lg:rounded-3xl lg:right-auto lg:py-2 lg:px-6  hover:border-2 border-current`}
+                            className={`fixed z-50 bottom-10 right-5 md:relative md:bottom-auto bg-violet-700 hover:bg-black text-gray-50 p-4 rounded-full lg:rounded-3xl lg:right-auto lg:py-2 lg:px-6 border-current`}
                         >
                             <Link href='/post' className={`md:flex md:items-center gap-2 z-50`}>
                                 <Image
@@ -69,8 +71,6 @@ function Header({ handleNav }: { handleNav: () => void }) {
                         </li>
                         <li >
                             {/* signify user of unread notifications if any notifications has a read value of false */}
-                          
-
                             <Link href='/notifications' className='relative'>
                                 {notifications?.some((notification: { read: boolean }) => notification.read === false) &&
                                     <span className={`absolute top-1 right-1 bg-red-500 rounded-full h-2 w-2`}></span>

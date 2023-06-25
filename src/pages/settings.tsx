@@ -67,7 +67,7 @@ function User() {
 
     return (<>
         <Head>
-            <title>Change settings  on chatter</title>
+            <title>Change settings  on InkSpire</title>
             <meta charSet="UTF-8" />
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
             <meta http-equiv="X-UA-Compatible" content="IE=7" />
@@ -77,7 +77,7 @@ function User() {
             throw new Error("Function not implemented.");
         }} />
 
-        <form className="bg-slate-50 px-8 py-4 relative" onSubmit={updateInfo}>
+        <form className="bg-slate-50 mt-4 px-8 py-4 relative" onSubmit={updateInfo}>
             {
                 success &&
                 <p className="bg-green-500 text-white absolute  bottom-1/4 right-1 px-3 py-4 rounded">Profile update successfully</p>
@@ -139,7 +139,7 @@ function User() {
                             <input type="text" placeholder="Add more topics" value={addTag} onChange={(e) => setAddTag(e.target.value)}
                                 className="block w-9/12 rounded-lg py-3 px-2" />
                             <button
-                                className="bg-violet-950 text-white py-2 px-6 rounded-2xl"
+                                className="bg-violet-900 text-white py-2 px-6 rounded-2xl"
                                 onClick={() => {
                                     if (addTag?.trim().length > 2) {
                                         dispatch({ type: "ADDTAG", payload: addTag })
@@ -198,7 +198,7 @@ function User() {
                     </label>
                 </div>
             </div>
-            <input type="submit" className="bg-violet-900 text-white py-2 px-4 rounded-xl mt-8 block lg:ml-auto" value="Update" />
+            <input type="submit" className="bg-gradient-to-br from-purple-700 to-blue-400 text-white py-2 px-4 rounded-xl mt-8 block lg:ml-auto" value="Update" />
         </form>
     </>);
 }

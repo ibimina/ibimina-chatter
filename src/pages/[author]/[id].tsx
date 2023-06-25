@@ -76,25 +76,27 @@ export default function SingleArticle() {
 
     const postComment = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (state?.user === null) return;
-        const docRef = doc(firebaseStore, 'articles', article?.id!);
-        await setDoc(docRef, {
-            comments: [
-                ...article?.comments, {
-                    uid: state?.user?.uid,
-                    name: state?.user?.displayName,
-                    image: state?.user?.photoURL,
-                    comment: comment,
-                    timestamp: new Date().toISOString()
-                }]
-        }, { merge: true });
-        await addNotification('commented', article)
-        setComment("")
+        if (state?.user === null || state?.user?.uid==="") {
+            alert("You need to login to comment")
+        }else{
+            const docRef = doc(firebaseStore, 'articles', article?.id!);
+            await setDoc(docRef, {
+                comments: [
+                    ...article?.comments, {
+                        uid: state?.user?.uid,
+                        name: state?.user?.displayName,
+                        image: state?.user?.photoURL,
+                        comment: comment,
+                        timestamp: new Date().toISOString()
+                    }]
+            }, { merge: true });
+            await addNotification('commented', article)
+            setComment("")
+        }   
     }
     const handleRoute = () => {
         router.back();
-    }
-    console.log(title)
+    } 
     return (
         <>
             <Head>
@@ -182,7 +184,7 @@ export default function SingleArticle() {
                             {
                                 isbookmarked ?
                                     <>
-                                        <Image src='/images/icons8-isbookmark.png' height={24} width={24} alt="like" />
+                                        <Image src='/images/icons8-isbookmark.png' className="brightness-150" height={24} width={24} alt="like" />
                                         <p className="text-">    {article?.bookmarks?.length}</p>
                                     </>
 
@@ -200,15 +202,12 @@ export default function SingleArticle() {
                             <Image src="/images/icons8-comment-24.png" height={24} width={24} alt="comments" />
                             {article?.comments?.length}
                         </button>
-                        <div>
-
-                        </div>
                         <button onClick={() =>
                             setIsShared(!isShared)} className={`flex items-center gap-1 ${isShared ? "text-violet-500" : ""}`
                             }>
                             <Image src="/images/icons8-share.svg" height={24} width={24} alt="share" />
                         </button>
-                        {isShared && <div className="absolute  bottom-6 right-0 bg-gray-100 p-4 rounded-lg shadow-lg">
+                        {isShared && <div className="absolute  bottom-6 right-0 bg-gray-100 p-4 rounded-lg shadow-lg lg:right-40">
                             <button className="flex items-center gap-1 mb-4"
                                 onClick={() => {
                                     navigator.clipboard.writeText(shareUrl)

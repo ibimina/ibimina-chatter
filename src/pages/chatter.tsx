@@ -13,26 +13,24 @@ function Chatter() {
 	return (
 		<>
 			<Head>
-				<title>Chatter</title>
+				<title>InkSpire</title>
 				<meta charSet="UTF-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 				<meta http-equiv="X-UA-Compatible" content="IE=7" />
-				<meta name="description" content="Chatter feeds page" />
+				<meta name="description" content="InkSpire feeds page" />
 			</Head>
 			<FeedLayout>
-				<main className={`w-full lg:w-4/6`}>
+				<main className={`w-full`}>
 					{
 						isLoading && (
 							<div className={`flex items-center justify-center font-normal max-h-screen h-96`}>
 								<div className='max-w-md text-center'>
 									<p className='text-center'>Loading...</p></div>
-							</div>
-
-						)
+							</div>)
 					}
 					{feeds
 						&&
-						<ul className={`p-2`}>
+						<ul>
 							{feeds.map((feed: ArticleProps, index: Key) => {
 								return (
 									<ArticleCard key={index} feed={feed} update={addBookmark} />
