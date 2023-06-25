@@ -61,7 +61,7 @@ const router = useRouter()
 			<main className={`lg:flex lg:flex-row-reverse`}>
 				<section className={`hidden bg-slate-300 lg:w-full  lg:block lg:min-h-screen lg:basis-2/5 `}></section>
 				<section className={`basis-3/5`}>
-					<h1 className={`text-3xl font-bold underline p-8 pt-3`}>Chatter</h1>
+					<h1 className={`font-bold text-3xl p-8 pt-3 font-serif text-transparent bg-clip-text bg-gradient-to-br  from-purple-700 to-blue-400 `}>InkSpire</h1>
 					<div
 						className={`lg:w-3/5 lg:m-auto lg:mt-7 pb-2 flex flex-col justify-center ${styles.loginCard}`}>
 						<div className={`mb-8`}>

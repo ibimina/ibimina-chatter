@@ -80,14 +80,14 @@ function Topics() {
 	return (
 		<>
 			<Head>
-				<title>Add topics  on chatter</title>
+				<title>Add topics  on InkSpire</title>
 				<meta charSet="UTF-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 				<meta http-equiv="X-UA-Compatible" content="IE=7" />
 				<meta name="description" content="Add topics to personalise your feeds" />
 			</Head>
 			<section>
-				<h1 className={`text-3xl font-bold underline ml-5 my-4 md:px-2`}>Chatter</h1>
+				<h1 className={`font-bold text-3xl font-serif ml-5 my-4 md:px-2 text-transparent bg-clip-text bg-gradient-to-br  from-purple-700 to-blue-400 `}>InkSpire</h1>
 				<div className={`pb-3`}>
 					<div className={`w-10/12 ml-5 md:px-2`}>
 						<div className={`mb-5`}>
