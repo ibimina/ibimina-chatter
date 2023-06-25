@@ -18,7 +18,7 @@ import { useAuthContext } from "@/store/store";
 import { useCollectionSnap, useInteraction } from "@/hooks";
 import { formatDistanceStrict } from "date-fns";
 
-import {   EmailShareButton,  FacebookShareButton, LinkedinShareButton, TelegramShareButton, TwitterShareButton, WhatsappShareButton,} from "react-share";
+import { EmailShareButton, FacebookShareButton, LinkedinShareButton, TelegramShareButton, TwitterShareButton, WhatsappShareButton, } from "react-share";
 import Head from "next/head";
 import FeedLayout from "@/container/feedslayout";
 
@@ -34,13 +34,14 @@ export default function SingleArticle() {
     const [shareUrl, setShareUrl] = useState('');
     const [isShared, setIsShared] = useState(false);
     const { snap } = useCollectionSnap('articles', "author.uid", `${author}`);
-
+    const [title, setTitle] = useState("")
     useEffect(() => {
         const getArticle = async () => {
             const doc = snap?.find((article: ArticleProps) => {
                 return article.id === id
-            })  
-            setArticle({...doc});
+            })
+            setArticle({ ...doc });
+            setTitle(`${article?.title} by ${article?.author?.name} on chatter`)
             const like = article?.likes?.find((like) => like?.uid === state?.user?.uid)
             const bookmark = article?.bookmarks?.find((bookmark) => bookmark?.user_uid === state?.user?.uid)
             if (like !== undefined) {
@@ -58,17 +59,17 @@ export default function SingleArticle() {
         };
         getArticle();
         setShareUrl(window?.location?.href);
-        // 
-    }, [article?.bookmarks, article?.likes, id, snap, state?.user?.uid]);
+              // 
+    }, [article?.author?.name, article?.bookmarks, article?.likes, article?.title, id, snap, state?.user?.uid]);
     useEffect(() => {
         (async () => {
-            if (id! !== undefined){
+            if (id! !== undefined) {
                 const docRef = doc(firebaseStore, "articles", `${id}`);
                 const docSnap = await getDoc(docRef);
                 await setDoc(docRef, {
                     views: docSnap.data()?.views + 1
                 }, { merge: true });
-            }         
+            }
         })();
     }, [id]);
     const { addBookmark, increaseLike, addNotification } = useInteraction();
@@ -96,10 +97,10 @@ export default function SingleArticle() {
     return (
         <>
             <Head>
-                <title>{`${article?.title} by ${article?.author?.name} on chatter`}</title>
-                <meta name="title" property="og:title" content={`${article?.title} by ${article?.author?.name} on chatter`} />
+                <title>{title}</title>
+                <meta name="title" property="og:title" content={title} />
                 <meta name="image" property="og:image" content={article?.coverImageUrl} />
-                <meta name="description" property="og:description" content={article?.subtitle} />             
+                <meta name="description" property="og:description" content={article?.subtitle} />
                 <meta name="url" property="og:url" content={shareUrl} />
                 <meta name="type" property="og:type" content="article" />
                 <meta name="site_name" property="og:site_name" content="chatter" />
@@ -236,7 +237,7 @@ export default function SingleArticle() {
                                 <Image src="/images/icons8-linkedin.svg" height={24} width={24} alt="linkedin" />
                                 Share on linkedin
                             </LinkedinShareButton>
-                            <WhatsappShareButton className="flex items-center gap-1" url={shareUrl} title={`${article?.title} by ${article?.author?.name} on  chatter`} separator=":: " >
+                            <WhatsappShareButton className="flex items-center gap-1" url={shareUrl} title={title} separator=":: " >
                                 <Image src="/images/icons8-whatsapp.svg" height={24} width={24} alt="whatsapp" />
                                 Share on whatsapp
                             </WhatsappShareButton>
@@ -256,7 +257,7 @@ export default function SingleArticle() {
                                 <Image className={`rounded-full`} src={"/images/icons8-user-64.png"} width={30} height={30} alt="author avatar" />
 
                             }
-                            <span>{state?.user?.displayName ? state?.user?.displayName :"anonymous"}</span>
+                            <span>{state?.user?.displayName ? state?.user?.displayName : "anonymous"}</span>
                         </Link>
                         <form onSubmit={postComment}>
                             <input value={comment} onChange={(e) => setComment(e.target.value)} className="block border-solid border-2 rounded-lg border-violet-400 w-full p-2 mb-6 outline-0 focus:shadow-violet-500/50 focus:shadow-lg" type="text" placeholder="Ask a question to spark a conversation" name="comment" />
