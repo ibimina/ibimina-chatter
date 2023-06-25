@@ -207,7 +207,7 @@ export default function SingleArticle() {
                             }>
                             <Image src="/images/icons8-share.svg" height={24} width={24} alt="share" />
                         </button>
-                        {isShared && <div className="absolute  bottom-6 right-0 bg-gray-100 p-4 rounded-lg shadow-lg">
+                        {isShared && article.article && article.title && <div className="absolute  bottom-6 right-0 bg-gray-100 p-4 rounded-lg shadow-lg">
                             <button className="flex items-center gap-1 mb-4"
                                 onClick={() => {
                                     navigator.clipboard.writeText(shareUrl)
