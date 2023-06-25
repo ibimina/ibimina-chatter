@@ -22,8 +22,6 @@ import { EmailShareButton, FacebookShareButton, LinkedinShareButton, TelegramSha
 import Head from "next/head";
 import FeedLayout from "@/container/feedslayout";
 
-//get the article tittle using serverside props
-
 
 export default function SingleArticle() {
     const { state } = useAuthContext();
@@ -61,12 +59,7 @@ export default function SingleArticle() {
             }
         };
         getArticle();
-        setShareUrl(window?.location?.href);
-        if (article.title && article.author.name) {
-            // setTitle(`${article?.title} by ${article?.author?.name} on chatter`)
-        }
-
-        // 
+        setShareUrl(window?.location?.href);    
     }, [article?.author?.name, article?.bookmarks, article?.likes, article?.title, id, snap, state?.user?.uid]);
     useEffect(() => {
         (async () => {
@@ -105,8 +98,8 @@ export default function SingleArticle() {
     return (
         <>
             <Head>
-                <title>{`${title}`}</title>
-                <meta name="title" property="og:title" content={`${title}`} />
+                <title>{`${article?.title} by ${article?.author?.name} on chatter`}</title>
+                <meta name="title" property="og:title" content={`${article?.title} by ${article?.author?.name} on chatter`} />
                 <meta name="image" property="og:image" content={article?.coverImageUrl} />
                 <meta name="description" property="og:description" content={article?.subtitle} />
                 <meta name="url" property="og:url" content={shareUrl} />
@@ -215,7 +208,7 @@ export default function SingleArticle() {
                             }>
                             <Image src="/images/icons8-share.svg" height={24} width={24} alt="share" />
                         </button>
-                        {isShared && article.article && article.title && <div className="absolute  bottom-6 right-0 bg-gray-100 p-4 rounded-lg shadow-lg">
+                        {isShared && <div className="absolute  bottom-6 right-0 bg-gray-100 p-4 rounded-lg shadow-lg">
                             <button className="flex items-center gap-1 mb-4"
                                 onClick={() => {
                                     navigator.clipboard.writeText(shareUrl)
@@ -241,11 +234,11 @@ export default function SingleArticle() {
                                 <Image src="/images/icons8-facebook.svg" height={24} width={24} alt="facebook" />
                                 Share on facebook
                             </FacebookShareButton>
-                            <LinkedinShareButton className="flex items-center gap-1 mb-4" title={`${article?.title} by ${article?.author?.name} on  chatter`} summary={`${article.title}`} source={shareUrl}  url={shareUrl}>
+                            <LinkedinShareButton className="flex items-center gap-1 mb-4" title={`${article?.title} by ${article?.author?.name} on  chatter`} summary={`${article.title}`} url={shareUrl}>
                                 <Image src="/images/icons8-linkedin.svg" height={24} width={24} alt="linkedin" />
                                 Share on linkedin
                             </LinkedinShareButton>
-                            <WhatsappShareButton className="flex items-center gap-1" url={shareUrl} separator=":: " title={`${title}`} >
+                            <WhatsappShareButton className="flex items-center gap-1" url={shareUrl} title={`${article?.title} by ${article?.author?.name} on chatter`} separator=":: ">
                                 <Image src="/images/icons8-whatsapp.svg" height={24} width={24} alt="whatsapp" />
                                 Share on whatsapp
                             </WhatsappShareButton>
