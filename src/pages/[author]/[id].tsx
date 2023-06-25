@@ -245,7 +245,7 @@ export default function SingleArticle() {
                             onClick={()=>{
                                 console.log(article?.author.name,title)
                                 const textParameter = `${article.title} by ${article.author.name} - ${shareUrl}`;
-                                const whatsappShareLink = `https://wa.me/?text=${encodeURIComponent(textParameter)}`;
+                                const whatsappShareLink = `https://web.whatsapp.com/send?text=${encodeURIComponent(textParameter)}`;
                                 window.open(whatsappShareLink, '_blank');
                             }
                             }>
