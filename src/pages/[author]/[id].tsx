@@ -99,8 +99,8 @@ export default function SingleArticle() {
                 <title>{article?.title} by {article?.author?.name} on chatter</title>
                 <meta name="description" content={article?.subtitle} />
                 <meta name="title" property="og:title" content={`${article?.title} by ${article?.author?.name} on chatter`} />
-                <meta name="description" property="og:description" content={article?.subtitle} />
                 <meta name="image" property="og:image" content={article?.coverImageUrl} />
+                <meta name="description" property="og:description" content={article?.subtitle} />             
                 <meta name="url" property="og:url" content={shareUrl} />
                 <meta name="type" property="og:type" content="article" />
                 <meta name="site_name" property="og:site_name" content="chatter" />
@@ -110,12 +110,6 @@ export default function SingleArticle() {
                 <meta name="twitter:card" content="summary_large_image" />
                 <meta name="twitter:site" content="@chatter" />
                 <meta name="twitter:creator" content="@chatter" />
-                <meta name="linkedin:title" content={`${article?.title} by ${article?.author?.name} on chatter`} />
-                <meta name="linkedin:description" content={article?.subtitle} />
-                <meta name="linkedin:image" content={article?.coverImageUrl} />
-                <meta name="linkedin:card" content="summary_large_image" />
-                <meta name="linkedin:site" content="@chatter" />
-                <meta name="linkedin:creator" content="@chatter" />
             </Head>
             <FeedLayout>
                 <main className={` md:w-10/12 mx-auto lg:w-9/12 `}>
