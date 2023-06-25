@@ -14,7 +14,6 @@ function Article() {
             throw new Error("Function not implemented.");
         }} />
         <div className={`w-11/12 mx-auto mb-4`}>
-            <Link href="/chatter">home</Link>
             <div className={`flex items-center gap-2 mb-2`}>
                 {
                     articleDetails?.coverImageUrl ?
