@@ -22,11 +22,15 @@ import { EmailShareButton, FacebookShareButton, LinkedinShareButton, TelegramSha
 import Head from "next/head";
 import FeedLayout from "@/container/feedslayout";
 
+//get the article tittle using serverside props
+
+
 export default function SingleArticle() {
     const { state } = useAuthContext();
     const router = useRouter();
     const { id, author } = router.query;
-
+    const { title } = router.query
+  
     const [article, setArticle] = useState<ArticleProps>({} as ArticleProps);
     const [isliked, setIsLiked] = useState(false)
     const [isbookmarked, setIsBookmarked] = useState(false)
@@ -34,14 +38,13 @@ export default function SingleArticle() {
     const [shareUrl, setShareUrl] = useState('');
     const [isShared, setIsShared] = useState(false);
     const { snap } = useCollectionSnap('articles', "author.uid", `${author}`);
-    const [title, setTitle] = useState("")
     useEffect(() => {
         const getArticle = async () => {
             const doc = snap?.find((article: ArticleProps) => {
                 return article.id === id
             })
             setArticle({ ...doc });
-            setTitle(`${article?.title} by ${article?.author?.name} on chatter`)
+
             const like = article?.likes?.find((like) => like?.uid === state?.user?.uid)
             const bookmark = article?.bookmarks?.find((bookmark) => bookmark?.user_uid === state?.user?.uid)
             if (like !== undefined) {
@@ -59,7 +62,11 @@ export default function SingleArticle() {
         };
         getArticle();
         setShareUrl(window?.location?.href);
-              // 
+        if (article.title && article.author.name) {
+            // setTitle(`${article?.title} by ${article?.author?.name} on chatter`)
+        }
+
+        // 
     }, [article?.author?.name, article?.bookmarks, article?.likes, article?.title, id, snap, state?.user?.uid]);
     useEffect(() => {
         (async () => {
@@ -94,11 +101,12 @@ export default function SingleArticle() {
     const handleRoute = () => {
         router.back();
     }
+    console.log(title)
     return (
         <>
             <Head>
                 <title>{title}</title>
-                <meta name="title" property="og:title" content={title} />
+                <meta name="title" property="og:title" content={`${title}`} />
                 <meta name="image" property="og:image" content={article?.coverImageUrl} />
                 <meta name="description" property="og:description" content={article?.subtitle} />
                 <meta name="url" property="og:url" content={shareUrl} />
@@ -241,14 +249,13 @@ export default function SingleArticle() {
                                 <Image src="/images/icons8-whatsapp.svg" height={24} width={24} alt="whatsapp" />
                                 Share on whatsapp
                             </WhatsappShareButton> */}
-                            <button className="flex items-center gap-1" 
-                            onClick={()=>{
-                                console.log(article?.author.name,title)
-                                const textParameter = `${article.title} by ${article.author.name} - ${shareUrl}`;
-                                const whatsappShareLink = `https://web.whatsapp.com/send?text=${encodeURIComponent(textParameter)}`;
-                                window.open(whatsappShareLink, '_blank');
-                            }
-                            }>
+                            <button className="flex items-center gap-1"
+                                onClick={() => {
+                                    const textParameter = `${article.title} by ${article.author.name} - ${shareUrl}`;
+                                    const whatsappShareLink = `https://web.whatsapp.com/send?text=${encodeURIComponent(textParameter)}`;
+                                    window.open(whatsappShareLink, '_blank');
+                                }
+                                }>
                                 <Image src="/images/icons8-whatsapp.svg" height={24} width={24} alt="whatsapp" />
                                 Share on whatsapp
                             </button>
