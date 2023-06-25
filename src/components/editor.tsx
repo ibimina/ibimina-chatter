@@ -182,7 +182,7 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,isDi
                     <div className={`bg-white p-4 w-full md:w-9/12  ml-auto h-full relative`}>
                         <div className="flex items-center justify-between mb-6">
                             <button className={`mb-2`} onClick={togglePublishing}>Close</button>
-                                <button className={`p-2 rounded-2xl ${isDiasbled ? "bg-violet-200 text-black" : "text-white bg-violet-900"}`} disabled={isDiasbled} onClick={publishArticleInFirebase}> {`${isDiasbled ? "Publishing" :"Publish now"}`}</button>
+                                <button className={`p-2 rounded-2xl ${isDiasbled ? "bg-gray-500 text-black" : "text-white bg-violet-700"}`} disabled={isDiasbled} onClick={publishArticleInFirebase}> {`${isDiasbled ? "Publishing" :"Publish now"}`}</button>
                         </div>
                         <p className="mb-8">Add or change topics (up to 5) so readers know what your story is about</p>
 
