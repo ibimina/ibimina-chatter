@@ -7,12 +7,14 @@ import styles from '@/styles/chatter.module.css';
 import { useEffect, useState } from "react";
 import { useAuthContext } from "@/store/store";
 import { formatDistanceStrict } from "date-fns";
+import { useRouter } from "next/router";
 
 function ArticleCard({ feed, update }: { feed: ArticleProps, update: (id: string, bookmark: UserBookmarkProps[]) => void }) {
     const [isliked, setIsLiked] = useState(false)
     const [isbookmarked, setIsBookmarked] = useState(false)
-
+    const router = useRouter()
     const { state } = useAuthContext()
+
     useEffect(() => {
         const like = feed.likes?.find((like) => like?.uid === state?.user?.uid)
         const bookmark = feed?.bookmarks?.find((bookmark) => bookmark?.user_uid === state?.user?.uid)
@@ -32,7 +34,7 @@ function ArticleCard({ feed, update }: { feed: ArticleProps, update: (id: string
             <div className="flex items-center gap-2 mb-2">
                 <Link href={`/${encodeURIComponent(feed?.author?.uid)}`} className={`flex items-center gap-1 `}>
                     {
-                        feed?.author?.image === null  &&
+                        feed?.author?.image === null &&
                         <Image className={`rounded-full`} src="/images/icons8-user.svg" width={30} height={30} alt="author avatar" />
                     }
                     {
@@ -49,11 +51,16 @@ function ArticleCard({ feed, update }: { feed: ArticleProps, update: (id: string
                     </div>
                 }
             </div>
-            <Link className={`grid grid-cols-5 items-center`} href={`/${encodeURIComponent(feed?.author?.uid)}/${encodeURIComponent(feed?.id!)}`}>
+            <div className={`grid grid-cols-5 items-center`} onClick={() => {
+                   router.push({
+                    pathname: `/${encodeURIComponent(feed?.author?.uid)}/${encodeURIComponent(feed?.id!)}`,
+                    query: {title:`${feed.title} by ${feed.author.name} on chatter`}
+                }, `/${encodeURIComponent(feed?.author?.uid)}/${encodeURIComponent(feed?.id!)}`)
+            }} >
                 <div className={`col-span-5 lg:col-span-3 mb-2`}>
                     <h1 className={`text-lg font-bold`}>{feed?.title}</h1>
                     <p className={`text-sm`}>{feed?.subtitle}</p>
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}             
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}
                         className={` prose prose-headings:m-0 prose-p:m-0.6 
                             hr-black prose-hr:border-solid prose-hr:border prose-hr:border-black
                              marker:text-sky-400 ${styles['markdownPreview']}`} >
@@ -66,7 +73,8 @@ function ArticleCard({ feed, update }: { feed: ArticleProps, update: (id: string
                             alt="article cover image" />
                     </div>
                 }
-            </Link>
+            </div>
+
             <div className='mt-3 flex items-center gap-2'>
                 <Link href={`/${encodeURIComponent(feed?.author?.uid)}/${encodeURIComponent(feed?.id!)}`}
                     className={`flex items-center gap-1`}>
