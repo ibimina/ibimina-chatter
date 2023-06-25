@@ -105,7 +105,7 @@ export default function SingleArticle() {
     return (
         <>
             <Head>
-                <title>{title}</title>
+                <title>{`${title}`}</title>
                 <meta name="title" property="og:title" content={`${title}`} />
                 <meta name="image" property="og:image" content={article?.coverImageUrl} />
                 <meta name="description" property="og:description" content={article?.subtitle} />
@@ -241,24 +241,15 @@ export default function SingleArticle() {
                                 <Image src="/images/icons8-facebook.svg" height={24} width={24} alt="facebook" />
                                 Share on facebook
                             </FacebookShareButton>
-                            <LinkedinShareButton className="flex items-center gap-1 mb-4" url={shareUrl} title={`${article?.title} by ${article?.author?.name} on  chatter`} >
+                            <LinkedinShareButton className="flex items-center gap-1 mb-4" title={`${article?.title} by ${article?.author?.name} on  chatter`} summary={`${article.title}`} source={shareUrl}  url={shareUrl}>
                                 <Image src="/images/icons8-linkedin.svg" height={24} width={24} alt="linkedin" />
                                 Share on linkedin
                             </LinkedinShareButton>
-                            {/* <WhatsappShareButton className="flex items-center gap-1" url={shareUrl} title={title} separator=":: " >
+                            <WhatsappShareButton className="flex items-center gap-1" url={shareUrl} separator=":: " title={`${title}`} >
                                 <Image src="/images/icons8-whatsapp.svg" height={24} width={24} alt="whatsapp" />
                                 Share on whatsapp
-                            </WhatsappShareButton> */}
-                            <button className="flex items-center gap-1"
-                                onClick={() => {
-                                    const textParameter = `${article.title} by ${article.author.name} - ${shareUrl}`;
-                                    const whatsappShareLink = `https://web.whatsapp.com/send?text=${encodeURIComponent(textParameter)}`;
-                                    window.open(whatsappShareLink, '_blank');
-                                }
-                                }>
-                                <Image src="/images/icons8-whatsapp.svg" height={24} width={24} alt="whatsapp" />
-                                Share on whatsapp
-                            </button>
+                            </WhatsappShareButton>
+                         
                         </div>}
 
                     </div>
