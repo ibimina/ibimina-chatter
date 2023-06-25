@@ -237,10 +237,21 @@ export default function SingleArticle() {
                                 <Image src="/images/icons8-linkedin.svg" height={24} width={24} alt="linkedin" />
                                 Share on linkedin
                             </LinkedinShareButton>
-                            <WhatsappShareButton className="flex items-center gap-1" url={shareUrl} title={title} separator=":: " >
+                            {/* <WhatsappShareButton className="flex items-center gap-1" url={shareUrl} title={title} separator=":: " >
                                 <Image src="/images/icons8-whatsapp.svg" height={24} width={24} alt="whatsapp" />
                                 Share on whatsapp
-                            </WhatsappShareButton>
+                            </WhatsappShareButton> */}
+                            <button className="flex items-center gap-1" 
+                            onClick={()=>{
+                                console.log(article?.author.name,title)
+                                const textParameter = `${article.title} by ${article.author.name} - ${shareUrl}`;
+                                const whatsappShareLink = `https://wa.me/?text=${encodeURIComponent(textParameter)}`;
+                                window.open(whatsappShareLink, '_blank');
+                            }
+                            }>
+                                <Image src="/images/icons8-whatsapp.svg" height={24} width={24} alt="whatsapp" />
+                                Share on whatsapp
+                            </button>
                         </div>}
 
                     </div>
