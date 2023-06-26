@@ -15,7 +15,7 @@ function FeedLayout({ children }: { children: React.ReactNode }) {
     return (
         <>
             {
-                state.user.uid === "" && state.authState ?
+                state?.user?.uid === "" && state?.authState ?
                     <>
                         <header className={`flex items-center justify-between p-2 bg-white shadow-md`}>
                             <div className={`flex items-center gap-2`}>
@@ -43,7 +43,7 @@ function FeedLayout({ children }: { children: React.ReactNode }) {
                 <aside className={` ${styles.aside} md:w-full  lg:w-3/12`} data-visible={isvisible}>
                     <ul className={`h-full w-9/12 lg:w-full lg:p-5 pt-12 md:w-5/12 bg-gray-100 lg:rounded-xl ${styles.ul}`}>
                         {
-                            state.user.uid === "" && state.authState ?
+                            state?.user?.uid === "" && state?.authState ?
                                 <>
                                     <div className='mb-3'>
                                         <h2 className="text-xl font-semibold">Sign Up Now! </h2>
