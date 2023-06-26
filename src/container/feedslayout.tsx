@@ -41,7 +41,7 @@ function FeedLayout({ children }: { children: React.ReactNode }) {
             <section
                 className={`relative md:flex md:gap-4 p-4  lg:items-start mt-4`}>
                 <aside className={` ${styles.aside} md:w-full  lg:w-3/12`} data-visible={isvisible}>
-                    <ul className={`h-full w-9/12 lg:w-full lg:p-5 pt-12 md:w-5/12 bg-gray-100 lg:rounded-xl ${styles.ul}`}>
+                    <ul className={`h-full w-9/12 lg:w-full pl-4  lg:p-5 pt-12 md:w-5/12 bg-gray-100 lg:rounded-xl ${styles.ul}`}>
                         {
                             state?.user?.uid === "" && state?.authState ?
                                 <>
@@ -131,10 +131,7 @@ function FeedLayout({ children }: { children: React.ReactNode }) {
                         className={` top-1 brightness-100 invert right-2 absolute lg:hidden ${styles.close}`}
                         onClick={() => seIsVisible(!isvisible)}></button>
                 </aside>
-
                 {children}
-
-
             </section >
         </>
     );

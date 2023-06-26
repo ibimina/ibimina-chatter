@@ -27,7 +27,7 @@ function Header({ handleNav }: { handleNav: () => void }) {
     return (
         <>
             <header
-                className={`grid grid-cols-3 lg:grid-cols-7 shadow-md items-center py-4 px-4`}
+                className={`relative grid grid-cols-3 lg:grid-cols-7 shadow-md items-center py-4 px-4`}
             >
                 <div className={`flex items-center gap-3 col-span-2 md:col-span-1`}>
                     {router.pathname !== '/settings'  &&
@@ -97,22 +97,23 @@ function Header({ handleNav }: { handleNav: () => void }) {
                         </li>
                     </ul>
                 </nav>
+                <div className={`${isClicked ? "block absolute top-16 right-3 bg-gray-100 p-3 rounded-lg z-10" : "hidden"}`}>
+                    <Link href={`/${encodeURIComponent(author)}`} className={`flex items-center gap-1 mb-2`}>
+                        <Image
+                            src={state?.user?.photoURL || '/images/icons8-user-64.png'}
+                            height={30}
+                            width={30}
+                            alt='user'
+                            className={`rounded-full`}
+                        />
+                        <span className='capitalize'>{state?.user?.displayName}</span>
+                    </Link>
+                    <Link href='/chatter' className='block mb-2 cursor-pointer '>Feeds</Link>
+                    <Link href='/settings' className='block mb-2 cursor-pointer '>Account setting</Link>
+                    <button onClick={handleLogout} className='block'>Logout</button>
+                </div>
             </header>
-            <div className={`${isClicked ? "block absolute right-1 bg-gray-100 p-3 rounded-lg z-10" : "hidden"}`}>
-                <Link href={`/${encodeURIComponent(author)}`} className={`flex items-center gap-1 mb-2`}>
-                    <Image
-                        src={state?.user?.photoURL || '/images/icons8-user-64.png'}
-                        height={30}
-                        width={30}
-                        alt='user'
-                        className={`rounded-full`}
-                    />
-                    <span className='capitalize'>{state?.user?.displayName}</span>
-                </Link>
-                <Link href='/chatter' className='block mb-2 cursor-pointer '>Feeds</Link>
-                <Link href='/settings' className='block mb-2 cursor-pointer '>Account setting</Link>
-                <button onClick={handleLogout} className='block'>Logout</button>
-            </div>
+            
         </>
     );
 }
