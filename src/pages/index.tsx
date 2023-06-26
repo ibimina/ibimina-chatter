@@ -1,13 +1,13 @@
 import Link from 'next/link';
 import styles from '../styles/index.module.css';
-import {useState } from 'react';
+import { useState } from 'react';
 import { useGoogleSignin, useGitHubSignin, useLogin } from '@/hooks';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 
 
 export default function Home() {
-const router = useRouter()
+	const router = useRouter()
 	const [loginDetails, setLoginDetails] = useState({
 		email: '',
 		password: '',
@@ -44,7 +44,7 @@ const router = useRouter()
 		} else if (error === "Firebase: Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later. (auth/too-many-requests).") {
 			setEmailExists(null)
 			setPasswordLimit(true)
-		}else{
+		} else {
 			router.push("/chatter")
 		}
 	}
@@ -52,80 +52,93 @@ const router = useRouter()
 	return (
 		<>
 			<Head>
-				<title>Log in on chatter</title>
+				<title>Log in on InkSpire</title>
 				<meta charSet="UTF-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 				<meta http-equiv="X-UA-Compatible" content="IE=7" />
 				<meta name="description" content="Log in to your account" />
 			</Head>
-			<main className={`lg:flex lg:flex-row-reverse`}>
-				<section className={`hidden bg-slate-300 lg:w-full  lg:block lg:min-h-screen lg:basis-2/5 `}></section>
-				<section className={`basis-3/5`}>
-					<h1 className={`font-bold text-3xl p-8 pt-3 font-serif text-transparent bg-clip-text bg-gradient-to-br  from-purple-700 to-blue-400 `}>InkSpire</h1>
-					<div
-						className={`lg:w-3/5 lg:m-auto lg:mt-7 pb-2 flex flex-col justify-center ${styles.loginCard}`}>
-						<div className={`mb-8`}>
-							<p className={`font-semibold text-3xl mb-2`}>Welcome back</p>
-							<p className={`text-base  text-slate-400`}>
-								Let&apos;s get you logged in so you can jump right back into
-								sharing your brilliant ideas and engaging stories{' '}
-							</p>
-						</div>
-						<form className={` mb-10`} onSubmit={handleLogin}>
-							{passwordLimit && <p className={`text-red-500`}>You have exceeded the login limit. Please wait a few minutes and try again.</p>}
-							<label className={`block mb-4`}>
-								{emailExists === false && <p className={`text-red-500`}>Wrong email</p>}
-								<input
-									onChange={handleChange}
-									name='email'
-									type='email'
-									placeholder='Enter your email'
-									required
-									className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
-								/>
-							</label>
-							<label className={`block mb-3`}>
-								{emailExists && <p className={`text-red-500`}>Wrong password</p>}
-								<input
-									onChange={handleChange}
-									name='password'
-									type='password'
-									placeholder='Enter your password'
-									required
-									className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
-								/>
-							</label>
-							<Link
-								href='forgotpassword'
-								className={`block text-right mb-8 underline`}>
-								forgot password
-							</Link>
-							<input
-								disabled={isLoading}
-								type='submit'
-								value='Log in'
-								className={`cursor-pointer block w-full p-2 bg-slate-300 rounded-lg hover:bg-black hover:text-white ${isLoading && 'opacity-50'}}`}
-							/>
-							<p className={`text-center`}>
-								Don&apos;t have an account?{' '}
-								<Link href='signup'>Create one</Link>{' '}
-							</p>
-						</form>
-						<p className={`mb-7`}>or continue with ______________</p>
-						<div className={`flex items-center justify-center gap-4`}>
-							<button
-								onClick={handleGoogleLogin}
-								className={`${styles.loginBtn}  ${styles.googleBtn} focus:border-solid hover:border-dashed rounded-full`}
-								aria-label='google login button'
-							></button>
-							<button
-								onClick={handleGithubLogin}
-								className={`${styles.loginBtn}  ${styles.githubBtn} focus:border-solid hover:border-dashed rounded-full`}
-								aria-label='github login button'
-							></button>
-						</div>
+			<main className={` min-h-screen flex items-center justify-center lg:flex lg:flex-row`}>
+				<section className={`hidden bg-hero-pattern bg-no-repeat bg-cover lg:w-full  lg:block lg:min-h-screen lg:basis-3/5 `}>
+					<div className='ml-10 mt-16 max-w-sm'>
+						<h1 className={`font-bold text-3xl mb-4 font-serif text-white`}>InkSpire</h1>
+						<p className='text-white font-serif font-bold text-xl'>
+							A platform for writers to share their ideas and stories with the world.{' '}
+						</p>
 					</div>
 				</section>
+				<section className={`basis-full px-6 md:basis-4/5 bg-white grid justify-center items-center`}>
+				
+						<h1 className={`font-bold absolute top-3 sm:top-6 md:top-10 md:left-8 left-4 text-4xl mb-4 md:mb-14 lg:hidden font-serif text-transparent bg-clip-text bg-gradient-to-br  from-purple-600 to-blue-500 `}>InkSpire</h1>
+						<div className='mt-20 lg:w-3/5 lg:m-auto md:mt-0 '>
+							<div
+								className={`pb-2 flex flex-col justify-center`}>
+								<div className={`mb-8`}>
+									<p className={`font-semibold text-3xl mb-2`}>Welcome back</p>
+									<p className={`text-base  text-slate-400`}>
+										Let&apos;s get you logged in so you can jump right back into
+										sharing your brilliant ideas and engaging stories{' '}
+									</p>
+								</div>
+								<form className={` mb-10`} onSubmit={handleLogin}>
+									{passwordLimit && <p className={`text-red-500`}>You have exceeded the login limit. Please wait a few minutes and try again.</p>}
+									<label className={`block mb-4`}>
+										{emailExists === false && <p className={`text-red-500`}>Wrong email</p>}
+										<input
+											onChange={handleChange}
+											name='email'
+											type='email'
+											placeholder='Enter your email'
+											required
+											className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
+										/>
+									</label>
+									<label className={`block mb-3`}>
+										{emailExists && <p className={`text-red-500`}>Wrong password</p>}
+										<input
+											onChange={handleChange}
+											name='password'
+											type='password'
+											placeholder='Enter your password'
+											required
+											className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
+										/>
+									</label>
+									<Link
+										href='forgotpassword'
+										className={`block text-right mb-8 text-violet-700`}>
+										forgot password
+									</Link>
+									<input
+										disabled={isLoading}
+										type='submit'
+										value='Log in'
+										className={`cursor-pointer mb-2 block w-full p-2 bg-violet-700 text-white rounded-lg hover:bg-black hover:text-white ${isLoading && 'opacity-50'}}`}
+									/>
+									<p className={`text-center`}>
+										Don&apos;t have an account?{' '}
+										<Link href='signup' className='text-violet-700'>Create one</Link>{' '}
+									</p>
+								</form>
+								<p className={`mb-7`}>or continue with ______________</p>
+								<div className={`flex items-center justify-center gap-4`}>
+									<button
+										onClick={handleGoogleLogin}
+										className={`${styles.loginBtn}  ${styles.googleBtn} focus:border-solid hover:border-dashed rounded-full`}
+										aria-label='google login button'
+									></button>
+									<button
+										onClick={handleGithubLogin}
+										className={`${styles.loginBtn}  ${styles.githubBtn} focus:border-solid hover:border-dashed rounded-full`}
+										aria-label='github login button'
+									></button>
+								</div>
+							</div>
+
+						</div>
+
+				
+									</section>
 			</main>
 		</>
 	);

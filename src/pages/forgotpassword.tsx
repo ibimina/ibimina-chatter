@@ -42,15 +42,13 @@ function ForgotPassword() {
 				<meta http-equiv="X-UA-Compatible" content="IE=7" />
 				<meta name="description" content="Enter your email to retrieve your account" />
 			</Head>
-			<main className={`lg:flex lg:flex-row-reverse`}>
-				<section
-					className={`hidden bg-slate-300 lg:w-full  lg:block lg:h-screen lg:basis-2/5 `}
-				></section>
-				<section className={`basis-3/5 p-8 pt-3`}>
-					<h1 className={`font-bold mb-9 text-3xl font-serif text-transparent bg-clip-text bg-gradient-to-br  from-purple-700 to-blue-400 `}>InkSpire</h1>
+			<main className={`lg:flex-row-reverse  min-h-screen flex items-center justify-center`}>
+				
+				<section className={`basis-full md:basis-4/5 p-8 pt-3`}>
+					<h1 className={`font-bold mb-9 text-3xl font-serif absolute top-3 sm:top-6 md:top-10 md:left-8 left-4 lg:h-min text-transparent bg-clip-text bg-gradient-to-br  from-purple-700 to-blue-400 `}>InkSpire</h1>
 
 					<div
-						className={`lg:w-3/5 lg:m-auto  flex flex-col justify-center ${styles.signupCard}`}
+						className={`lg:w-3/5 lg:m-auto  flex flex-col justify-center `}
 					>
 						<div className={`mb-8`}>
 							<p className={`font-semibold text-3xl mb-2`}>
@@ -76,12 +74,22 @@ function ForgotPassword() {
 							<input
 								type='submit'
 								value='Submit Email'
-								className={`cursor-pointer mt-10 block w-full p-2 bg-slate-300 rounded-lg hover:bg-black hover:text-white `}
+								className={`cursor-pointer mt-10 block w-full p-2 bg-violet-700 text-white rounded-lg hover:bg-black hover:text-white `}
 							/>
 							<p className={` text-center`}>
-								Already have an account? <Link href='/'>Log in</Link>{' '}
+								Already have an account? <Link href='/' className='text-violet-700'>Log in</Link>{' '}
 							</p>
 						</form>
+					</div>
+				</section>
+				<section
+					className={`hidden bg-hero-pattern bg-no-repeat bg-cover lg:w-full  lg:block lg:h-screen lg:basis-3/5 `}
+				>
+					<div className='ml-10 mt-16 max-w-sm'>
+						<h1 className={`font-bold text-3xl mb-4 font-serif text-white`}>InkSpire</h1>
+						<p className='text-white font-serif font-bold text-xl'>
+							A platform for writers to share their ideas and stories with the world.{' '}
+						</p>
 					</div>
 				</section>
 				{

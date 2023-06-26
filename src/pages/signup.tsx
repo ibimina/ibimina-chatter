@@ -75,14 +75,21 @@ function SignUp() {
 				<meta http-equiv="X-UA-Compatible" content="IE=7" />
 				<meta name="description" content="Create a account on InkSpire" />
 			</Head>
-			<main className={`lg:flex lg:flex-row-reverse`}>
+			<main className={`lg:flex lg:flex-row`}>
 				<section
-					className={`hidden bg-slate-300 lg:w-full  lg:block lg:h-screen lg:basis-2/5 `}
-				></section>
-				<section className={`basis-3/5 p-8 pt-3`}>
-					<h1 className={`font-bold text-3xl font-serif text-transparent bg-clip-text bg-gradient-to-br  from-purple-700 to-blue-400 `}>InkSpire</h1>
+					className={`hidden bg-hero-pattern bg-no-repeat bg-cover lg:w-full  lg:block lg:h-screen lg:basis-2/5 `}
+				>
+					<div className='ml-10 mt-16 max-w-sm'>
+						<h1 className={`font-bold text-3xl mb-4 font-serif text-white`}>InkSpire</h1>
+						<p className='text-white font-serif font-bold text-xl'>
+							A platform for writers to share their ideas and stories with the world.{' '}
+						</p>
+					</div>
+				</section>
+				<section className={`basis-3/5 p-8 pt-3 min-h-screen grid justify-center items-center`}>
+					<h1 className={`font-bold text-3xl font-serif  absolute top-3 sm:top-6 md:top-10 md:left-8 left-4 lg:hidden text-transparent bg-clip-text bg-gradient-to-br  from-purple-700 to-blue-400 `}>InkSpire</h1>
 					<div
-						className={`lg:w-3/5 lg:m-auto  flex flex-col justify-center ${styles.signupCard}`}
+						className={`lg:w-3/5 lg:m-auto flex flex-col justify-center`}
 					>
 						<div className={`mb-8`}>
 							<p className={`font-semibold text-3xl mb-2`}>
@@ -156,7 +163,7 @@ function SignUp() {
 							<input
 								type='submit'
 								value='Sign Up'
-								className={`cursor-pointer mt-10 block w-full p-2 bg-slate-300 rounded-lg hover:bg-black hover:text-white ${isLoading ? styles.grey : ''
+								className={`cursor-pointer mt-10 block w-full p-2 bg-violet-700 text-white rounded-lg hover:bg-black hover:text-white ${isLoading ? styles.grey : ''
 									} `}
 								disabled={isLoading}
 							/>

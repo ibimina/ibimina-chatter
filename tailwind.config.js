@@ -13,6 +13,10 @@ module.exports = {
 			colors: {
 				'prose-hr': '#000',
 			},
+			// add custom bg image
+			backgroundImage: {
+				'hero-pattern': "url('/images/herobg.jpg')",
+			},
 		},
 	},
 	plugins: [require('@tailwindcss/typography')],
