@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useGoogleSignin, useGitHubSignin, useLogin } from '@/hooks';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import { HeroAside } from '@/components';
 
 
 export default function Home() {
@@ -59,14 +60,7 @@ export default function Home() {
 				<meta name="description" content="Log in to your account" />
 			</Head>
 			<main className={` min-h-screen flex items-center justify-center lg:flex lg:flex-row`}>
-				<section className={`hidden bg-hero-pattern bg-no-repeat bg-cover lg:w-full  lg:block lg:min-h-screen lg:basis-3/5 `}>
-					<div className='ml-10 mt-16 max-w-sm'>
-						<h1 className={`font-bold text-3xl mb-4 font-serif text-white`}>InkSpire</h1>
-						<p className='text-white font-serif font-bold text-xl'>
-							A platform for writers to share their ideas and stories with the world.{' '}
-						</p>
-					</div>
-				</section>
+				<HeroAside/>
 				<section className={`basis-full px-6 md:basis-4/5 bg-white grid justify-center items-center`}>
 				
 						<h1 className={`font-bold absolute top-3 sm:top-6 md:top-10 md:left-8 left-4 text-4xl mb-4 md:mb-14 lg:hidden font-serif text-transparent bg-clip-text bg-gradient-to-br  from-purple-600 to-blue-500 `}>InkSpire</h1>

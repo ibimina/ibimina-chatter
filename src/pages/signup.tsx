@@ -3,6 +3,7 @@ import Link from 'next/link';
 import styles from '../styles/signup.module.css';
 import useSignUp from '@/hooks/useSignUp';
 import { useState } from 'react';
+import { HeroAside } from '@/components';
 
 
 function SignUp() {
@@ -24,16 +25,16 @@ function SignUp() {
 	const [formErrors, setFormErrors] = useState<FormErrors[]>([]) // ["Invalid email", "Username should be at least 3 characters"
 	const validateForm = () => {
 		let validEmailpattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-		if(!validEmailpattern.test(userDetails.email)){
-		setFormErrors([...formErrors, {email:"Invalid email"}])	
-		}if(userDetails.username.length < 3){
-		setFormErrors([...formErrors, {name:"Username should be at least 3 characters"}])
-		}if(userDetails.password.length < 6){
-		setFormErrors([...formErrors, {password:"Password should be at least 6 characters"}])	
+		if (!validEmailpattern.test(userDetails.email)) {
+			setFormErrors([...formErrors, { email: "Invalid email" }])
+		} if (userDetails.username.length < 3) {
+			setFormErrors([...formErrors, { name: "Username should be at least 3 characters" }])
+		} if (userDetails.password.length < 6) {
+			setFormErrors([...formErrors, { password: "Password should be at least 6 characters" }])
 		}
-		if(formErrors.length > 0){
+		if (formErrors.length > 0) {
 			return false
-		}else{
+		} else {
 			return true
 		}
 	};
@@ -49,7 +50,7 @@ function SignUp() {
 
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		if(!validateForm()){
+		if (!validateForm()) {
 			console.log("form is not valid", formErrors)
 			return
 		}
@@ -76,16 +77,7 @@ function SignUp() {
 				<meta name="description" content="Create a account on InkSpire" />
 			</Head>
 			<main className={`lg:flex lg:flex-row`}>
-				<section
-					className={`hidden bg-hero-pattern bg-no-repeat bg-cover lg:w-full  lg:block lg:h-screen lg:basis-2/5 `}
-				>
-					<div className='ml-10 mt-16 max-w-sm'>
-						<h1 className={`font-bold text-3xl mb-4 font-serif text-white`}>InkSpire</h1>
-						<p className='text-white font-serif font-bold text-xl'>
-							A platform for writers to share their ideas and stories with the world.{' '}
-						</p>
-					</div>
-				</section>
+				<HeroAside />
 				<section className={`basis-3/5 p-8 pt-3 min-h-screen grid justify-center items-center`}>
 					<h1 className={`font-bold text-3xl font-serif  absolute top-3 sm:top-6 md:top-10 md:left-8 left-4 lg:hidden text-transparent bg-clip-text bg-gradient-to-br  from-purple-700 to-blue-400 `}>InkSpire</h1>
 					<div
@@ -112,7 +104,7 @@ function SignUp() {
 								/>
 								{
 									formErrors.map((error, index) => {
-										if(error.name){
+										if (error.name) {
 											return <p key={index} className={`text-red-500 text-sm`}>{error.name}</p>
 										}
 									})
@@ -129,7 +121,7 @@ function SignUp() {
 								/>
 								{
 									formErrors.map((error, index) => {
-										if(error.email){
+										if (error.email) {
 											return <p key={index} className={`text-red-500 text-sm`}>{error.email}</p>
 										}
 									})
@@ -141,7 +133,7 @@ function SignUp() {
 							<label className={`block mb-3`}>
 								{
 									formErrors.map((error, index) => {
-										if(error.password){
+										if (error.password) {
 											return <p key={index} className={`text-red-500 text-sm`}>{error.password}</p>
 										}
 									})

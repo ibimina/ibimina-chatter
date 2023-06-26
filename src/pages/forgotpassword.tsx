@@ -5,6 +5,7 @@ import { sendPasswordResetEmail } from 'firebase/auth';
 import { firebaseAuth } from '@/firebase/config';
 import { useState } from 'react';
 import Head from 'next/head';
+import { HeroAside } from '@/components';
 
 
 function ForgotPassword() {
@@ -42,10 +43,10 @@ function ForgotPassword() {
 				<meta http-equiv="X-UA-Compatible" content="IE=7" />
 				<meta name="description" content="Enter your email to retrieve your account" />
 			</Head>
-			<main className={`lg:flex-row-reverse  min-h-screen flex items-center justify-center`}>
-				
+			<main className={`lg:flex-row  min-h-screen flex items-center justify-center`}>
+				<HeroAside />
 				<section className={`basis-full md:basis-4/5 p-8 pt-3`}>
-					<h1 className={`font-bold mb-9 text-3xl font-serif absolute top-3 sm:top-6 md:top-10 md:left-8 left-4 lg:h-min text-transparent bg-clip-text bg-gradient-to-br  from-purple-700 to-blue-400 `}>InkSpire</h1>
+					<h1 className={`font-bold mb-9 text-3xl font-serif lg:hidden absolute top-3 sm:top-6 md:top-10 md:left-8 left-4 lg:h-min text-transparent bg-clip-text bg-gradient-to-br  from-purple-700 to-blue-400 `}>InkSpire</h1>
 
 					<div
 						className={`lg:w-3/5 lg:m-auto  flex flex-col justify-center `}
@@ -80,16 +81,6 @@ function ForgotPassword() {
 								Already have an account? <Link href='/' className='text-violet-700'>Log in</Link>{' '}
 							</p>
 						</form>
-					</div>
-				</section>
-				<section
-					className={`hidden bg-hero-pattern bg-no-repeat bg-cover lg:w-full  lg:block lg:h-screen lg:basis-3/5 `}
-				>
-					<div className='ml-10 mt-16 max-w-sm'>
-						<h1 className={`font-bold text-3xl mb-4 font-serif text-white`}>InkSpire</h1>
-						<p className='text-white font-serif font-bold text-xl'>
-							A platform for writers to share their ideas and stories with the world.{' '}
-						</p>
 					</div>
 				</section>
 				{
