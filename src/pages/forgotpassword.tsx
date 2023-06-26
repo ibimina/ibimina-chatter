@@ -5,7 +5,6 @@ import { sendPasswordResetEmail } from 'firebase/auth';
 import { firebaseAuth } from '@/firebase/config';
 import { useState } from 'react';
 import Head from 'next/head';
-import { HeroAside } from '@/components';
 import RegistrationLayout from '@/container/registerlayout';
 
 

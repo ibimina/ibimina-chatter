@@ -3,7 +3,6 @@ import Link from 'next/link';
 import styles from '../styles/signup.module.css';
 import useSignUp from '@/hooks/useSignUp';
 import { useState } from 'react';
-import { HeroAside } from '@/components';
 import RegistrationLayout from '@/container/registerlayout';
 
 

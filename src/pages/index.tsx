@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useGoogleSignin, useGitHubSignin, useLogin } from '@/hooks';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import { HeroAside } from '@/components';
 import RegistrationLayout from '@/container/registerlayout';
 
 
