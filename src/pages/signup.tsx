@@ -4,6 +4,7 @@ import styles from '../styles/signup.module.css';
 import useSignUp from '@/hooks/useSignUp';
 import { useState } from 'react';
 import { HeroAside } from '@/components';
+import RegistrationLayout from '@/container/registerlayout';
 
 
 function SignUp() {
@@ -76,96 +77,93 @@ function SignUp() {
 				<meta http-equiv="X-UA-Compatible" content="IE=7" />
 				<meta name="description" content="Create a account on InkSpire" />
 			</Head>
-			<main className={`lg:flex lg:flex-row`}>
-				<HeroAside />
-				<section className={`basis-3/5 p-8 pt-3 min-h-screen grid justify-center items-center`}>
-					<h1 className={`font-bold text-3xl font-serif  absolute top-3 sm:top-6 md:top-10 md:left-8 left-4 lg:hidden text-transparent bg-clip-text bg-gradient-to-br  from-purple-700 to-blue-400 `}>InkSpire</h1>
-					<div
-						className={`lg:w-3/5 lg:m-auto flex flex-col justify-center`}
-					>
-						<div className={`mb-8`}>
-							<p className={`font-semibold text-3xl mb-2`}>
-								Create your account
-							</p>
-							<p className={`text-base  text-slate-400`}>
-								Start crafting compelling blog posts that engage and captivate
-								readers from the very beginning.{' '}
-							</p>
-						</div>
-						<form className={`mb-10`} onSubmit={handleSubmit}>
-							<label className={`block mb-4`}>
-								<input
-									type='text'
-									name='username'
-									required
-									placeholder='Enter your username'
-									className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
-									onChange={handleInputChange}
-								/>
-								{
-									formErrors.map((error, index) => {
-										if (error.name) {
-											return <p key={index} className={`text-red-500 text-sm`}>{error.name}</p>
-										}
-									})
-								}
-							</label>
-							<label className={`block mb-4`}>
-								<input
-									onChange={handleInputChange}
-									name='email'
-									type='email'
-									placeholder='Enter your email'
-									required
-									className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
-								/>
-								{
-									formErrors.map((error, index) => {
-										if (error.email) {
-											return <p key={index} className={`text-red-500 text-sm`}>{error.email}</p>
-										}
-									})
-								}
-								{emailExists && (
-									<p className={`text-red-500 text-sm`}>Email already exists</p>
-								)}
-							</label>
-							<label className={`block mb-3`}>
-								{
-									formErrors.map((error, index) => {
-										if (error.password) {
-											return <p key={index} className={`text-red-500 text-sm`}>{error.password}</p>
-										}
-									})
-								}
-								{isPasswordShort && (
-									<p className={`text-red-500 text-sm`}>
-										Password should be at least 6 characters
-									</p>
-								)}
-								<input
-									type='password'
-									name='password'
-									required
-									placeholder='Enter your password'
-									className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
-									onChange={handleInputChange}
-								/>
-							</label>
-							<input
-								type='submit'
-								value='Sign Up'
-								className={`cursor-pointer mt-10 block w-full p-2 bg-violet-700 text-white rounded-lg hover:bg-black hover:text-white ${isLoading ? styles.grey : ''
-									} `}
-								disabled={isLoading}
-							/>
-							<p className={` text-center`}>
-								Already have an account? <Link href='/'>Log in</Link>{' '}
-							</p>
-						</form>
+			<RegistrationLayout>
+				<div
+					className={`lg:w-3/5 lg:m-auto flex flex-col justify-center`}
+				>
+					<div className={`mb-8`}>
+						<p className={`font-semibold text-3xl mb-2`}>
+							Create your account
+						</p>
+						<p className={`text-base  text-slate-400`}>
+							Start crafting compelling blog posts that engage and captivate
+							readers from the very beginning.{' '}
+						</p>
 					</div>
-				</section>
-			</main>
+					<form className={`mb-10`} onSubmit={handleSubmit}>
+						<label className={`block mb-4`}>
+							<input
+								type='text'
+								name='username'
+								required
+								placeholder='Enter your username'
+								className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
+								onChange={handleInputChange}
+							/>
+							{
+								formErrors.map((error, index) => {
+									if (error.name) {
+										return <p key={index} className={`text-red-500 text-sm`}>{error.name}</p>
+									}
+								})
+							}
+						</label>
+						<label className={`block mb-4`}>
+							<input
+								onChange={handleInputChange}
+								name='email'
+								type='email'
+								placeholder='Enter your email'
+								required
+								className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
+							/>
+							{
+								formErrors.map((error, index) => {
+									if (error.email) {
+										return <p key={index} className={`text-red-500 text-sm`}>{error.email}</p>
+									}
+								})
+							}
+							{emailExists && (
+								<p className={`text-red-500 text-sm`}>Email already exists</p>
+							)}
+						</label>
+						<label className={`block mb-3`}>
+							{
+								formErrors.map((error, index) => {
+									if (error.password) {
+										return <p key={index} className={`text-red-500 text-sm`}>{error.password}</p>
+									}
+								})
+							}
+							{isPasswordShort && (
+								<p className={`text-red-500 text-sm`}>
+									Password should be at least 6 characters
+								</p>
+							)}
+							<input
+								type='password'
+								name='password'
+								required
+								placeholder='Enter your password'
+								className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
+								onChange={handleInputChange}
+							/>
+						</label>
+						<input
+							type='submit'
+							value='Sign Up'
+							className={`cursor-pointer mt-10 block w-full p-2 bg-violet-700 text-white rounded-lg hover:bg-black hover:text-white ${isLoading ? styles.grey : ''
+								} `}
+							disabled={isLoading}
+						/>
+						<p className={` text-center`}>
+							Already have an account? <Link href='/'>Log in</Link>{' '}
+						</p>
+					</form>
+				</div>
+			</RegistrationLayout>
+			
 		</>
 	);
 }
