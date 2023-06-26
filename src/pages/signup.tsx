@@ -52,10 +52,11 @@ function SignUp() {
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (!validateForm()) {
-			console.log("form is not valid", formErrors)
 			return
+		}else{
+			await createUser(userDetails);
 		}
-		await createUser(userDetails);
+
 		if (
 			error === 'FirebaseError: Firebase: Error (auth/email-already-in-use)'
 		) {
