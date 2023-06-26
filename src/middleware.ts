@@ -21,5 +21,5 @@ export default function middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/bookmarks', '/chatter', '/explore', '/post', '/settings',"/signup", '/topics', '/edit', '/draft', '/n', '/search', '/forgotpassword'],
+    matcher: ['/','/bookmarks', '/chatter', '/explore', '/post', '/settings',"/signup", '/topics', '/edit', '/draft', '/n', '/search', '/forgotpassword'],
 }
