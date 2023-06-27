@@ -60,14 +60,14 @@ export default function Explore() {
             </Head>
             <FeedLayout>
                 <main className={`md:w-4/6`}>
-                    <h1>
+                    <h1 className="font-medium text-lg mb-2">
                         Explore Tech Topics
                     </h1>
-                    <p>
+                    <p className="mb-4  font-serif">
                         Explore the most popular tech blogs from the community. A constantly updating list of popular tags and the best minds in tech.
                     </p>
                     <ul>
-                        <li>Trending Topics</li>
+                        <li className="text-violet-700 font-serif font-normal text-lg">Trending Topics</li>
                     </ul>
                     <div className={`grid md:grid-cols-2 lg:grid-cols-3 gap-3 my-8`}>
                         {topics && topics.map((topic, index) =>
