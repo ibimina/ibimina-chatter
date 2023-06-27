@@ -16,6 +16,7 @@ module.exports = {
 			// add custom bg image
 			backgroundImage: {
 				'hero-pattern': "url('/images/herobg.jpg')",
+				'close-icon': "url('/images/icons8-close.svg')",
 			},
 		},
 	},
