@@ -6,4 +6,5 @@ export type { CommentProps } from "./article";
 export type { UnSplash } from "./unsplash";
 export type { LikeProps } from "./article";
 export type { BookmarkProps } from "./article";
-export type {UserBookmarkProps} from './article'
+export type {UserBookmarkProps} from './article';
+export type {NotificationProps} from './notification';
