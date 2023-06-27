@@ -2,14 +2,15 @@ import Head from 'next/head';
 import Link from 'next/link';
 import styles from '../styles/signup.module.css';
 import useSignUp from '@/hooks/useSignUp';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import RegistrationLayout from '@/container/registerlayout';
-
+import { useAuthContext } from '@/store/store';
 
 function SignUp() {
 	const [emailExists, setEmailExists] = useState<boolean | null>(null);
 	const [isPasswordShort, setIsPasswordShort] = useState<boolean | null>(null);
 	const { createUser, error, isLoading } = useSignUp();
+	const { state } = useAuthContext()
 
 	const [userDetails, setUserDetails] = useState({
 		username: '',
@@ -17,25 +18,32 @@ function SignUp() {
 		password: '',
 		topics: [],
 	});
-	interface FormErrors {
-		email?: string;
-		name?: string;
-		password?: string;
+	interface formErrorProps {
+		email: string;
+		name: string;
+		password: string;
 	}
-	const [formErrors, setFormErrors] = useState<FormErrors[]>([]) // ["Invalid email", "Username should be at least 3 characters"
+	const [formErrors, setFormErrors] = useState<formErrorProps>({ name: "", email: "", password: "" }) // ["Invalid email", "Username should be at least 3 characters"
 	const validateForm = () => {
 		let validEmailpattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-		if (!validEmailpattern.test(userDetails.email)) {
-			setFormErrors([...formErrors, { email: "Invalid email" }])
-		} if (userDetails.username.length < 3) {
-			setFormErrors([...formErrors, { name: "Username should be at least 3 characters" }])
-		} if (userDetails.password.length < 6) {
-			setFormErrors([...formErrors, { password: "Password should be at least 6 characters" }])
-		}
-		if (formErrors.length > 0) {
-			return false
+		if (validEmailpattern.test(userDetails.email)) {
+			setFormErrors({ ...formErrors, email: "invalid email" })
 		} else {
+			setFormErrors({ ...formErrors, email: "" })
+		} if (userDetails.username.length < 2) {
+			setFormErrors({ ...formErrors, name: "Username should be at least 2 characters" })
+		} else {
+			setFormErrors({ ...formErrors, name: "" })
+		}
+		if (userDetails.password.length < 6) {
+			setFormErrors({ ...formErrors, password: "Password should be at least 6 characters" })
+		} else {
+			setFormErrors({ ...formErrors, password: "" })
+		}
+		if (formErrors.name === "" && formErrors.email === "" && formErrors.password === "") {
 			return true
+		} else {
+			return false
 		}
 	};
 
@@ -50,23 +58,25 @@ function SignUp() {
 
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		if (!validateForm()) {
-			return
-		}else{
-			await createUser(userDetails);
-		}
-
-		if (
-			error === 'FirebaseError: Firebase: Error (auth/email-already-in-use)'
-		) {
-			setEmailExists(true);
-		} else if (
-			error ===
-			'FirebaseError: Firebase: Password should be at least 6 characters (auth/weak-password).'
-		) {
-			setIsPasswordShort(true);
+		const isValid = validateForm()
+		if (isValid) {
+			await createUser(userDetails)
 		}
 	};
+	useEffect(() => {
+		if (!state.success) {
+			if (
+				error === 'Firebase: Error (auth/email-already-in-use).'
+			) {
+				setEmailExists(true);
+			} else if (
+				error ===
+				'Firebase: Password should be at least 6 characters (auth/weak-password).'
+			) {
+				setIsPasswordShort(true);
+			}
+		}
+	}, [error, state.success])
 
 	return (
 		<>
@@ -100,12 +110,8 @@ function SignUp() {
 								className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
 								onChange={handleInputChange}
 							/>
-							{
-								formErrors.map((error, index) => {
-									if (error.name) {
-										return <p key={index} className={`text-red-500 text-sm`}>{error.name}</p>
-									}
-								})
+							{formErrors.name &&
+								<p className={`text-red-500 text-sm`}>{formErrors.name}</p>
 							}
 						</label>
 						<label className={`block mb-4`}>
@@ -118,23 +124,18 @@ function SignUp() {
 								className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
 							/>
 							{
-								formErrors.map((error, index) => {
-									if (error.email) {
-										return <p key={index} className={`text-red-500 text-sm`}>{error.email}</p>
-									}
-								})
+								formErrors.email &&
+								<p className={`text-red-500 text-sm`}>{formErrors.email}</p>
 							}
+
 							{emailExists && (
 								<p className={`text-red-500 text-sm`}>Email already exists</p>
 							)}
 						</label>
 						<label className={`block mb-3`}>
 							{
-								formErrors.map((error, index) => {
-									if (error.password) {
-										return <p key={index} className={`text-red-500 text-sm`}>{error.password}</p>
-									}
-								})
+								formErrors.password &&
+								<p className={`text-red-500 text-sm`}>{formErrors.password}</p>
 							}
 							{isPasswordShort && (
 								<p className={`text-red-500 text-sm`}>
@@ -163,7 +164,7 @@ function SignUp() {
 					</form>
 				</div>
 			</RegistrationLayout>
-			
+
 		</>
 	);
 }
