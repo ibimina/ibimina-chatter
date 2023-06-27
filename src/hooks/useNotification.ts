@@ -40,7 +40,7 @@ function useNotification() {
                 setNotifications([])
                 setIsLoading(false)
                 return
-            } else {
+            } else if(data?.notification?.length > 0) {
                 setIsLoading(true)
                 data?.notification?.forEach((notification: any) => {
                     if (notification?.event_user !== state?.user?.uid) {
