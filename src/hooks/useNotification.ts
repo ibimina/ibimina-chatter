@@ -3,7 +3,7 @@ import { DocumentData, doc, setDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import useCollection from "./useCollection";
 import { firebaseStore } from "@/firebase/config";
-import { set } from "cypress/types/lodash";
+import { NotificationProps } from "@/types";
 
 
 function useNotification() {
@@ -32,9 +32,8 @@ function useNotification() {
 
     useEffect(() => {
         //get user doc notifications
-       
+    
         const getNotifications = async () => {
-            setIsLoading(true)
             let notificationsArr: DocumentData = []
             if(!data?.notification){
                 setNotifications([])
@@ -42,16 +41,19 @@ function useNotification() {
                 return
             } else if(data?.notification?.length > 0) {
                 setIsLoading(true)
-                data?.notification?.forEach((notification: any) => {
+                data?.notification?.forEach((notification: NotificationProps) => {
                     if (notification?.event_user !== state?.user?.uid) {
                         notificationsArr.push(notification)
                     }
                 })
-                notificationsArr.sort((a: { timestamp: any }, b: { timestamp: any }) => new Date(b?.timestamp).getTime() - new Date(a?.timestamp).getTime())
+                notificationsArr.sort((a: { timestamp: string }, b: { timestamp: string }) => new Date(b?.timestamp).getTime() - new Date(a?.timestamp).getTime())
                 setNotifications(notificationsArr)
                 setIsLoading(false)
-            } 
-              
+            } else{
+                setNotifications([])
+                setIsLoading(false)
+            }
+              setIsLoading(false)
             
         }
         getNotifications()
