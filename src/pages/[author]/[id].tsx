@@ -116,7 +116,7 @@ export default function SingleArticle() {
                 <meta name="twitter:creator" content="@InkSpire" />
             </Head>
             <FeedLayout>
-                <main className={` md:w-10/12 mx-auto lg:w-9/12 `}>
+                <main className={` md:w-10/12 mx-auto lg:w-8/12 `}>
                     <div className="flex items-center mb-6 gap-4">
                         <button
                             onClick={handleRoute}
@@ -159,7 +159,7 @@ export default function SingleArticle() {
                     </Link>
                     <ReactMarkdown remarkPlugins={[remarkGfm]}
                         components={{ a: LinkRenderer }}
-                        className={` prose prose-headings:m-0 prose-p:my-0  prose-li:m-0 prose-ol:m-0 prose-ul:m-0 prose-ul:leading-6
+                        className={` prose max-w-none prose-headings:m-0 prose-p:my-0  prose-li:m-0 prose-ol:m-0 prose-ul:m-0 prose-ul:leading-6
                             hr-black prose-hr:border-solid prose-hr:border prose-hr:border-black
                              marker:text-gray-700  break-words whitespace-pre-wrap`} >
                         {article?.article}
