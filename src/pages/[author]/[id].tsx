@@ -100,19 +100,19 @@ export default function SingleArticle() {
     return (
         <>
             <Head>
-                <title>{`${article?.title} by ${article?.author?.name} on chatter`}</title>
-                <meta name="title" property="og:title" content={`${article?.title} by ${article?.author?.name} on chatter`} />
+                <title>{`${article?.title} by ${article?.author?.name} on InkSpire`}</title>
+                <meta name="title" property="og:title" content={`${article?.title} by ${article?.author?.name} on InkSpire`} />
                 <meta name="image" property="og:image" content={article?.coverImageUrl} />
                 <meta name="description" property="og:description" content={article?.subtitle} />
                 <meta name="url" property="og:url" content={shareUrl} />
                 <meta name="type" property="og:type" content="article" />
-                <meta name="site_name" property="og:site_name" content="chatter" />
-                <meta name="twitter:title" content={`${article?.title} by ${article?.author?.name} on chatter`} />
+                <meta name="site_name" property="og:site_name" content="InkSpire" />
+                <meta name="twitter:title" content={`${article?.title} by ${article?.author?.name} on InkSpire`} />
                 <meta name="twitter:description" content={article?.subtitle} />
                 <meta name="twitter:image" content={article?.coverImageUrl} />
                 <meta name="twitter:card" content="summary_large_image" />
-                <meta name="twitter:site" content="@chatter" />
-                <meta name="twitter:creator" content="@chatter" />
+                <meta name="twitter:site" content="@InkSpire" />
+                <meta name="twitter:creator" content="@InkSpire" />
             </Head>
             <FeedLayout>
                 <main className={` md:w-10/12 mx-auto lg:w-9/12 `}>
