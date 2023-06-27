@@ -29,7 +29,7 @@ const useGoogleSignin = () => {
                 await setDoc(doc(firebaseStore, "users", user?.uid), userInfo);
                 dispatch(signIn(userInfo))
                 Cookies.set("loggedin", "true");
-                router.push('/tags');
+                router.push('/topics');
             }
           
         } catch (error: any) {
