@@ -23,6 +23,7 @@ export const InitialState = {
         facebook:""
     },
     authState: false,
+    success: false,
 };
 
 export const authReducer = (
@@ -32,6 +33,7 @@ export const authReducer = (
     if (action.type === SIGN_IN) {
         return {
             ...state,
+            success: true,
             user: action.payload,
         };
     }
@@ -134,6 +136,11 @@ export const authReducer = (
             authState: true,
             user: { ...state?.user, photoURL:  action.payload },
         };
+    }if(action.type === "ERROR"){
+        return {
+            ...state,
+            success: false,
+        }
     }
 
     return state;
