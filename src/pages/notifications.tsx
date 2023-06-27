@@ -1,6 +1,7 @@
 import { NotificationCard } from "@/components";
 import FeedLayout from "@/container/feedslayout";
 import useNotification from "@/hooks/useNotification";
+import Head from "next/head";
 import { Key, useEffect } from "react";
 
 
@@ -12,7 +13,13 @@ function Notifications() {
     })
 
     return (<>
-
+        <Head>
+            <title>Notifications - InkSpire</title>
+            <meta charSet="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <meta http-equiv="X-UA-Compatible" content="IE=7" />
+            <meta name="description" content="notifications" />
+        </Head>
         <FeedLayout>
             <main className={`w-full lg:w-4/6`}>
                 <h1 className="font-bold ">

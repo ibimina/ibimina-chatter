@@ -45,7 +45,7 @@ function Search() {
     return (
         <>
             <Head>
-                <title>#{q} on chatter</title>
+                <title>#{q} on InkSpire</title>
                 <meta charSet="UTF-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                 <meta http-equiv="X-UA-Compatible" content="IE=7" />

@@ -14,7 +14,7 @@ const MarkdownEditor = () => {
     return (
         <>
             <Head>
-                <title>Create an Article  on chatter</title>
+                <title>Create an Article  on InkSpire</title>
                 <meta charSet="UTF-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                 <meta http-equiv="X-UA-Compatible" content="IE=7" />
