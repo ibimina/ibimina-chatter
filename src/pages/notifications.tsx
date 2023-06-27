@@ -1,6 +1,7 @@
 import { NotificationCard } from "@/components";
 import FeedLayout from "@/container/feedslayout";
 import useNotification from "@/hooks/useNotification";
+import { NotificationProps } from "@/types";
 import Head from "next/head";
 import { Key, useEffect } from "react";
 
@@ -28,16 +29,7 @@ function Notifications() {
                 {isLoading && <p className="h-56 flex items-center justify-center">Loading...</p>}
                 {!isLoading && notifications?.length === 0 && <p className="text-center text-2xl h-56 flex items-center justify-center">No notifications</p>}
                 {notifications &&
-                    notifications?.map((notification: {
-                        event: string,
-                        event_username: string,
-                        event_userimage: string,
-                        event_user: string,
-                        articleTitle: string,
-                        articleId: string
-                        read: boolean
-
-                    }, index: Key) => {
+                    notifications?.map((notification: NotificationProps, index: Key) => {
                         return (
                             <NotificationCard key={index} notification={notification} />
                         )
