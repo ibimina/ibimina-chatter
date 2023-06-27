@@ -15,13 +15,12 @@ import { LinkRenderer } from "@/components";
 import styles from "@/styles/editor.module.css"
 import { ArticleProps } from "@/types/article";
 import { useAuthContext } from "@/store/store";
-import { useCollectionSnap, useInteraction } from "@/hooks";
-import { formatDistanceStrict } from "date-fns";
+import { useCollectionSnap, useInteraction ,useTime} from "@/hooks";
 
 import { EmailShareButton, FacebookShareButton, LinkedinShareButton, TelegramShareButton, TwitterShareButton, WhatsappShareButton, } from "react-share";
 import Head from "next/head";
 import FeedLayout from "@/container/feedslayout";
-import useTime from "@/hooks/useTime";
+
 
 
 export default function SingleArticle() {
@@ -36,6 +35,7 @@ export default function SingleArticle() {
     const [isShared, setIsShared] = useState(false);
     const { snap } = useCollectionSnap('articles', "author.uid", `${author}`);
     const { published } = useTime(article?.timestamp)
+    const [viewLikes, setViewLikes] = useState(false)
     useEffect(() => {
         const getArticle = async () => {
             const doc = snap?.find((article: ArticleProps) => {
@@ -59,7 +59,7 @@ export default function SingleArticle() {
             }
         };
         getArticle();
-        setShareUrl(window?.location?.href);    
+        setShareUrl(window?.location?.href);
     }, [article?.author?.name, article?.bookmarks, article?.likes, article?.title, id, snap, state?.user?.uid]);
     useEffect(() => {
         (async () => {
@@ -76,9 +76,9 @@ export default function SingleArticle() {
 
     const postComment = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (state?.user === null || state?.user?.uid==="") {
+        if (state?.user === null || state?.user?.uid === "") {
             alert("You need to login to comment")
-        }else{
+        } else {
             const docRef = doc(firebaseStore, 'articles', article?.id!);
             await setDoc(docRef, {
                 comments: [
@@ -92,11 +92,12 @@ export default function SingleArticle() {
             }, { merge: true });
             await addNotification('commented', article)
             setComment("")
-        }   
+        }
     }
     const handleRoute = () => {
         router.back();
-    } 
+    }
+
     return (
         <>
             <Head>
@@ -144,9 +145,9 @@ export default function SingleArticle() {
                             {article?.author?.image === null &&
                                 <Image className={`rounded-full`} src={"/images/icons8-user-64.png"} width={30} height={30} alt="author avatar" />
                             }
-                            
+
                             <span className="capitalize">{article?.author?.name} </span>
-                           
+
                         </div>
                         {
                             article?.title?.length > 1 &&
@@ -164,21 +165,22 @@ export default function SingleArticle() {
                         {article?.article}
                     </ReactMarkdown>
                     <div className='relative flex items-center gap-2 justify-center mt-20 mb-10'>
-                        <button
-                            onClick={() => increaseLike(article?.id!, article?.likes!, article)}
-                            className={`flex items-center gap-1`} title="likes">
-                            {
-                                isliked ?
-                                    <>
-                                        <Image src='/images/icons8-love-48.png' height={24} width={24} alt="like" />
-                                        <p className="text-red-500">  {article?.likesCount}</p>
-                                    </>
-                                    : <>
-                                        <Image src='/images/icons8-like-50.png' height={24} width={24} alt="like" />
-                                        <p className="text-current">  {article?.likesCount}</p>
-                                    </>
-                            }
-                        </button>
+                        <div className={`flex items-center gap-1`}>
+                            <button
+                                onClick={() => increaseLike(article?.id!, article?.likes!, article)}
+                                title="likes">
+                                {
+                                    isliked ?
+                                        <>
+                                            <Image src='/images/icons8-love-48.png' height={24} width={24} alt="like" />
+                                        </>
+                                        : <>
+                                            <Image src='/images/icons8-like-50.png' height={24} width={24} alt="like" />
+                                        </>
+                                }
+                            </button>
+                            <button onClick={() => setViewLikes(!viewLikes)} className={`${isliked ? "text-red-500 cursor-pointer" : "text-current cursor-pointer"}`} title="View who liked" >{article?.likesCount}</button>
+                        </div>
                         <button
                             onClick={() => addBookmark(article?.id!, article?.bookmarks)}
                             className='flex items-center gap-1' title="bookmarks">
@@ -199,6 +201,7 @@ export default function SingleArticle() {
                             <Image src="/images/icons8-chart-24.png" height={18} width={18} alt="views chart" />
                             {article?.views}
                         </button>
+
                         <button className='flex items-center gap-1' title="comments">
                             <Image src="/images/icons8-comment-24.png" height={24} width={24} alt="comments" />
                             {article?.comments?.length}
@@ -242,10 +245,39 @@ export default function SingleArticle() {
                                 <Image src="/images/icons8-whatsapp.svg" height={24} width={24} alt="whatsapp" />
                                 Share on whatsapp
                             </WhatsappShareButton>
-                         
+
                         </div>}
 
                     </div>
+                    {
+                        viewLikes &&
+                        <div onClick={() => setViewLikes(!viewLikes)} className="fixed top-0 left-0 w-full h-full bg-slate-900 bg-opacity-50 flex items-center justify-center">
+                            <div className="bg-gray-50 max-w-sm w-full px-4 py-2 rounded mx-4" >
+                                    <div className="flex items-center justify-between mb-4">
+                                    <p className="text-current text-lg font-medium">People who liked</p>
+                                    <button onClick={() => setViewLikes(!viewLikes)} className="cursor-pointer bg-close-icon bg-no-repeat bg-center w-3 h-3 hover:bg-slate-200" title=""></button>
+                                </div>
+
+                                {article?.likes?.map((like: any, index) => {
+                                    return (
+                                        <div className="flex items-center justify-between mb-3" key={index}>
+                                            <div className="flex items-center gap-1">
+                                                <Image className="rounded-full" src={like.image ? like.image : "/images/icons8-user-64.png"} height={24} width={24} alt="like" />
+                                                <p className="text-gray-500">  {like.name}</p>
+                                            </div>
+                                            <p>{like?.timestamp?.length} {like?.timestamp?.length > 1 ? "likes" : "like"}</p>
+                                        </div>)
+                                })
+                                }
+                                {
+                                    article?.likes?.length === 0 && <p>No likes yet</p>
+                                }
+                            </div>
+                        </div>
+                    }
+
+
+
                     <div className="py-2 max-w-lg">
                         <h2 className="text-xl font-bold mb-3">
                             {article?.comments?.length > 1 ? "Comments" : "Comment"}
