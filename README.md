@@ -16,30 +16,14 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 
 ### Project name
 
-Chatter
+InkSpire
 
 ### Project description
 
-A multi-functional platform where authors and readers can create and have access to their own content. Chatter aims to knock off competition from the likes of Hashnode and Medium in its first 2 years of launch.
+A multi-functional platform where authors and readers can create and have access to their own content. InkSpire aims to knock off competition from the likes of Hashnode and Medium in its first 2 years of launch.
 
 ## Project system Architecture
 
@@ -57,12 +41,13 @@ Screenshot of the project architecture:
 - User can update a post.
 - User can delete a post.
 - User can like a post.
+- User can bookmark a post.
 - User can view all likes on a post.
 - User can see all views analytics on a post.
 - User can comment on a post.
 - User can view all comments on a post.
 - User can view all posts by a user.
-- User can view all posts by a user.
+
 
 ### Project technologies
 
@@ -70,13 +55,21 @@ Screenshot of the project architecture:
 - TypeScript
 - Module CSS
 - Tailwind CSS
-- React Query
-- React Hook Form
 - React Markdown
 - Cypress 
 - React Share
+- ESLint
+- Prettier
+- Husky
+- Commit Lint
+- emoji-picker-react
+- Firebase
+- date-fns
+
+
 
 ### Project status
+95% complete
 
 ### Project structure explanation
 
@@ -87,5 +80,56 @@ Screenshot of the project architecture:
   - `pages` - Contains all the pages of the project.
   - `styles` - Contains all the styles of the project.
   - `types` - Contains all the types of the project.
-  - `utils` - Contains all the utils of the project.
+  -  `middlewares` - Contains all the middlewares of the project.
 - `public` - Contains all the public files of the project.
+
+### Project setup
+
+- Clone the repository
+
+```bash
+git clone
+```
+
+- Install dependencies
+
+```bash
+npm install
+```
+
+- Run the project
+
+```bash
+npm run dev
+```
+
+- Run the tests
+
+```bash
+npm run test
+```
+
+### Project deployment
+
+- Deploy the project to Vercel
+
+```bash
+npm run deploy
+```
+
+### Project screenshots
+
+![signup page](./public/signup.png)
+
+![feeds page](./public/feeds.png)
+
+![post page](./public/post.png)
+
+![profile page](./public/profile.png)
+
+
+
+### Project demo
+
+[InkSpire](https://ibimina-chatter.vercel.app)
+
