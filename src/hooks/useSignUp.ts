@@ -37,8 +37,9 @@ export default function useSignUp() {
 			Cookies.set("loggedin", "true");
 			dispatch(signIn(userInfo));
 			setIsLoading(false);
-			router.push("/topics")
+			router.push("/topics");
 		} catch (error: any) {
+			dispatch({ type: "ERROR" })
 			setError(error.message);
 			setIsLoading(false);
 		}
