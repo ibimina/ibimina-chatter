@@ -12,3 +12,4 @@ export {default as useFeeds} from "./useFeeds";
 export {default as useNotification} from "./useNotification";
 export {default as useTime} from "./useTime";
 export { default as useFollow } from "./useFollow";
+export { default as useMessage } from "./useMessage"
