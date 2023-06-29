@@ -123,6 +123,19 @@ function FeedLayout({ children }: { children: React.ReactNode }) {
                                             Bookmarks
                                         </Link>
                                     </li>
+                                    <li className={`font-medium hover:scale-105 `}>
+                                        <Link href='/messages' className={`flex items-center gap-2 hover:text-blue-500`}>
+                                            <Image
+                                                src='/images/icons8-message-50.png'
+                                                height={44}
+                                                width={34}
+                                                alt='message'
+                                            />
+                                            Message
+                                            
+                                        </Link>
+                                     
+                                    </li>
                                 </>
                         }
                     </ul>
