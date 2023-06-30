@@ -13,12 +13,12 @@ function Header({ handleNav }: { handleNav: () => void }) {
     const { state } = useAuthContext();
     const author = state?.user?.uid
     const { logoutUser } = useLogOut();
-    const {notifications} = useNotification()
+    const { notifications } = useNotification()
     const getSearchAndRedirect = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const input = e.currentTarget.childNodes[0] as HTMLInputElement
         const search = input.value
-        router.push(`/search?q=${search}`)      
+        router.push(`/search?q=${search}`)
     }
     const handleLogout = async () => {
         await logoutUser()
@@ -30,7 +30,7 @@ function Header({ handleNav }: { handleNav: () => void }) {
                 className={`relative grid grid-cols-3 lg:grid-cols-7 shadow-md items-center py-4 px-4`}
             >
                 <div className={`flex items-center gap-3 col-span-2 md:col-span-1`}>
-                    {router.pathname !== '/settings'  &&
+                    {router.pathname !== '/settings' &&
                         <button
                             onClick={handleNav}
                             className={`lg:hidden ${styles.menu}`}
@@ -39,7 +39,7 @@ function Header({ handleNav }: { handleNav: () => void }) {
                     }
                     <Link href="/chatter">
                         <h1 className={`font-bold text-3xl font-serif text-transparent bg-clip-text bg-gradient-to-br  from-purple-700 to-blue-400 `}>InkSpire</h1>
-                        </Link>
+                    </Link>
                 </div>
                 {router.pathname !== '/settings' &&
                     <form
@@ -55,33 +55,40 @@ function Header({ handleNav }: { handleNav: () => void }) {
                 }
                 <nav className={`col-start-3 lg:col-start-6 lg:col-end-8`}>
                     <ul className={`flex items-center gap-2 justify-end`}>
-                        <li
-                            className={`fixed z-50 bottom-10 right-5 md:relative md:bottom-auto bg-violet-700 hover:bg-black text-gray-50 p-4 rounded-full lg:rounded-3xl lg:right-auto lg:py-2 lg:px-6 border-current`}
-                        >
-                            <Link href='/post' className={`md:flex md:items-center gap-2 z-50`}>
-                                <Image
-                                    className='brightness-100 invert'
-                                    src='/images/icons8-write-48.png'
-                                    height={24}
-                                    width={24}
-                                    alt='quill'
-                                />
-                                <span className={`hidden md:block`}>write</span>
-                            </Link>
-                        </li>
+
+                        {
+
+                            router.pathname !== '/messages' &&
+                            <li
+                                className={`fixed z-50 bottom-10 right-5 md:relative md:bottom-auto bg-violet-700 hover:bg-black text-gray-50 p-4 rounded-full lg:rounded-3xl lg:right-auto lg:py-2 lg:px-6 border-current`}
+                            >
+                                <Link href='/post' className={`md:flex md:items-center gap-2 z-50`}>
+                                    <Image
+                                        className='brightness-100 invert'
+                                        src='/images/icons8-write-48.png'
+                                        height={24}
+                                        width={24}
+                                        alt='quill'
+                                    />
+                                    <span className={`hidden md:block`}>write</span>
+                                </Link>
+                            </li>
+                        }
+
+
                         <li >
                             {/* signify user of unread notifications if any notifications has a read value of false */}
                             <Link href='/notifications' className='relative'>
                                 {notifications?.some((notification: { read: boolean }) => notification.read === false) &&
                                     <span className={`absolute top-1 right-1 bg-red-500 rounded-full h-2 w-2`}></span>
                                 }
-                            <Image
-                                src='/images/icons8-notifications-78.png'
-                                height={44}
-                                width={34}
-                                alt='notification'
-                            />
-                            <span className={`hidden`}>notification</span>
+                                <Image
+                                    src='/images/icons8-notifications-78.png'
+                                    height={44}
+                                    width={34}
+                                    alt='notification'
+                                />
+                                <span className={`hidden`}>notification</span>
                             </Link>
                         </li>
                         <li
@@ -113,7 +120,7 @@ function Header({ handleNav }: { handleNav: () => void }) {
                     <button onClick={handleLogout} className='block'>Logout</button>
                 </div>
             </header>
-            
+
         </>
     );
 }
