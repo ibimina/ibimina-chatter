@@ -16,7 +16,8 @@ import { firebaseStore } from "@/firebase/config";
 
 
 function ViewProfile() {
-    const author = useRouter().query.author
+    const router = useRouter();
+    const author = router.query.author
     const { state, dispatch } = useAuthContext()
     const { snap } = useCollectionSnap("articles", "author.uid", `${author}`)
     const { data } = useCollection("users", `${author}`)
@@ -106,7 +107,7 @@ function ViewProfile() {
                             </div>
 
                             <div className="flex items-center gap-4 mb-6">
-                                <p className="font-semibold flex items-center flex-col md:flex-col">{articles?.length} <span>articles</span> </p>
+                                <p className="font-semibold flex items-center flex-col md:flex-col">{articles?.length ? articles?.length : 0} <span>articles</span> </p>
                                 <button onClick={() => setViewFollowers(!viewFollowers)} className="font-semibold flex items-center flex-col md:flex-col">{followers?.length} <span>{followers?.length === 0 ? "follower" : "followers"}</span> </button>
                                 <button onClick={() => setViewFollowing(!viewFollowing)} className="font-semibold flex items-center flex-col md:flex-col">{following?.length} <span>following</span> </button>
                             </div>
@@ -196,17 +197,23 @@ function ViewProfile() {
                         </div>
                     }
 
-                    {
-                        state?.user?.uid === author &&
-                        <Link href="/settings" className="bg-violet-900 text-white py-1 px-6 rounded-2xl w-max">Edit</Link>
-                    }
-                    {
-                        state?.user?.uid !== author &&
-                        <button onClick={() => handelFollow({name:data?.displayName,image:data?.photoURL,author:data.uid})} className="cursor-pointer bg-violet-700 text-white rounded-2xl px-4 py-2">
-                            {isfollowing ? "following" : "follow +"}
-                        </button>
-                    }
+                    <div className="flex gap-1 items-center mb-3 lg:mb-0">
 
+                        {
+                            state?.user?.uid === author &&
+                            <Link href="/settings" className="bg-violet-900 text-white py-1 px-6 rounded-2xl w-max">Edit</Link>
+                        }
+                        {
+                            state?.user?.uid !== author &&
+                            <button onClick={() => handelFollow({ name: data?.displayName, image: data?.photoURL, author: data.uid })} className="cursor-pointer bg-violet-700 text-white rounded-2xl px-4 py-2">
+                                {isfollowing ? "following" : "follow +"}
+                            </button>
+                        }
+                            <button onClick={() => router.push(`/messages?q=${author}`)} className="cursor-pointer bg-slate-300 rounded-2xl px-4 py-2">
+                                message
+                            </button>                    
+                    </div>
+                   
                 </div>
 
                 {/* add a button to click follow writer */}

@@ -1,0 +1,23 @@
+.containerHeight {
+    min-height: 72vh;
+}
+.previewMessage{
+    overflow-y: scroll;
+}
+.message{
+    border-bottom-left-radius: 18px;
+    border-top-right-radius: 4px;
+        border-top-left-radius: 18px;
+        border-bottom-right-radius: 18px;
+}
+@media (min-width:40rem) {
+    .containerHeight {
+        min-height: 85vh;
+    }
+}
+
+@media (min-width:60rem) {
+    .containerHeight {
+        min-height: 85vh;
+    }
+}
