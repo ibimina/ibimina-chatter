@@ -29,7 +29,8 @@ function ArticleSide({ isvisible, handleVisible }: { isvisible: boolean, handleV
                                 doc.published === false &&
                                 <li key={doc?.id} className={`mb-1 `}>
                                     <Link href={`/draft/${encodeURIComponent(doc.id)}`}>
-                                        {doc?.article}
+                                        <p className={`text-amber-950`}>{doc?.title ? doc?.title : "Untitled"}</p>
+                                        <span> {doc?.article.substring(0, 30)}</span>
                                     </Link>
                                 </li>
                             )
