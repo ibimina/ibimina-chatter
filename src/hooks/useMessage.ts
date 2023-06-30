@@ -17,10 +17,15 @@ function useMessage() {
 
                         arr.push(d.data()?.contact)
                     })
-                    setMessages(arr)
+                    const sortedMessages = arr.sort((a: any, b: any) => {
+                        return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+                    })
+                    setMessages(sortedMessages)
                 })
             }
             getMessages()
+        }else{
+            setMessages([])
         }
     }, [state?.user?.uid])
     return { messages }
