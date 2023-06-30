@@ -166,7 +166,9 @@
 .image{
     background: url('../assets/icons8-image-25.png') no-repeat center center;
 }
-
+.embedLink{
+    background: url('../assets/icons8-video-24.png') no-repeat center center;
+}
 .articlesSection {
     display: none;
 }
