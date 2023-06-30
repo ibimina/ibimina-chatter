@@ -56,9 +56,7 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,isDi
         setPage(1)
         getSearchData()
     };
-    const increasePage = () => {
-        setPage(page + 1)
-    }
+
     const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
         const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
         if (scrollHeight - scrollTop === clientHeight) {
