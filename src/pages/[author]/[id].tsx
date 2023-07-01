@@ -276,7 +276,21 @@ export default function SingleArticle() {
                         </div>
                     }
 
-
+{
+    article?.topics?.length > 0 &&
+    <div className="py-2 max-w-lg">
+        <h2 className="text-xl font-bold mb-3">Topics</h2>
+        <div className="flex flex-wrap gap-2">
+            {article?.topics?.map((topic: any, index: number) => {
+                return (
+                    <Link href={`/n?q=${topic}`} key={index} className="bg-gray-200 px-2 py-1 rounded-lg text-sm text-gray-600 hover:bg-gray-200">
+                        {topic}                    
+                    </Link>
+                )
+            })}
+        </div>
+        </div>
+}
 
                     <div className="py-2 max-w-lg">
                         <h2 className="text-xl font-bold mb-3">

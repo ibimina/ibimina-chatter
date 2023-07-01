@@ -1,15 +1,23 @@
 .containerHeight {
     min-height: 72vh;
 }
-.previewMessage{
+
+.previewMessage {
     overflow-y: scroll;
 }
-.message{
+
+.message {
     border-bottom-left-radius: 18px;
     border-top-right-radius: 4px;
-        border-top-left-radius: 18px;
-        border-bottom-right-radius: 18px;
+    border-top-left-radius: 18px;
+    border-bottom-right-radius: 18px;
 }
+
+.messgeHeight {
+    height: 580px;
+    overflow-y: scroll;
+}
+
 @media (min-width:40rem) {
     .containerHeight {
         min-height: 85vh;

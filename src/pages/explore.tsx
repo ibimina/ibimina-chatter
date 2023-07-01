@@ -19,9 +19,10 @@ export default function Explore() {
             const firebaseTopics = getDoc(doc(firebaseStore, "topics", `${process.env.NEXT_PUBLIC_TOPICS_DATABASE_ID}`))
             const response = (await firebaseTopics)?.data()?.topics
             setTopics(response.sort((a: topic, b: topic) => b.count - a.count))
+   
         }
         getTopics()
-        return () => { getTopics }
+        return () => { getTopics() }
     }, [state, state?.user?.uid])
     const addUserTopic = async (e: React.MouseEvent, tag: string) => {
         e.preventDefault();
@@ -70,7 +71,7 @@ export default function Explore() {
                         <li className="text-violet-700 font-serif font-normal text-lg">Trending Topics</li>
                     </ul>
                     <div className={`grid md:grid-cols-2 lg:grid-cols-3 gap-3 my-8`}>
-                        {topics && topics.map((topic, index) =>
+                        {topics && topics.slice(0,10).map((topic, index) =>
                             <div key={index} className={`flex justify-between items-center bg-stone-200 hover:bg-zinc-300  cursor-pointer`} aria-selected='false'>
                                 <Link className={`px-4 py-3 font-medium`} href={`/n?q=${topic?.name}`}>{topic?.name} </Link>
                                 <button

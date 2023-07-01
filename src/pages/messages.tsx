@@ -1,7 +1,7 @@
 import FeedLayout from "@/container/feedslayout";
 import { firebaseStore } from "@/firebase/config";
 import { useMessage } from "@/hooks";
-import { DocumentData,  collection, doc, onSnapshot, query, setDoc,  getDoc } from "firebase/firestore";
+import { DocumentData, collection, doc, onSnapshot, query, setDoc, getDoc } from "firebase/firestore";
 import React, { Key, useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { useAuthContext } from "@/store/store";
@@ -29,7 +29,7 @@ function Message() {
             onSnapshot(q, (querySnapshot) => {
                 const users: any[] = [];
                 querySnapshot.forEach((doc) => {
-                    if (doc.data()?.displayName.includes(inkSpire)) users.push(doc.data());
+                    if (doc?.data()?.displayName?.includes(inkSpire)) users.push(doc.data());
                 });
                 setSearchUser(users)
             });
@@ -38,8 +38,8 @@ function Message() {
             setSearchUser([])
         }
     }, [inkSpire])
-    
-    const messageUser = ((uid: string) => {
+
+    const messageUser = useCallback((uid: string) => {
         setIsModal(false)
         onSnapshot(doc(firebaseStore, "messages", state?.user?.uid, "chats", `${uid}`), (doc) => {
             if (doc.exists() && doc.data()?.message?.length > 0) {
@@ -53,18 +53,18 @@ function Message() {
                 setSingleUserMessages([])
             }
         });
-    })
+    }, [state?.user?.uid])
     useEffect(() => {
         if (q && state?.user?.uid) {
             const qRef = query(collection(firebaseStore, "users"));
             onSnapshot(qRef, (querySnapshot) => {
 
                 querySnapshot.forEach((doc) => {
-                    if (doc.data()?.uid === q) {
+                    if (doc?.data()?.uid === q) {
                         setSelectUser({ photoURL: doc.data().photoURL, displayName: doc.data().displayName, uid: doc.data().uid })
                         messageUser(`${q}`)
-                      }
-                })   
+                     }
+                })
 
             });
         } else {
@@ -116,7 +116,10 @@ function Message() {
                         <h2 className="hidden mb-4 lg:block">Messages</h2>
                         {
                             messages?.length === 0 &&
-                            <p>No message yet</p>
+                            <div className="flex items-center justify-center h-full">
+                                <p className="text-center px-2 ">No message yet</p>
+                            </div>
+
                         }
                         {
                             messages?.length > 0 &&
@@ -147,17 +150,17 @@ function Message() {
                     }
                     {
                         !ismodal && selectUser?.displayName?.length > 0 &&
-                        <div className="col-span-4 lg:col-span-3 flex  flex-col">
+                        <div className="col-span-4 lg:col-span-3 flex  flex-col justify-between">
 
                             <Link className="flex items-center p-2 gap-1 mb-4 border-b-2 border-gray-200" href={`/${encodeURIComponent(selectUser?.uid)}`}>
                                 <Image className="rounded-full" src={selectUser?.photoURL ? selectUser?.photoURL : "/images/icons8-user-64.png"} height={24} width={24} alt="like" />
                                 <span>{selectUser?.displayName}</span>
                             </Link>
 
-                            <div className="flex p-2 flex-col justify-between h-full">
+                            <div className={`flex p-2 flex-col justify-end ${styles.messgeHeight}`}>
                                 {
                                     singleUserMessages?.length > 0 &&
-                                    <ul className={`overflow-y-scroll max max-h-96`}>
+                                    <ul className={`overflow-y-scroll mb-2 `}>
                                         {
                                             singleUserMessages?.map((m: { message: string, username: string, messageUserUid: string, messagerImage: string, timestamp: string }, index: Key) =>
                                                 <li key={index} className={`mb-4 ${m.messageUserUid === state.user.uid ? "flex justify-end" : ""}`}>
@@ -179,7 +182,7 @@ function Message() {
 
 
                                                                 </Link>
-                                                                <div className="hidden lg:block">
+                                                                <div className="">
                                                                     <p className="rounded-xl bg-gray-300 px-2 py-1 mb-2 max-w-max">{m.message} </p>
                                                                 </div>
                                                             </div>
@@ -201,7 +204,7 @@ function Message() {
                                 }
 
 
-                                <form onSubmit={handleSendMessage}>
+                                <form onSubmit={handleSendMessage} className="mb-2 mx-1">
                                     <input type="text" className="w-full border-2 border-slate-400 rounded-xl p-2" name="privatechat" value={chatMessage} onChange={(e) => setChatMessage(e.target.value)} />
                                 </form>
 
