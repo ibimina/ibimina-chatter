@@ -1,13 +1,26 @@
 import useCollectionSnap from '@/hooks/useCollectionSnap';
 import { useAuthContext } from '@/store/store';
 import styles from '@/styles/editor.module.css';
+
 import Link from 'next/link';
+import { useState } from 'react';
+import { DeleteModal } from '@/components/index';
+import Image from 'next/image';
 
 function ArticleSide({ isvisible, handleVisible }: { isvisible: boolean, handleVisible: (e: React.MouseEvent) => void }) {
     const { state } = useAuthContext()
     const { snap, loading, error } = useCollectionSnap("articles", "author.uid", state?.user?.uid);
     const publishedLength = snap?.filter((doc: any) => doc.published === true).length;
     const draftLength = snap?.filter((doc: any) => doc.published === false).length;
+    const [showdeleteModal, setShowDeleteModal] = useState(false)
+    const [showPublishedDeleteModal, setShowPublishedDeleteModal] = useState(false)
+    const handleModal = () => {
+        setShowDeleteModal(!showdeleteModal)
+
+    }
+    const handleModalTwo = () => {
+        setShowPublishedDeleteModal(!showPublishedDeleteModal)
+    }
     return (
         <aside className={` px-3 pt-5 lg:block lg:col-span-2 bg-gray-100 shadow-inner lg:rounded-lg ${styles.articlesSection}`}
             data-visible={isvisible}>
@@ -24,13 +37,18 @@ function ArticleSide({ isvisible, handleVisible }: { isvisible: boolean, handleV
                         <span>{error}</span>
                     }
                     {snap &&
-                        snap?.map((doc: any) => {
+                        snap?.map((doc: { published: boolean; id: string; title: string, article: string; }) => {
                             return (
                                 doc.published === false &&
                                 <li key={doc?.id} className={`mb-1 `}>
                                     <Link href={`/draft/${encodeURIComponent(doc.id)}`}>
-                                        <p className={`text-amber-950`}>{doc?.title ? doc?.title : "Untitled"}</p>
-                                        <span> {doc?.article.substring(0, 30)}</span>
+                                        <div className='flex items-start justify-between'>
+                                            <p className={`text-amber-950`}>{doc?.title ? doc?.title : "Untitled"}</p>
+                                            <button onClick={handleModal} title='delete'>
+                                                <Image src="/images/icons8-delete-32.png" alt="delete icon" height={24} width={24} />
+                                            </button>
+                                            {showdeleteModal && <DeleteModal articleid={doc.id} published={doc.published} handleModal={handleModal} />}
+                                        </div>   <span> {doc?.article.substring(0, 30)}</span>
                                     </Link>
                                 </li>
                             )
@@ -58,10 +76,15 @@ function ArticleSide({ isvisible, handleVisible }: { isvisible: boolean, handleV
                         snap?.map((doc: any) => {
                             return (
                                 doc.published === true &&
-                                <li key={doc?.id} className={`mb-2`}>
-                                    <Link href={`/edit/${encodeURIComponent(doc.id)}`} >
-                                        {doc?.title}
+                                <li key={doc?.id} className={`mb-2 flex items-start justify-between`}>
+                                    <p> <Link href={`/edit/${encodeURIComponent(doc.id)}`} >
+                                        {doc?.title.substring(0, 35)}
                                     </Link>
+                                    </p>
+                                    <button onClick={handleModal} title='delete'>
+                                        <Image src="/images/icons8-delete-32.png" alt="delete icon" height={24} width={24} />
+                                    </button>
+                                    {showPublishedDeleteModal && <DeleteModal articleid={doc.id} published={doc.published} handleModal={handleModalTwo} />}
                                 </li>
                             )
                         })
