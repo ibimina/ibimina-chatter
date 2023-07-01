@@ -80,6 +80,7 @@ function useInteraction() {
             })
             if (hasLiked) {
                 await setDoc(docRef, { likes: updateLike, likesCount: countLikes }, { merge: true });
+                await addNotification('liked', article)
             } else if (likes.length === 0 || hasLiked === undefined) {
                 await setDoc(docRef, {
                     likes: [...likes, {
