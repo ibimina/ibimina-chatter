@@ -33,14 +33,12 @@ function Message() {
                 });
                 setSearchUser(users)
             });
-        } else {
-            setSelectUser({ photoURL: "", displayName: "", uid: "" })
-            setSearchUser([])
-        }
+        } 
     }, [inkSpire])
 
-    const messageUser = useCallback((uid: string) => {
+    const messageUser = (uid: string) => {
         setIsModal(false)
+        setInkSpire("")
         onSnapshot(doc(firebaseStore, "messages", state?.user?.uid, "chats", `${uid}`), (doc) => {
             if (doc.exists() && doc.data()?.message?.length > 0) {
                 // sort the messages by timestamp
@@ -48,24 +46,22 @@ function Message() {
                     return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
                 })
                 setSingleUserMessages(sortedMessages)
+                setSearchUser([])
             } else {
-
                 setSingleUserMessages([])
             }
         });
-    }, [state?.user?.uid])
+    }
     useEffect(() => {
         if (q && state?.user?.uid) {
             const qRef = query(collection(firebaseStore, "users"));
             onSnapshot(qRef, (querySnapshot) => {
-
                 querySnapshot.forEach((doc) => {
                     if (doc?.data()?.uid === q) {
                         setSelectUser({ photoURL: doc.data().photoURL, displayName: doc.data().displayName, uid: doc.data().uid })
                         messageUser(`${q}`)
-                     }
+                    }
                 })
-
             });
         } else {
             setSelectUser({ photoURL: "", displayName: "", uid: "" })
@@ -76,7 +72,6 @@ function Message() {
         e.preventDefault()
         try {
             const messageInfo = { message: chatMessage, username: state.user.displayName, messageUserUid: state?.user?.uid, messagerImage: state.user.photoURL, timestamp: new Date().toISOString() }
-
             const docRef = doc(firebaseStore, "messages", state?.user?.uid, "chats", `${selectUser?.uid}`)
             const docReff = doc(firebaseStore, "messages", `${selectUser?.uid}`, "chats", state?.user?.uid)
             const userMessage = await getDoc(docRef)
@@ -108,12 +103,19 @@ function Message() {
         setSelectUser({ uid: m?.uid, displayName: m?.name, photoURL: m?.image })
         messageUser(m?.uid)
     }
+    console.log(messages,singleUserMessages)
     return (<>
         <FeedLayout>
-            <main className={`md:w-9/12 mx-auto border-2 border-gray-400 rounded-xl`}>
+            <main className={`md:w-9/12 mx-auto border border-gray-300 rounded-xl`}>
                 <section className={`grid grid-cols-5  ${styles.containerHeight}`}>
-                    <div className="col-span-1 lg:p-2 lg:col-span-2 border-r border-gray-400 ">
-                        <h2 className="hidden mb-4 lg:block">Messages</h2>
+                    <div className="col-span-1  lg:col-span-2 border-r border-gray-400 ">
+                        <div className="flex  mb-4 items-center justify-between p-2 border-b border-gray-300">
+                            <h2 className="hidden lg:block">Messages</h2>
+                            <button title="search for a user" className={`cursor-pointer w-6 h-7 bg-no-repeat bg-new-message`}
+                                onClick={() => {setInkSpire("");setIsModal(!ismodal)}}></button>
+                        </div>
+
+
                         {
                             messages?.length === 0 &&
                             <div className="flex items-center justify-center h-full">
@@ -123,15 +125,15 @@ function Message() {
                         }
                         {
                             messages?.length > 0 &&
-                            <ul className={`${styles.previewMessage} p-2 `}>
+                            <ul className={`${styles.previewMessage} p-2 on scroll-m-7`}>
                                 {
                                     messages?.map((m: { sentby: string, name: string, image: string, uid: string, timestamp: string, lastmessage: string }, index: Key) => <li key={index} className="mb-3">
-                                        <div className="lg:flex items-center gap-1" onClick={() => getMessage(m)} role="button">
+                                        <div className="lg:flex items-start gap-2" onClick={() => getMessage(m)} role="button">
                                             <Image className="rounded-full" src={m?.image ? m?.image : '/images/icons8-user.svg'} height={50} width={50} alt={m.name} />
                                             <div className="hidden lg:block">
                                                 <p>{m?.name}</p>
-                                                <span>{m.sentby === state.user.uid ? "You: " : ""}{m.lastmessage} </span>
-                                                <span>{formatDistanceStrict(new Date(m?.timestamp), new Date(), { addSuffix: true })}</span>
+                                                <span className="text-slate-500 text-sm">{m.sentby === state.user.uid ? "You: " : ""}{m.lastmessage} </span>
+                                                <span className="text-slate-400 text-xs">{formatDistanceStrict(new Date(m?.timestamp), new Date(), { addSuffix: true })}</span>
                                             </div>
                                         </div>
                                     </li>)
@@ -140,7 +142,7 @@ function Message() {
                         }
                     </div>
                     {
-                        !ismodal && selectUser.displayName === '' &&
+                        selectUser.displayName === '' &&
                         <div className="col-span-4 lg:col-span-3 flex items-center justify-center">
                             <div>
                                 <p className="mb-4">Send private message to a friend</p>
@@ -149,27 +151,26 @@ function Message() {
                         </div>
                     }
                     {
-                        !ismodal && selectUser?.displayName?.length > 0 &&
+                        selectUser?.displayName?.length > 0 &&
                         <div className="col-span-4 lg:col-span-3 flex  flex-col justify-between">
 
-                            <Link className="flex items-center p-2 gap-1 mb-4 border-b-2 border-gray-200" href={`/${encodeURIComponent(selectUser?.uid)}`}>
-                                <Image className="rounded-full" src={selectUser?.photoURL ? selectUser?.photoURL : "/images/icons8-user-64.png"} height={24} width={24} alt="like" />
+                            <Link className="flex items-center p-2 gap-1 mb-4 border-b border-gray-300" href={`/${encodeURIComponent(selectUser?.uid)}`}>
+                                <Image className="rounded-full" src={selectUser?.photoURL ? selectUser?.photoURL : "/images/icons8-user-64.png"} height={27} width={27} alt="like" />
                                 <span>{selectUser?.displayName}</span>
                             </Link>
 
-                            <div className={`flex p-2 flex-col justify-end ${styles.messgeHeight}`}>
+                            <div className={`flex p-2 px-3 flex-col justify-end ${styles.messgeHeight}`}>
                                 {
                                     singleUserMessages?.length > 0 &&
                                     <ul className={`overflow-y-scroll mb-2 `}>
                                         {
                                             singleUserMessages?.map((m: { message: string, username: string, messageUserUid: string, messagerImage: string, timestamp: string }, index: Key) =>
                                                 <li key={index} className={`mb-4 ${m.messageUserUid === state.user.uid ? "flex justify-end" : ""}`}>
-                                                    {/* if chats have the sam */}
                                                     {
                                                         m.messageUserUid === state.user.uid &&
                                                         <div className="">
                                                             <p className={`bg-blue-500 text-white p-2 text-end max-w-max ml-auto ${styles.message}`}>{m.message} </p>
-                                                            <span className="block">{formatDistanceStrict(new Date(m?.timestamp), new Date(), { addSuffix: true })}</span>
+                                                            <span className="block text-end text-xs text-slate-500">{formatDistanceStrict(new Date(m?.timestamp), new Date(), { addSuffix: true })}</span>
                                                         </div>
                                                     }
                                                     {
@@ -177,33 +178,24 @@ function Message() {
                                                         < >
                                                             <div className="flex items-center gap-1">
                                                                 <Link href={`/${encodeURIComponent(m?.messageUserUid)}`}>
-
                                                                     <Image className="rounded-full" src={m?.messagerImage ? m?.messagerImage : '/images/icons8-user.svg'} height={40} width={40} alt={m.username} />
-
-
                                                                 </Link>
                                                                 <div className="">
-                                                                    <p className="rounded-xl bg-gray-300 px-2 py-1 mb-2 max-w-max">{m.message} </p>
+                                                                    <p className="rounded-xl bg-gray-400 text-white px-2 py-1 mb-2 max-w-max">{m.message} </p>
                                                                 </div>
                                                             </div>
-
-                                                            <p>{formatDistanceStrict(new Date(m?.timestamp), new Date(), { addSuffix: true })}</p>
-
+                                                            <p className="text-slate-500 text-xs">{formatDistanceStrict(new Date(m?.timestamp), new Date(), { addSuffix: true })}</p>
                                                         </>
                                                     }
-
-                                                </li>)
-                                        }
+                                                </li>)}
                                     </ul>
                                 }
                                 {
                                     singleUserMessages?.length === 0 &&
-                                    <div className="text-center">
+                                    <div className="text-center h-full flex items-center justify-center">
                                         <p>no message</p>
                                     </div>
                                 }
-
-
                                 <form onSubmit={handleSendMessage} className="mb-2 mx-1">
                                     <input type="text" className="w-full border-2 border-slate-400 rounded-xl p-2" name="privatechat" value={chatMessage} onChange={(e) => setChatMessage(e.target.value)} />
                                 </form>
@@ -236,13 +228,13 @@ function Message() {
                                                         <input type="radio" name="chat" className="mr-4" onChange={() => setSelectUser(user)} />
                                                     </label>
                                                 )}
-                                            </ul>
-                                        )
-                                }
-
+                                            </ul>)}
                             </div>
                             <div className="mx-2 mt-2 ">
-                                <button onClick={() => messageUser(selectUser?.uid)} disabled={!selectUser.uid} className={`w-full rounded py-2 mb-3 ${selectUser.uid ? "bg-violet-700  text-white" : "bg-violet-300  text-white"} `}>chat</button>
+                                <button onClick={() =>{
+                                    console.log(selectUser)
+                                        messageUser(selectUser?.uid)
+                                } } disabled={!selectUser.uid} className={`w-full rounded py-2 mb-3 ${selectUser.uid ? "bg-violet-700  text-white" : "bg-violet-300  text-white"} `}>chat</button>
                             </div>
                         </div>
                     </div>

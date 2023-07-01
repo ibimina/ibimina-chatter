@@ -15,7 +15,6 @@
 
 .messgeHeight {
     height: 580px;
-    overflow-y: scroll;
 }
 
 @media (min-width:40rem) {
