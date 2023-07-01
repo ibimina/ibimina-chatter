@@ -17,6 +17,8 @@ module.exports = {
 			backgroundImage: {
 				'hero-pattern': "url('/images/herobg.jpg')",
 				'close-icon': "url('/images/icons8-close.svg')",
+				"delete-icon": "url('/images/icons8-delete-32.png')",
+				'new-message': "url('/images/icons8-composing-mail-24.png')",
 			},
 		},
 	},
