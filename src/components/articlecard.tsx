@@ -50,7 +50,7 @@ function ArticleCard({ feed, update }: { feed: ArticleProps, update: (id: string
                     </div>
                 }
             </div>
-            <Link className={`grid grid-cols-5 items-center`} href={`/${encodeURIComponent(feed?.author?.uid)}/${encodeURIComponent(feed?.id!)}`}>
+            <Link className={`grid grid-cols-5 items-center`} href={`/inkspire/${encodeURIComponent(feed?.id!)}`}>
                 <div className={`col-span-5 lg:col-span-3 mb-2`}>
                     <h1 className={`text-2xl font-bold mb-1`}>{feed?.title}</h1>
                     <div className="flex items-center gap-2"><Image src='/images/icons8-read-30.png' width={24} height={24} alt="opened book" /> {feed?.readingTime} min read</div>
@@ -70,7 +70,7 @@ function ArticleCard({ feed, update }: { feed: ArticleProps, update: (id: string
             </Link>
 
             <div className='mt-3 flex items-center gap-2'>
-                <Link href={`/${encodeURIComponent(feed?.author?.uid)}/${encodeURIComponent(feed?.id!)}`}
+                <Link href={`/inkspire/${encodeURIComponent(feed?.id!)}`}
                     className={`flex items-center gap-1`}>
                     {
                         isliked ?
@@ -99,11 +99,11 @@ function ArticleCard({ feed, update }: { feed: ArticleProps, update: (id: string
                             </>
                     }
                 </button>
-                <Link href={`/${encodeURIComponent(feed?.author?.uid)}/${encodeURIComponent(feed?.id!)}`} className='flex items-center gap-1'>
+                <Link href={`/inkspire/${encodeURIComponent(feed?.id!)}`} className='flex items-center gap-1'>
                     <Image src="/images/icons8-chart-24.png" height={18} width={18} alt="views chart" />
                     {feed?.views}
                 </Link>
-                <Link href={`/${encodeURIComponent(feed?.author?.uid)}/${encodeURIComponent(feed?.id!)}`} className='flex items-center gap-1'>
+                <Link href={`/inkspire/${encodeURIComponent(feed?.id!)}`} className='flex items-center gap-1'>
                     <Image src="/images/icons8-comment-24.png" height={24} width={24} alt="comments" />
                     {feed?.comments?.length}
                 </Link>
