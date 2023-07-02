@@ -11,21 +11,12 @@ function useNotification() {
     const [isLoading, setIsLoading] = useState<boolean>(true)
     const { state } = useAuthContext()
     const { data } = useCollection("notifications", `${state?.user?.uid}`)
-   
-    interface t {
-        event: string,
-        event_username: string,
-        event_userimage: string,
-        event_user: string,
-        articleTitle: string,
-        articleId: string
-        read: boolean
-    }
+
     //mark all notifications as read
     const markasRead = async () => {
         if (data?.notification?.length > 0) {
             const docRef = doc(firebaseStore, "notifications", `${state?.user?.uid}`)
-            const updateNotificationArray = data?.notification?.map((n: t) => n.read ? n : { ...n, read: true })
+            const updateNotificationArray = data?.notification?.map((n: NotificationProps) => n.read ? n : { ...n, read: true })
             await setDoc(docRef, { notification: updateNotificationArray }, { merge: true })
         }
     }
