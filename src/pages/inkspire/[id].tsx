@@ -1,11 +1,11 @@
-import React from "react";
+import React, { Key } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 import { firebaseStore } from "@/firebase/config";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { DocumentData, doc, getDoc, setDoc } from "firebase/firestore";
 
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -13,38 +13,36 @@ import remarkGfm from "remark-gfm";
 import { LinkRenderer } from "@/components";
 
 import styles from "@/styles/editor.module.css"
-import { ArticleProps } from "@/types/article";
 import { useAuthContext } from "@/store/store";
-import { useCollectionSnap, useInteraction ,useTime} from "@/hooks";
+import { useCollection, useInteraction ,useTime} from "@/hooks";
 
 import { EmailShareButton, FacebookShareButton, LinkedinShareButton, TelegramShareButton, TwitterShareButton, WhatsappShareButton, } from "react-share";
-import Head from "next/head";
 import FeedLayout from "@/container/feedslayout";
+import Head from "next/head";
 
 
 
 export default function SingleArticle() {
     const { state } = useAuthContext();
     const router = useRouter();
-    const { id, author } = router.query;
-    const [article, setArticle] = useState<ArticleProps>({} as ArticleProps);
+    const { id } = router.query;
+    const [article, setArticle] = useState<DocumentData>();
     const [isliked, setIsLiked] = useState(false)
     const [isbookmarked, setIsBookmarked] = useState(false)
     const [comment, setComment] = useState('');
     const [shareUrl, setShareUrl] = useState('');
     const [isShared, setIsShared] = useState(false);
-    const { snap } = useCollectionSnap('articles', "author.uid", `${author}`);
+    const {data} = useCollection("articles",`${id}`)
+ 
     const { published } = useTime(article?.timestamp)
     const [viewLikes, setViewLikes] = useState(false)
     useEffect(() => {
         const getArticle = async () => {
-            const doc = snap?.find((article: ArticleProps) => {
-                return article.id === id
-            })
-            setArticle({ ...doc });
+         
+            setArticle({...data});
 
-            const like = article?.likes?.find((like) => like?.uid === state?.user?.uid)
-            const bookmark = article?.bookmarks?.find((bookmark) => bookmark?.user_uid === state?.user?.uid)
+            const like = article?.likes?.find((like: { uid: string; }) => like?.uid === state?.user?.uid)
+            const bookmark = article?.bookmarks?.find((bookmark: { user_uid: string; }) => bookmark?.user_uid === state?.user?.uid)
             if (like !== undefined) {
                 setIsLiked(true)
             } else {
@@ -60,7 +58,7 @@ export default function SingleArticle() {
         };
         getArticle();
         setShareUrl(window?.location?.href);
-    }, [article?.author?.name, article?.bookmarks, article?.likes, article?.title, id, snap, state?.user?.uid]);
+    }, [article?.bookmarks, article?.likes, data, state?.user?.uid]);
     useEffect(() => {
         (async () => {
             if (id! !== undefined) {
@@ -90,7 +88,7 @@ export default function SingleArticle() {
                         timestamp: new Date().toISOString()
                     }]
             }, { merge: true });
-            await addNotification('commented', article)
+            await addNotification('commented', article!)
             setComment("")
         }
     }
@@ -136,7 +134,7 @@ export default function SingleArticle() {
 
                     <h1 className={`text-2xl text-center  mb-2 font-bold`}>{article?.title}</h1>
                     <p className={`text-xl text-center  mb-6 font-medium`}>{article?.subtitle}</p>
-                    <Link href={`/${encodeURIComponent(article?.author?.uid)}`} className={`flex flex-col md:flex-row items-center md:justify-center md:gap-4 mb-8`}>
+                    <Link href={`/profile/${encodeURIComponent(article?.author?.uid)}`} className={`flex flex-col md:flex-row items-center md:justify-center md:gap-4 mb-8`}>
                         <div className="flex items-center justify-center gap-1 mb-2 md:mb-0">
                             {article?.author?.image?.length > 2 &&
                                 <Image className={`rounded-full`} src={article?.author?.image} width={30} height={30} alt="author avatar" />
@@ -167,7 +165,7 @@ export default function SingleArticle() {
                     <div className='relative flex items-center gap-2 justify-center mt-20 mb-10'>
                         <div className={`flex items-center gap-1`}>
                             <button
-                                onClick={() => increaseLike(article?.id!, article?.likes!, article)}
+                                onClick={() => increaseLike(article?.id!, article?.likes!, article!)}
                                 title="likes">
                                 {
                                     isliked ?
@@ -237,7 +235,7 @@ export default function SingleArticle() {
                                 <Image src="/images/icons8-facebook.svg" height={24} width={24} alt="facebook" />
                                 Share on facebook
                             </FacebookShareButton>
-                            <LinkedinShareButton className="flex items-center gap-1 mb-4" title={`${article?.title} by ${article?.author?.name} on  chatter`} summary={`${article.title}`} url={shareUrl}>
+                            <LinkedinShareButton className="flex items-center gap-1 mb-4" title={`${article?.title} by ${article?.author?.name} on  chatter`} summary={`${article?.title}`} url={shareUrl}>
                                 <Image src="/images/icons8-linkedin.svg" height={24} width={24} alt="linkedin" />
                                 Share on linkedin
                             </LinkedinShareButton>
@@ -258,7 +256,7 @@ export default function SingleArticle() {
                                     <button onClick={() => setViewLikes(!viewLikes)} className="cursor-pointer bg-close-icon bg-no-repeat bg-center w-3 h-3 hover:bg-slate-200" title=""></button>
                                 </div>
 
-                                {article?.likes?.map((like: any, index) => {
+                                {article?.likes?.map((like: any, index:Key) => {
                                     return (
                                         <div className="flex items-center justify-between mb-3" key={index}>
                                             <div className="flex items-center gap-1">
@@ -312,7 +310,7 @@ export default function SingleArticle() {
                             <input className="block bg-violet-700 text-gray-200 font-medium p-2 rounded-xl ml-auto" type="submit" value="Comment" />
                         </form>
                         {article?.comments?.length === 0 ? <p className="text-center text-gray-500">No comments yet</p> :
-                            article?.comments?.map((comment, index) => {
+                            article?.comments?.map((comment: { image: string, name: string, comment: string }, index:Key) => {
                                 return (
                                     <div key={index} className="flex items-center gap-2 mb-2">
                                         <Image className={`rounded-full`} src={comment?.image === null ? "/images/icons8-user-64.png" : comment?.image} width={30} height={30} alt="author avatar" />
