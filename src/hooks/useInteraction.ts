@@ -1,6 +1,6 @@
 import { firebaseStore } from "@/firebase/config";
 import { useAuthContext } from "@/store/store";
-import { ArticleProps, BookmarkProps, LikeProps, UserBookmarkProps } from "@/types";
+import { BookmarkProps, LikeProps, UserBookmarkProps } from "@/types";
 import { DocumentData, doc, getDoc, setDoc } from "firebase/firestore";
 import { useState } from "react";
 
@@ -51,11 +51,10 @@ function useInteraction() {
                     })
                 }, { merge: true });
             }
-        }
-       
+        }     
     }
 
-    const increaseLike = async (id: string, likes: LikeProps[], article: ArticleProps) => {
+    const increaseLike = async (id: string, likes: LikeProps[], article:DocumentData) => {
         if (state?.user?.uid === '' || state?.user === null) {
             return alert("Please login to like this article")
         }else{
@@ -97,7 +96,7 @@ function useInteraction() {
         
     }
 
-    const addNotification = async (event: string, article: ArticleProps) => {
+    const addNotification = async (event: string, article: DocumentData) => {
         const docRef = doc(firebaseStore, 'notifications', `${article?.author?.uid}`);
         const docSnap = await getDoc(docRef);
        if (docSnap.exists()) {
