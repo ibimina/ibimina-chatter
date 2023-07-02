@@ -50,7 +50,7 @@ function ArticleCard({ feed, update }: { feed: ArticleProps, update: (id: string
                     </div>
                 }
             </div>
-            <Link className={`grid grid-cols-5 items-center`} href={`/inkspire/${encodeURIComponent(feed?.id!)}`}>
+            <Link className={`grid grid-cols-5 gap-3 items-center`} href={`/inkspire/${encodeURIComponent(feed?.id!)}`}>
                 <div className={`col-span-5 lg:col-span-3 mb-2`}>
                     <h1 className={`text-2xl font-bold mb-1`}>{feed?.title}</h1>
                     <div className="flex items-center gap-2"><Image src='/images/icons8-read-30.png' width={24} height={24} alt="opened book" /> {feed?.readingTime} min read</div>
