@@ -103,7 +103,6 @@ function Message() {
         setSelectUser({ uid: m?.uid, displayName: m?.name, photoURL: m?.image })
         messageUser(m?.uid)
     }
-    console.log(messages,singleUserMessages)
     return (<>
         <FeedLayout>
             <main className={`md:w-9/12 mx-auto border border-gray-300 rounded-xl`}>
@@ -154,7 +153,7 @@ function Message() {
                         selectUser?.displayName?.length > 0 &&
                         <div className="col-span-4 lg:col-span-3 flex  flex-col justify-between">
 
-                            <Link className="flex items-center p-2 gap-1 mb-4 border-b border-gray-300" href={`/${encodeURIComponent(selectUser?.uid)}`}>
+                            <Link className="flex items-center p-2 gap-1 mb-4 border-b border-gray-300" href={`/profile/${encodeURIComponent(selectUser?.uid)}`}>
                                 <Image className="rounded-full" src={selectUser?.photoURL ? selectUser?.photoURL : "/images/icons8-user-64.png"} height={27} width={27} alt="like" />
                                 <span>{selectUser?.displayName}</span>
                             </Link>
@@ -177,7 +176,7 @@ function Message() {
                                                         m.messageUserUid !== state.user.uid &&
                                                         < >
                                                             <div className="flex items-center gap-1">
-                                                                <Link href={`/${encodeURIComponent(m?.messageUserUid)}`}>
+                                                                <Link href={`/profile/${encodeURIComponent(m?.messageUserUid)}`}>
                                                                     <Image className="rounded-full" src={m?.messagerImage ? m?.messagerImage : '/images/icons8-user.svg'} height={40} width={40} alt={m.username} />
                                                                 </Link>
                                                                 <div className="">

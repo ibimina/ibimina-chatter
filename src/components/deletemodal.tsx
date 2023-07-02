@@ -1,5 +1,4 @@
 import { firebaseStore } from '@/firebase/config'
-import { id } from 'date-fns/locale'
 import { collection, deleteDoc, doc, onSnapshot, setDoc } from 'firebase/firestore'
 import { useRouter } from 'next/router'
 import React from 'react'
