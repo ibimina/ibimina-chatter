@@ -5,6 +5,7 @@ import { useGoogleSignin, useGitHubSignin, useLogin } from '@/hooks';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import RegistrationLayout from '@/container/registerlayout';
+import Image from 'next/image';
 
 
 export default function Home() {
@@ -59,74 +60,91 @@ export default function Home() {
 				<meta http-equiv="X-UA-Compatible" content="IE=7" />
 				<meta name="description" content="Log in to your account" />
 			</Head>
-			
-				<RegistrationLayout>
-	<div className='mt-20 lg:w-3/5 lg:m-auto md:mt-0 '>
-						<div
-							className={`pb-2 flex flex-col justify-center`}>
-							<div className={`mb-8`}>
-								<p className={`font-semibold text-3xl mb-2`}>Welcome back</p>
-								<p className={`text-base  text-slate-400`}>
-									Let&apos;s get you logged in so you can jump right back into
-									sharing your brilliant ideas and engaging stories{' '}
-								</p>
-							</div>
-							<form className={` mb-10`} onSubmit={handleLogin}>
-								{passwordLimit && <p className={`text-red-500`}>You have exceeded the login limit. Please wait a few minutes and try again.</p>}
-								<label className={`block mb-4`}>
-									{emailExists === false && <p className={`text-red-500`}>Wrong email</p>}
-									<input
-										onChange={handleChange}
-										name='email'
-										type='email'
-										placeholder='Enter your email'
-										required
-										className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
-									/>
-								</label>
-								<label className={`block mb-3`}>
-									{emailExists && <p className={`text-red-500`}>Wrong password</p>}
-									<input
-										onChange={handleChange}
-										name='password'
-										type='password'
-										placeholder='Enter your password'
-										required
-										className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
-									/>
-								</label>
-								<Link
-									href='forgotpassword'
-									className={`block text-right mb-8 text-violet-700`}>
-									forgot password
-								</Link>
+
+			<RegistrationLayout>
+				<div className='mt-20 lg:w-3/5 lg:m-auto md:mt-0 '>
+					<div
+						className={`pb-2 flex flex-col justify-center`}>
+						<div className={`mb-8`}>
+							<p className={`font-semibold text-3xl mb-2`}>Welcome back</p>
+							<p className={`text-base  text-slate-400`}>
+								Let&apos;s get you logged in so you can jump right back into
+								sharing your brilliant ideas and engaging stories{' '}
+							</p>
+						</div>
+						<form className={` mb-10`} onSubmit={handleLogin}>
+							{passwordLimit && <p className={`text-red-500`}>You have exceeded the login limit. Please wait a few minutes and try again.</p>}
+							<label className={`block mb-4`}>
+								{emailExists === false && <p className={`text-red-500`}>Wrong email</p>}
 								<input
-									disabled={isLoading}
-									type='submit'
-									value='Log in'
-									className={`cursor-pointer mb-2 block w-full p-2 bg-violet-700 text-white rounded-lg hover:bg-black hover:text-white ${isLoading && 'opacity-50'}}`}
+									onChange={handleChange}
+									name='email'
+									type='email'
+									placeholder='Enter your email'
+									required
+									className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
 								/>
-								<p className={`text-center`}>
-									Don&apos;t have an account?{' '}
-									<Link href='signup' className='text-violet-700'>Create one</Link>{' '}
-								</p>
-							</form>
-							<p className={`mb-7`}>or continue with ______________</p>
-							<div className={`flex items-center justify-center gap-4`}>
+							</label>
+							<label className={`block mb-3 relative`}>
+								{emailExists && <p className={`text-red-500`}>Wrong password</p>}
+								<input
+									onChange={handleChange}
+									name='password'
+									type='password'
+									placeholder='Enter your password'
+									required
+									className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
+								/>
 								<button
-									onClick={handleGoogleLogin}
-									className={`${styles.loginBtn}  ${styles.googleBtn} focus:border-solid hover:border-dashed rounded-full`}
-									aria-label='google login button'
-								></button>
-								<button
-									onClick={handleGithubLogin}
-									className={`${styles.loginBtn}  ${styles.githubBtn} focus:border-solid hover:border-dashed rounded-full`}
-									aria-label='github login button'
-								></button>
-							</div>
+									onClick={(e) => {
+										e.preventDefault()
+										const passwordInput = document.querySelector('input[name="password"]')!
+										if (passwordInput.getAttribute('type') === 'password') {
+											passwordInput.setAttribute('type', 'text')
+											e.currentTarget.classList.add('bg-eye-off-icon')
+										}
+										else {
+											passwordInput.setAttribute('type', 'password')
+											e.currentTarget.classList.remove('bg-eye-off-icon')
+										}
+									}}
+									className={`bg-eye-icon cursor-pointer w-7 h-6 bg-no-repeat bg-center absolute right-2 top-2`}>
+									<span className='sr-only'>show password</span>
+								</button>
+
+							</label>
+							<Link
+								href='forgotpassword'
+								className={`block text-right mb-8 text-violet-700`}>
+								forgot password
+							</Link>
+							<input
+								disabled={isLoading}
+								type='submit'
+								value='Log in'
+								className={`cursor-pointer mb-2 block w-full p-2 bg-violet-700 text-white rounded-lg hover:bg-black hover:text-white ${isLoading && 'opacity-50'}}`}
+							/>
+							<p className={`text-center`}>
+								Don&apos;t have an account?{' '}
+								<Link href='signup' className='text-violet-700'>Create one</Link>{' '}
+							</p>
+						</form>
+						<p className={`mb-7`}>or continue with ______________</p>
+						<div className={`flex items-center justify-center gap-4`}>
+							<button
+								onClick={handleGoogleLogin}
+								className={`${styles.loginBtn}  ${styles.googleBtn} focus:border-solid hover:border-dashed rounded-full`}
+								aria-label='google login button'
+							></button>
+							<button
+								onClick={handleGithubLogin}
+								className={`${styles.loginBtn}  ${styles.githubBtn} focus:border-solid hover:border-dashed rounded-full`}
+								aria-label='github login button'
+							></button>
 						</div>
 					</div>
-				</RegistrationLayout>
+				</div>
+			</RegistrationLayout>
 		</>
 	);
 }

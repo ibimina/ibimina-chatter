@@ -132,7 +132,7 @@ function SignUp() {
 								<p className={`text-red-500 text-sm`}>Email already exists</p>
 							)}
 						</label>
-						<label className={`block mb-3`}>
+						<label className={`block mb-3 relative`}>
 							{
 								formErrors.password &&
 								<p className={`text-red-500 text-sm`}>{formErrors.password}</p>
@@ -150,6 +150,22 @@ function SignUp() {
 								className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
 								onChange={handleInputChange}
 							/>
+							<button
+								onClick={(e) => {
+									e.preventDefault()
+									const passwordInput = document.querySelector('input[name="password"]')!
+									if (passwordInput.getAttribute('type') === 'password') {
+										passwordInput.setAttribute('type', 'text')
+										e.currentTarget.classList.add('bg-eye-off-icon')
+									}
+									else {
+										passwordInput.setAttribute('type', 'password')
+										e.currentTarget.classList.remove('bg-eye-off-icon')
+									}
+								}}
+								className={`bg-eye-icon cursor-pointer w-7 h-6 bg-no-repeat bg-center absolute right-2 top-2`}>
+								<span className='sr-only'>show password</span>
+							</button>
 						</label>
 						<input
 							type='submit'
