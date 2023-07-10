@@ -5,6 +5,7 @@ import useSignUp from '@/hooks/useSignUp';
 import { useEffect, useState } from 'react';
 import RegistrationLayout from '@/container/registerlayout';
 import { useAuthContext } from '@/store/store';
+import { ShowPassword } from '@/components';
 
 function SignUp() {
 	const [emailExists, setEmailExists] = useState<boolean | null>(null);
@@ -150,22 +151,7 @@ function SignUp() {
 								className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
 								onChange={handleInputChange}
 							/>
-							<button
-								onClick={(e) => {
-									e.preventDefault()
-									const passwordInput = document.querySelector('input[name="password"]')!
-									if (passwordInput.getAttribute('type') === 'password') {
-										passwordInput.setAttribute('type', 'text')
-										e.currentTarget.classList.add('bg-eye-off-icon')
-									}
-									else {
-										passwordInput.setAttribute('type', 'password')
-										e.currentTarget.classList.remove('bg-eye-off-icon')
-									}
-								}}
-								className={`bg-eye-icon cursor-pointer w-7 h-6 bg-no-repeat bg-center absolute right-2 top-2`}>
-								<span className='sr-only'>show password</span>
-							</button>
+							<ShowPassword/>
 						</label>
 						<input
 							type='submit'

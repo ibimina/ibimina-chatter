@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import RegistrationLayout from '@/container/registerlayout';
 import Image from 'next/image';
+import { ShowPassword } from '@/components';
 
 
 export default function Home() {
@@ -95,23 +96,7 @@ export default function Home() {
 									required
 									className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
 								/>
-								<button
-									onClick={(e) => {
-										e.preventDefault()
-										const passwordInput = document.querySelector('input[name="password"]')!
-										if (passwordInput.getAttribute('type') === 'password') {
-											passwordInput.setAttribute('type', 'text')
-											e.currentTarget.classList.add('bg-eye-off-icon')
-										}
-										else {
-											passwordInput.setAttribute('type', 'password')
-											e.currentTarget.classList.remove('bg-eye-off-icon')
-										}
-									}}
-									className={`bg-eye-icon cursor-pointer w-7 h-6 bg-no-repeat bg-center absolute right-2 top-2`}>
-									<span className='sr-only'>show password</span>
-								</button>
-
+							<ShowPassword />
 							</label>
 							<Link
 								href='forgotpassword'
