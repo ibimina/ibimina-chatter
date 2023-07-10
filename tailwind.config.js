@@ -19,6 +19,8 @@ module.exports = {
 				'close-icon': "url('/images/icons8-close.svg')",
 				"delete-icon": "url('/images/icons8-delete-32.png')",
 				'new-message': "url('/images/icons8-composing-mail-24.png')",
+				'eye-icon': "url('/images/icons8-eye-24.png')",
+				'eye-off-icon': "url('/images/icons8-closed-eye-24.png')",
 			},
 		},
 	},
