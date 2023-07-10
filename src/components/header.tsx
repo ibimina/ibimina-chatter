@@ -105,7 +105,7 @@ function Header({ handleNav }: { handleNav: () => void }) {
                     </ul>
                 </nav>
                 <div className={`${isClicked ? "block absolute top-16 right-3 bg-gray-100 p-3 rounded-lg z-10" : "hidden"}`}>
-                    <Link href={`/${encodeURIComponent(author)}`} className={`flex items-center gap-1 mb-2`}>
+                    <Link href={`/profile/${encodeURIComponent(author)}`} className={`flex items-center gap-1 mb-2`}>
                         <Image
                             src={state?.user?.photoURL || '/images/icons8-user-64.png'}
                             height={30}
