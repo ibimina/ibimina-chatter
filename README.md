@@ -41,11 +41,12 @@ npm run dev
 ```bash
 npm run test
 ```
-### Project name
+
+## Project name
 
 InkSpire
 
-### Project description
+## Project description
 
 A multi-functional platform where authors and readers can create and have access to their own content. InkSpire aims to knock off competition from the likes of Hashnode and Medium in its first 2 years of launch.
 
@@ -77,6 +78,7 @@ Screenshot of the project architecture:
 - User can see all notifications.
 - User can view and update their profile.
 
+---
 ### Project technologies
 
 - Next.js
@@ -98,9 +100,10 @@ Screenshot of the project architecture:
 ### Project status
 95% complete
 
+
 ### Project structure explanation
 
-- `app` - The main folder of the project, contains all the code of the project.
+- `ibimina-chatter` - The main folder of the project, contains all the code of the project.
   - `components` - Contains all the components of the project.
   - `constants` - Contains all the constants of the project.
   - `hooks` - Contains all the hooks of the project.
@@ -118,7 +121,7 @@ Screenshot of the project architecture:
 ```bash
 npm run deploy
 ```
-
+---
 ### Project screenshots
 
 ![signup page](./public/signup.png)
@@ -130,23 +133,25 @@ npm run deploy
 ![profile page](./public/profile.png)
 
 
-
+---
 ### Project Live link
 
 [InkSpire](https://ibimina-chatter.vercel.app)
 
-
+---
 ### Contact
 
 - Twitter: [@ibiminaah](https://twitter.com/ibiminaah)
 - Linkedin: [Ibimina hart](https://www.linkedin.com/in/ibimina-hart)
 - Email : [Email](mailto:ibimina.c.hart@gmail.com)
 
-
+---
 ### Acknowledgements
 
 - [AltSchool Africa](https://altschoolafrica.com)
 
+
+---
 ### Author
 
 - Ibimina Hart
