@@ -82,7 +82,7 @@ function ForgotPassword() {
 
 				{
 					emailSent &&
-					<div className={`fixed top-0 flex items-center justify-center w-full h-full ${styles.backdrop}`}>
+					<div className={`fixed top-0 left-0 flex items-center justify-center w-full h-full ${styles.backdrop}`}>
 						<div className={`bg-white text-black text-center py-5 px-2 ${styles.success}`}>
 							<p className={`mb-2`}>Email has been sent</p>
 							<Image src="/images/icons8-received-96.png" className={`mx-auto mb-2`} alt="email sent" width={80} height={70} />
