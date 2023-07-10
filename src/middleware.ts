@@ -12,7 +12,7 @@ export default function middleware(req: NextRequest) {
         return NextResponse.redirect(url);
     }
 
-    if (verify  && req.nextUrl.pathname === '/' || verify  && req.nextUrl.pathname === '/signup' || verify  && req.nextUrl.pathname === '/forgotpassword' ) {
+    if (verify && req.nextUrl.pathname === '/' || verify && req.nextUrl.pathname === '/signup' || verify && req.nextUrl.pathname === '/forgotpassword' || verify && req.nextUrl.pathname === '/resetpassword') {
         let url = req.nextUrl.clone()
         url.pathname = '/chatter'
         return NextResponse.redirect(url);
@@ -21,5 +21,5 @@ export default function middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/','/bookmarks', '/chatter', '/explore', '/post', '/settings',"/signup", '/topics', '/edit', '/draft', '/n', '/notifications','/search', '/forgotpassword','/messages'],
+    matcher: ['/','/bookmarks', '/chatter', '/explore', '/post', '/settings',"/signup", '/topics', '/edit', '/draft', '/n', '/notifications','/search', '/forgotpassword','/messages','/resetpassword'],
 }
