@@ -55,12 +55,10 @@ function Header({ handleNav }: { handleNav: () => void }) {
                 }
                 <nav className={`col-start-3 lg:col-start-6 lg:col-end-8`}>
                     <ul className={`flex items-center gap-2 justify-end`}>
-
                         {
-
                             router.pathname !== '/messages' &&
                             <li
-                                className={`fixed z-50 bottom-10 right-5 md:relative md:bottom-auto bg-violet-700 hover:bg-black text-gray-50 p-4 rounded-full lg:rounded-3xl lg:right-auto lg:py-2 lg:px-6 border-current`}
+                                className={`fixed z-40 bottom-10 right-5 md:relative md:bottom-auto bg-violet-700 hover:bg-black text-gray-50 p-4 rounded-full lg:rounded-3xl lg:right-auto lg:py-2 lg:px-6 border-current`}
                             >
                                 <Link href='/post' className={`md:flex md:items-center gap-2 z-50`}>
                                     <Image
@@ -88,7 +86,7 @@ function Header({ handleNav }: { handleNav: () => void }) {
                                     width={34}
                                     alt='notification'
                                 />
-                                <span className={`hidden`}>notification</span>
+                                <span className={`sr-only`}>notification</span>
                             </Link>
                         </li>
                         <li
