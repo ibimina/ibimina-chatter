@@ -9,7 +9,6 @@ const useCollection = (collRef: string, user: string,) => {
         const getData = async () => {
             const docRef = doc(firebaseStore, collRef, user);
             onSnapshot(docRef, (doc) => {
-                console.log(doc.data())
                 if (doc.exists()) {
                     setData({ ...doc.data(), id: doc.id })
                 } else {
