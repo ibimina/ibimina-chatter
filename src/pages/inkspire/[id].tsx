@@ -14,15 +14,28 @@ import { LinkRenderer } from "@/components";
 
 import styles from "@/styles/editor.module.css"
 import { useAuthContext } from "@/store/store";
-import { useCollection, useInteraction ,useTime} from "@/hooks";
+import { useCollection, useInteraction, useTime } from "@/hooks";
 
 import { EmailShareButton, FacebookShareButton, LinkedinShareButton, TelegramShareButton, TwitterShareButton, WhatsappShareButton, } from "react-share";
 import FeedLayout from "@/container/feedslayout";
 import Head from "next/head";
 
+export async function getServerSideProps(context: any) {
 
+    const id = context.query.id
+    const res = await getDoc(doc(firebaseStore, "articles", `${id}`))
+    const metaData = res.data()
+    return {
+        props: {
+            title:`${metaData?.title} by ${metaData?.author?.name} on inkSpire`,
+            image:metaData?.coverImageUrl,
+            description:metaData?.subtitle,
+            url:`https://ibimina-chatter.vercel.app/inkspire/${metaData?.id}`,
+        }
+    }
+}
 
-export default function SingleArticle() {
+export default function SingleArticle({title,image,description,url}:any) {
     const { state } = useAuthContext();
     const router = useRouter();
     const { id } = router.query;
@@ -32,21 +45,18 @@ export default function SingleArticle() {
     const [comment, setComment] = useState('');
     const [shareUrl, setShareUrl] = useState('');
     const [isShared, setIsShared] = useState(false);
-    const {data} = useCollection("articles",`${id}`)
- 
+    const { data } = useCollection("articles", `${id}`)
+
     const { published } = useTime(article?.timestamp)
     const [viewLikes, setViewLikes] = useState(false)
     useEffect(() => {
         const getArticle = async () => {
-         
-            setArticle({...data});
-
+            setArticle({ ...data });
             const like = article?.likes?.find((like: { uid: string; }) => like?.uid === state?.user?.uid)
             const bookmark = article?.bookmarks?.find((bookmark: { user_uid: string; }) => bookmark?.user_uid === state?.user?.uid)
             if (like !== undefined) {
                 setIsLiked(true)
             } else {
-
                 setIsLiked(false)
             }
             if (bookmark !== undefined) {
@@ -95,20 +105,22 @@ export default function SingleArticle() {
     const handleRoute = () => {
         router.back();
     }
-
+    // let title = `${article?.title} by ${article?.author?.name} on InkSpire`
     return (
         <>
             <Head>
-                <title>{`${article?.title} by ${article?.author?.name} on InkSpire`}</title>
-                <meta name="title" property="og:title" content={`${article?.title} by ${article?.author?.name} on InkSpire`} />
-                <meta name="image" property="og:image" content={article?.coverImageUrl} />
-                <meta name="description" property="og:description" content={article?.subtitle} />
+                <title>{title}</title>
+                <meta name="title" property="og:title" content={title} />
+                <meta name="image" property="og:image" content={image} />
+                <meta name="description" property="og:description" content={description} />
                 <meta name="url" property="og:url" content={shareUrl} />
                 <meta name="type" property="og:type" content="article" />
                 <meta name="site_name" property="og:site_name" content="InkSpire" />
-                <meta name="twitter:title" content={`${article?.title} by ${article?.author?.name} on InkSpire`} />
-                <meta name="twitter:description" content={article?.subtitle} />
-                <meta name="twitter:image" content={article?.coverImageUrl} />
+                <meta property="og:image:width" content="1140" />
+                <meta property="og:image:height" content="600" />
+                <meta name="twitter:title" content={title} />
+                <meta name="twitter:description" content={description} />
+                <meta name="twitter:image" content={image} />
                 <meta name="twitter:card" content="summary_large_image" />
                 <meta name="twitter:site" content="@InkSpire" />
                 <meta name="twitter:creator" content="@InkSpire" />
@@ -219,27 +231,27 @@ export default function SingleArticle() {
 
                                 Copy link
                             </button>
-                            <EmailShareButton className="flex items-center gap-1 mb-4" url={shareUrl} subject={`${article?.title} by ${article?.author?.name} on  chatter`} >
+                            <EmailShareButton className="flex items-center gap-1 mb-4" url={shareUrl} subject={title} >
                                 <Image src="/images/icons8-email-24.png" height={24} width={24} alt="twitter" />
                                 Share on email
                             </EmailShareButton>
-                            <TelegramShareButton className="flex items-center gap-1 mb-4" url={shareUrl} title={`${article?.title} by ${article?.author?.name} on  chatter`} >
+                            <TelegramShareButton className="flex items-center gap-1 mb-4" url={shareUrl} title={title} >
                                 <Image src="/images/icons8-telegram-24.png" height={24} width={24} alt="twitter" />
                                 Share on telegram
                             </TelegramShareButton>
-                            <TwitterShareButton className=" flex items-center gap-1 mb-4" url={shareUrl} title={`${article?.title} by ${article?.author?.name} on  chatter`} >
+                            <TwitterShareButton className=" flex items-center gap-1 mb-4" url={shareUrl} title={title} >
                                 <Image src="/images/icons8-twitter.svg" height={24} width={24} alt="twitter" />
                                 Share on twitter
                             </TwitterShareButton>
-                            <FacebookShareButton className="flex items-center gap-1 mb-4" url={shareUrl} quote={`${article?.title} by ${article?.author?.name} on  chatter`} >
+                            <FacebookShareButton className="flex items-center gap-1 mb-4" url={shareUrl} quote={title} >
                                 <Image src="/images/icons8-facebook.svg" height={24} width={24} alt="facebook" />
                                 Share on facebook
                             </FacebookShareButton>
-                            <LinkedinShareButton className="flex items-center gap-1 mb-4" title={`${article?.title} by ${article?.author?.name} on  chatter`} summary={`${article?.title}`} url={shareUrl}>
+                            <LinkedinShareButton className="flex items-center gap-1 mb-4" title={title} summary={`${article?.title}`} url={shareUrl}>
                                 <Image src="/images/icons8-linkedin.svg" height={24} width={24} alt="linkedin" />
                                 Share on linkedin
                             </LinkedinShareButton>
-                            <WhatsappShareButton className="flex items-center gap-1" url={shareUrl} title={`${article?.title} by ${article?.author?.name} on chatter`} separator=":: ">
+                            <WhatsappShareButton className="flex items-center gap-1" url={shareUrl} title={title} separator=":: ">
                                 <Image src="/images/icons8-whatsapp.svg" height={24} width={24} alt="whatsapp" />
                                 Share on whatsapp
                             </WhatsappShareButton>
@@ -251,12 +263,12 @@ export default function SingleArticle() {
                         viewLikes &&
                         <div onClick={() => setViewLikes(!viewLikes)} className="fixed top-0 left-0 w-full h-full bg-slate-900 bg-opacity-50 flex items-center justify-center">
                             <div className="bg-gray-50 max-w-sm w-full px-4 py-2 rounded mx-4" >
-                                    <div className="flex items-center justify-between mb-4">
+                                <div className="flex items-center justify-between mb-4">
                                     <p className="text-current text-lg font-medium">People who liked</p>
                                     <button onClick={() => setViewLikes(!viewLikes)} className="cursor-pointer bg-close-icon bg-no-repeat bg-center w-3 h-3 hover:bg-slate-200" title=""></button>
                                 </div>
 
-                                {article?.likes?.map((like: any, index:Key) => {
+                                {article?.likes?.map((like: any, index: Key) => {
                                     return (
                                         <div className="flex items-center justify-between mb-3" key={index}>
                                             <div className="flex items-center gap-1">
@@ -274,21 +286,21 @@ export default function SingleArticle() {
                         </div>
                     }
 
-{
-    article?.topics?.length > 0 &&
-    <div className="py-2 max-w-lg">
-        <h2 className="text-xl font-bold mb-3">Topics</h2>
-        <div className="flex flex-wrap gap-2">
-            {article?.topics?.map((topic: any, index: number) => {
-                return (
-                    <Link href={`/n?q=${topic}`} key={index} className="bg-gray-200 px-2 py-1 rounded-lg text-sm text-gray-600 hover:bg-gray-200">
-                        {topic}                    
-                    </Link>
-                )
-            })}
-        </div>
-        </div>
-}
+                    {
+                        article?.topics?.length > 0 &&
+                        <div className="py-2 max-w-lg">
+                            <h2 className="text-xl font-bold mb-3">Topics</h2>
+                            <div className="flex flex-wrap gap-2">
+                                {article?.topics?.map((topic: any, index: number) => {
+                                    return (
+                                        <Link href={`/n?q=${topic}`} key={index} className="bg-gray-200 px-2 py-1 rounded-lg text-sm text-gray-600 hover:bg-gray-200">
+                                            {topic}
+                                        </Link>
+                                    )
+                                })}
+                            </div>
+                        </div>
+                    }
 
                     <div className="py-2 max-w-lg">
                         <h2 className="text-xl font-bold mb-3">
@@ -310,7 +322,7 @@ export default function SingleArticle() {
                             <input className="block bg-violet-700 text-gray-200 font-medium p-2 rounded-xl ml-auto" type="submit" value="Comment" />
                         </form>
                         {article?.comments?.length === 0 ? <p className="text-center text-gray-500">No comments yet</p> :
-                            article?.comments?.map((comment: { image: string, name: string, comment: string }, index:Key) => {
+                            article?.comments?.map((comment: { image: string, name: string, comment: string }, index: Key) => {
                                 return (
                                     <div key={index} className="flex items-center gap-2 mb-2">
                                         <Image className={`rounded-full`} src={comment?.image === null ? "/images/icons8-user-64.png" : comment?.image} width={30} height={30} alt="author avatar" />
