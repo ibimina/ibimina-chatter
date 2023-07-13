@@ -118,9 +118,6 @@ export default function SingleArticle({title,image,description,url}:any) {
                 <meta name="site_name" property="og:site_name" content="InkSpire" />
                 <meta property="og:image:width" content="1140" />
                 <meta property="og:image:height" content="600" />
-                <meta name="twitter:title" content={title} />
-                <meta name="twitter:description" content={description} />
-                <meta name="twitter:image" content={image} />
                 <meta name="twitter:card" content="summary_large_image" />
                 <meta name="twitter:site" content="@InkSpire" />
                 <meta name="twitter:creator" content="@InkSpire" />
