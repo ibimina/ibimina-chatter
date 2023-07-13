@@ -28,7 +28,7 @@ export async function getServerSideProps(context: any) {
     return {
         props: {
             title:`${metaData?.title} by ${metaData?.author?.name} on inkSpire`,
-            image:metaData?.coverImageUrl,
+            image:`${metaData?.coverImageUrl}?8753`,
             description:metaData?.subtitle,
             url:`https://ibimina-chatter.vercel.app/inkspire/${metaData?.id}`,
         }
