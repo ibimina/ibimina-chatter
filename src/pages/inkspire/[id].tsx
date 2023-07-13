@@ -115,9 +115,7 @@ export default function SingleArticle({title,image,description,url}:any) {
                 <meta name="description" property="og:description" content={description} />
                 <meta name="url" property="og:url" content={shareUrl} />
                 <meta name="type" property="og:type" content="article" />
-                <meta name="site_name" property="og:site_name" content="InkSpire" />
-                <meta property="og:image:width" content="1140" />
-                <meta property="og:image:height" content="600" />
+                <meta name="site_name" property="og:site_name" content="InkSpire" />           
                 <meta name="twitter:card" content="summary_large_image" />
                 <meta name="twitter:image" content={image} />
                 <meta name="twitter:site" content="@InkSpire" />
