@@ -14,3 +14,4 @@ export {default as useTime} from "./useTime";
 export { default as useFollow } from "./useFollow";
 export { default as useMessage } from "./useMessage";
 export { default as useUpdate } from "./useUpdate";
+export { default as useSingleArticle} from "./useSingleArticle"
