@@ -3,22 +3,19 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-
 import { firebaseStore } from "@/firebase/config";
-import { DocumentData, doc, getDoc, setDoc } from "firebase/firestore";
-
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-
 import { LinkRenderer } from "@/components";
-
 import styles from "@/styles/editor.module.css"
 import { useAuthContext } from "@/store/store";
-import { useCollection, useInteraction, useTime } from "@/hooks";
+import { useInteraction, useSingleArticle, useTime } from "@/hooks";
 
 import { EmailShareButton, FacebookShareButton, LinkedinShareButton, TelegramShareButton, TwitterShareButton, WhatsappShareButton, } from "react-share";
 import FeedLayout from "@/container/feedslayout";
 import Head from "next/head";
+import { Isliked } from "@/helper/isLiked";
 
 export async function getServerSideProps(context: any) {
 
@@ -36,39 +33,19 @@ export async function getServerSideProps(context: any) {
 }
 
 export default function SingleArticle({ title, image, description, url }: any) {
+    const { article } = useSingleArticle()
     const { state } = useAuthContext();
+    const { isbookmarked, isliked } = Isliked(article)
     const router = useRouter();
     const { id } = router.query;
-    const [article, setArticle] = useState<DocumentData>();
-    const [isliked, setIsLiked] = useState(false)
-    const [isbookmarked, setIsBookmarked] = useState(false)
     const [comment, setComment] = useState('');
     const [shareUrl, setShareUrl] = useState('');
     const [isShared, setIsShared] = useState(false);
-    const { data } = useCollection("articles", `${id}`)
-
     const { published } = useTime(article?.timestamp)
     const [viewLikes, setViewLikes] = useState(false)
     useEffect(() => {
-        const getArticle = async () => {
-            setArticle({ ...data });
-            const like = article?.likes?.find((like: { uid: string; }) => like?.uid === state?.user?.uid)
-            const bookmark = article?.bookmarks?.find((bookmark: { user_uid: string; }) => bookmark?.user_uid === state?.user?.uid)
-            if (like !== undefined) {
-                setIsLiked(true)
-            } else {
-                setIsLiked(false)
-            }
-            if (bookmark !== undefined) {
-                setIsBookmarked(true)
-            } else {
-
-                setIsBookmarked(false)
-            }
-        };
-        getArticle();
         setShareUrl(window?.location?.href);
-    }, [article?.bookmarks, article?.likes, data, state?.user?.uid]);
+    }, []);
     useEffect(() => {
         (async () => {
             if (id! !== undefined) {
@@ -105,7 +82,7 @@ export default function SingleArticle({ title, image, description, url }: any) {
     const handleRoute = () => {
         router.back();
     }
-        return (
+    return (
         <>
             <Head>
                 <title>{title}</title>
