@@ -4,31 +4,13 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ArticleProps, UserBookmarkProps } from "@/types";
 import styles from '@/styles/chatter.module.css';
-import { useEffect, useState } from "react";
-import { useAuthContext } from "@/store/store";
 import { useTime } from "@/hooks";
+import { Isliked } from "@/helper/isLiked";
 
 function ArticleCard({ feed, update }: { feed: ArticleProps, update: (id: string, bookmark: UserBookmarkProps[]) => void }) {
-    const [isliked, setIsLiked] = useState(false)
-    const [isbookmarked, setIsBookmarked] = useState(false)
+    const { published } = useTime(feed?.timestamp)
+    const {isbookmarked,isliked} = Isliked(feed)
 
-    const { state } = useAuthContext()
-   const {published} = useTime(feed?.timestamp)
-
-    useEffect(() => {
-        const like = feed.likes?.find((like) => like?.uid === state?.user?.uid)
-        const bookmark = feed?.bookmarks?.find((bookmark) => bookmark?.user_uid === state?.user?.uid)
-        if (like !== undefined) {
-            setIsLiked(true)
-        } else {
-            setIsLiked(false)
-        }
-        if (bookmark !== undefined) {
-            setIsBookmarked(true)
-        } else {
-            setIsBookmarked(false)
-        }
-    }, [feed, feed?.bookmarks, feed?.likes, state?.user?.uid])
     return (
         <li className={`px-5 border-gray-100 border-2 py-4 rounded-lg mb-3 `}>
             <div className="flex items-center gap-2 mb-2">
@@ -52,7 +34,7 @@ function ArticleCard({ feed, update }: { feed: ArticleProps, update: (id: string
             </div>
             <Link className={`grid grid-cols-5 gap-3 items-center`} href={`/inkspire/${encodeURIComponent(feed?.id!)}`}>
                 <div className={`col-span-5 lg:col-span-3 mb-2`}>
-                    <h1 className={`text-2xl font-bold mb-1`}>{feed?.title}</h1>
+                    <h1 className={`text-2xl font-bold mb-1 break-words`}>{feed?.title}</h1>
                     <div className="flex items-center gap-2"><Image src='/images/icons8-read-30.png' width={24} height={24} alt="opened book" /> {feed?.readingTime} min read</div>
                     <ReactMarkdown remarkPlugins={[remarkGfm]}
                         className={` prose prose-headings:m-0 prose-p:m-0.6 pro prose-headings:text-lg
