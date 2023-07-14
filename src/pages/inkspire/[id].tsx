@@ -27,15 +27,15 @@ export async function getServerSideProps(context: any) {
     const metaData = res.data()
     return {
         props: {
-            title:`${metaData?.title} by ${metaData?.author?.name} on inkSpire`,
-            image:`${metaData?.coverImageUrl}?8753`,
-            description:metaData?.subtitle,
-            url:`https://ibimina-chatter.vercel.app/inkspire/${metaData?.id}`,
+            title: `${metaData?.title} by ${metaData?.author?.name} on inkSpire`,
+            image: metaData?.coverImageUrl,
+            description: metaData?.subtitle,
+            url: `https://ibimina-chatter.vercel.app/inkspire/${metaData?.id}`,
         }
     }
 }
 
-export default function SingleArticle({title,image,description,url}:any) {
+export default function SingleArticle({ title, image, description, url }: any) {
     const { state } = useAuthContext();
     const router = useRouter();
     const { id } = router.query;
@@ -105,8 +105,7 @@ export default function SingleArticle({title,image,description,url}:any) {
     const handleRoute = () => {
         router.back();
     }
-    // let title = `${article?.title} by ${article?.author?.name} on InkSpire`
-    return (
+        return (
         <>
             <Head>
                 <title>{title}</title>
@@ -115,9 +114,11 @@ export default function SingleArticle({title,image,description,url}:any) {
                 <meta name="description" property="og:description" content={description} />
                 <meta name="url" property="og:url" content={shareUrl} />
                 <meta name="type" property="og:type" content="article" />
-                <meta name="site_name" property="og:site_name" content="InkSpire" />           
-                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="site_name" property="og:site_name" content="InkSpire" />
+                <meta property="og:image:width" content="1140" />
+                <meta property="og:image:height" content="600" />
                 <meta name="twitter:image" content={image} />
+                <meta name="twitter:card" content="summary_large_image" />
                 <meta name="twitter:site" content="@InkSpire" />
                 <meta name="twitter:creator" content="@InkSpire" />
             </Head>
