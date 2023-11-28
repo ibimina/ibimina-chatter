@@ -14,7 +14,7 @@ function ArticleCard({ feed, update }: { feed: ArticleProps, update: (id: string
     return (
         <li className={`px-5 border-gray-100 border-2 py-4 rounded-lg mb-3 `}>
             <div className="flex items-center gap-2 mb-2">
-                <Link href={`/${encodeURIComponent(feed?.author?.uid)}`} className={`flex items-center gap-1 `}>
+                <Link href={`/profile/${encodeURIComponent(feed?.author?.uid)}`} className={`flex items-center gap-1 `}>
                     {
                         feed?.author?.image === null &&
                         <Image className={`rounded-full`} src="/images/icons8-user.svg" width={30} height={30} alt="author avatar" />

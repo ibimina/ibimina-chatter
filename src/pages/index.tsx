@@ -5,7 +5,6 @@ import { useGoogleSignin, useGitHubSignin, useLogin } from '@/hooks';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import RegistrationLayout from '@/container/registerlayout';
-import Image from 'next/image';
 import { ShowPassword } from '@/components';
 
 
