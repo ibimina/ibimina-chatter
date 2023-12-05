@@ -58,25 +58,12 @@ Screenshot of the project architecture:
 
 ### Project features
 
-- User can create an account.
-- User can login.
-- User can create a post.
-- User can view all posts.
-- User can view a single post.
-- User can update a post.
-- User can delete a post.
-- User can like, bookmark, comment on a post.
-- User can view all likes on a post.
-- User can see all views analytics on a post.
-- User can view all comments on a post.
-- User can view all posts by a user.
-- User can send a message to another user.
-- User can view all messages sent to them.
-- User can view all messages sent by them.
-- User can follow and unfollow another user.
-- User can view all followers and followings.
-- User can see all notifications.
-- User can view and update their profile.
+- Manage accounts (create, log in, update profile).
+- Interact with content (create, view, update, delete posts; like, bookmark, comment).
+- Access analytics (view likes and post views).
+- Communicate with others (send and view messages).
+- Engage socially (follow/unfollow users, view followers and followings).
+- Receive notifications.
 
 ---
 ### Project technologies
