@@ -67,7 +67,8 @@ function Search() {
                     {
                         coll === 'articles' && a?.length > 0 &&
                         a?.map((article: ArticleProps,index: Key) => {
-                            return <ArticleCard key={index} feed={article} update={function (id: string, bookmark: UserBookmarkProps[]): void {
+                            return <ArticleCard key={index} feed={article}
+                                update={function (id: string,): void {
                                 throw new Error("Function not implemented.");
                             }} />
                         })
