@@ -1,18 +1,16 @@
-import Link from "next/link";
-import { firebaseStore } from "@/firebase/config";
-import { useAuthContext } from "@/store/store";
-import { setDoc, doc } from "firebase/firestore";
 import { useState } from "react";
 import styles from '../styles/tags.module.css'
-import useCollection from "@/hooks/useCollection";
 import Head from "next/head";
+import { addUserTopics } from "@/services/user.service";
+import { useMutation } from "@tanstack/react-query";
+import { AxiosError } from "axios";
+import { toast } from "react-toastify";
+import { useRouter } from "next/router";
 
 
 function Topics() {
-	const { state, dispatch } = useAuthContext();
-	const { data } = useCollection("users", state?.user?.uid)
-	const [arr, setArr] = useState(data?.topics || [])
 	const [topic, setTopic] = useState("")
+	const router = useRouter()
 
 	const [articleTags, setArticleTags] = useState([
 		{ topic: "JavaScript", selected: false },
@@ -20,30 +18,39 @@ function Topics() {
 		{ topic: "CSS", selected: false },
 		{ topic: "React", selected: false },
 		{ topic: "Vue", selected: false },
-		{ topic: "cloud engineering", selected: false },
-		{ topic: "accessibility", selected: false },
-		{ topic: "nodejs", selected: false },
+		{ topic: "Cloud Engineering", selected: false },
+		{ topic: "Accessibility", selected: false },
+		{ topic: "Node.js", selected: false },
 	])
 
+	 const { mutate, isPending } = useMutation({
+    mutationFn: addUserTopics,
+		 onSuccess: (response) => {
+		console.log("addUserTopics response:", response);
+
+	  toast.success(response?.data?.data?.message || "Add Topics Success");
+      router.push("/chatter");
+    },
+    onError: (error: AxiosError) => {
+	  toast.error(
+		typeof error?.response?.data === "string"
+		  ? error.response.data
+		  : (error?.message || "Add Topics Failed")
+	  ); 
+    },
+	 });
+
 	const getUserPreferredTag = async (e: React.FormEvent, topic: string) => {
-		const userRef = doc(firebaseStore, 'users', state?.user?.uid);
 		e.preventDefault()
 		if (topic.length > 1) {
 			const exist = articleTags.find((articleTag) => {
 				return articleTag.topic.toLowerCase() === topic.toLowerCase()
 			})
-			if (!exist) {
-				arr.push(topic)
-				setDoc(userRef, {
-					topics: arr
-				}, { merge: true });
+			if (!exist) {	
 				setArticleTags([...articleTags, { topic, selected: true }])
-				//dispatch to add to user topics
-				dispatch({ type: "ADDTAG", payload: topic })
 				setTopic("")
 			}
 		}
-
 	}
 
 
@@ -51,31 +58,30 @@ function Topics() {
 		e.preventDefault();
 		let addBtn = e.currentTarget.getAttribute('aria-pressed');
 		if (addBtn === 'false') {
-			const userRef = doc(firebaseStore, 'users', state?.user?.uid);
 			e.currentTarget.setAttribute('aria-pressed', 'true');
-			const exist = arr.find((articleTag: string) => {
-				return articleTag.toLowerCase() === topic.toLowerCase()
-			})
-			if (!exist) {
-				arr.push(topic)
-				setDoc(userRef, {
-					topics: arr
-				}, { merge: true });
-				//dispatch to add to user topics
-				dispatch({ type: "ADDTAG", payload: topic })
-			}
+			setArticleTags(articleTags.map((articleTag) => {
+				if (articleTag.topic === topic) {
+					articleTag.selected = true;
+				}
+				return articleTag;
+			}));
 		}
 		else {
-			const userRef = doc(firebaseStore, 'users', state?.user?.uid);
 			e.currentTarget.setAttribute('aria-pressed', 'false');
-			const updateArray = arr.filter((userTag: string) => userTag !== topic)
-			setArr(updateArray)
-			setDoc(userRef, {
-				topics: arr
-			}, { merge: true });
-			//remove from user topics
-			dispatch({ type: "REMOVETAG", payload: topic })
-		}
+			setArticleTags(articleTags.map((articleTag) => {
+				if (articleTag.topic === topic) {
+					articleTag.selected = false;
+				}
+				return articleTag;
+			}));
+					}
+	}
+
+	const onSubmitTopics = () => {
+		const topics = articleTags.filter((articleTag) => articleTag.selected).map((articleTag) => articleTag.topic);	
+		mutate({
+			topics: topics
+		})
 	}
 	return (
 		<>
@@ -109,7 +115,7 @@ function Topics() {
 							)}
 						</div>
 					</div>
-					<Link href="/chatter" className={`bg-violet-700 text-white px-9 py-3 mx-auto mb-4 font-medium block w-max hover:bg-purple-600 `}>Next</Link>
+					<button onClick={onSubmitTopics} className={`bg-violet-700 text-white px-9 py-3 mx-auto mb-4 font-medium block w-max hover:bg-purple-600 `}>Next</button>
 				</div>
 			</section>
 		</>

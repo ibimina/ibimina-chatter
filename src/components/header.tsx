@@ -1,19 +1,33 @@
-import { useAuthContext } from '@/store/store';
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from '@/styles/chatter.module.css';
 import useLogOut from '@/hooks/useLogout';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { useNotification } from '@/hooks';
+import { useCurrentUserState } from '@/store/user.store';
+import { getDashboardInfo } from '@/services/user.service';
+import { useMutation } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 
 function Header({ handleNav }: { handleNav: () => void }) {
     const [isClicked, setIsClicked] = useState(false)
+        const { updateCurrentUser, currentUser } = useCurrentUserState();
+    	const { mutate, isPending } = useMutation({
+		mutationFn: getDashboardInfo,
+		onSuccess: async (response) => {
+            updateCurrentUser(response?.data)
+		},
+		onError: (error: AxiosError) => {
+
+		},
+	}); 
+
+		
+    useEffect(() => {
+            mutate();
+        }, []);
     const router = useRouter();
-    const { state } = useAuthContext();
-    const author = state?.user?.uid
     const { logoutUser } = useLogOut();
-    const { notifications } = useNotification()
     const getSearchAndRedirect = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const input = e.currentTarget.childNodes[0] as HTMLInputElement
@@ -77,9 +91,9 @@ function Header({ handleNav }: { handleNav: () => void }) {
                         <li >
                             {/* signify user of unread notifications if any notifications has a read value of false */}
                             <Link href='/notifications' className='relative'>
-                                {notifications?.some((notification: { read: boolean }) => notification.read === false) &&
+                                {/* {notifications?.some((notification: { read: boolean }) => notification.read === false) &&
                                     <span className={`absolute top-1 right-1 bg-red-500 rounded-full h-2 w-2`}></span>
-                                }
+                                } */}
                                 <Image
                                     src='/images/icons8-notifications-78.png'
                                     height={44}
@@ -93,7 +107,7 @@ function Header({ handleNav }: { handleNav: () => void }) {
                             className='cursor-pointer'
                             onClick={() => setIsClicked(!isClicked)}>
                             <Image
-                                src={state?.user?.photoURL || '/images/icons8-user.svg'}
+                                src={currentUser.profile_image || '/images/icons8-user.svg'}
                                 height={40}
                                 width={40}
                                 alt='user'
@@ -103,15 +117,15 @@ function Header({ handleNav }: { handleNav: () => void }) {
                     </ul>
                 </nav>
                 <div className={`${isClicked ? "block absolute top-16 right-3 bg-gray-100 p-3 rounded-lg z-10" : "hidden"}`}>
-                    <Link href={`/profile/${encodeURIComponent(author)}`} className={`flex items-center gap-1 mb-2`}>
+                    <Link href={`/profile/${encodeURIComponent(currentUser.id)}`} className={`flex items-center gap-1 mb-2`}>
                         <Image
-                            src={state?.user?.photoURL || '/images/icons8-user-64.png'}
+                            src={currentUser.profile_image || '/images/icons8-user-64.png'}
                             height={30}
                             width={30}
                             alt='user'
                             className={`rounded-full`}
                         />
-                        <span className='capitalize'>{state?.user?.displayName}</span>
+                        <span className='capitalize'>{currentUser.username}</span>
                     </Link>
                     <Link href='/chatter' className='block mb-2 cursor-pointer '>Feeds</Link>
                     <Link href='/settings' className='block mb-2 cursor-pointer '>Account setting</Link>

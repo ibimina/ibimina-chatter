@@ -9,7 +9,7 @@ import { EmojiClickData } from "emoji-picker-react";
 import { useEffect, useState } from "react";
 import useFetch from "@/hooks/useFetch";
 import { useRouter } from "next/router";
-import { useAuthContext } from "@/store/store";
+import { useCurrentUserState } from "@/store/user.store";
 
 interface NewType {
     articleDetails: any;
@@ -23,7 +23,7 @@ interface NewType {
     uploadImage: (e: React.ChangeEvent<HTMLInputElement>) => void;
     isvisible: boolean;
     handleVisible: (e: React.MouseEvent) => void;
-    publishArticleInFirebase: (e: React.MouseEvent) => Promise<void>;
+    publishArticle: (e: React.MouseEvent) => void;
     isPublishing: boolean;
     togglePublishing: (e: React.MouseEvent) => void;
     addTag: (e: React.FormEvent) => void;
@@ -33,15 +33,13 @@ interface NewType {
 
 function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,isDiasbled,
     toggleUnsplash, getUnsplashTerm, removeTag, isPublishing, togglePublishing,
-    articleDetails, handleValueChange, insertMarkdown, getUnSplashUrl, handleVisible, publishArticleInFirebase, addTag }: NewType) {
+    articleDetails, handleValueChange, insertMarkdown, getUnSplashUrl, handleVisible, publishArticle, addTag }: NewType) {
 
     const [showEmojiPicker, setShowEmojiPicker] = useState<boolean>(false);
     const [hide, setHide] = useState<boolean>(true);
     const [page, setPage] = useState<number>(1);
-
-    const { state } = useAuthContext();
     const router = useRouter();
-
+const {currentUser} = useCurrentUserState()
     const toggleEmojiPicker = () => {
         return setShowEmojiPicker(!showEmojiPicker)
     }
@@ -65,19 +63,19 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,isDi
     }
 
     useEffect(() => {
-        if (router.pathname.includes("/edit") && state?.user?.uid) {
+        if (router.pathname.includes("/edit") && currentUser?.id) {
             setHide(false)
         }
-    }, [router.pathname, state?.user?.uid])
+    }, [router.pathname, currentUser?.id])
     return (
         <>
             <main className={`lg:grid lg:grid-cols-9 gap-6 px-4 md:px-8 ${styles.editorGrid}`}>
                 <ArticleSide isvisible={isvisible} handleVisible={handleVisible} />
                 <section className={`col-start-3  ${styles.editSection}`} data-shrink={isvisible}>
                     {
-                        articleDetails?.coverImageUrl ?
+                        articleDetails?.cover_image ?
                             <div className={`relative w-full h-96 mb-2`}>
-                                <Image src={articleDetails?.coverImageUrl} alt="cover image" fill
+                                <Image src={articleDetails?.cover_image} alt="cover image" fill
                                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw,  33vw" />
                             </div>
                             : <button className={`mb-3 font-medium`}>Add cover image</button>
@@ -140,10 +138,10 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,isDi
                                 hide && <div className={`w-full`}>
                                     <h1 className={`font-medium  max-w-max p-2 rounded-lg`}>Editor</h1>
                                     <textarea
-                                        name="article"
+                                        name="content"
                                         id="markdownTextarea"
                                         rows={10}
-                                        value={articleDetails?.article}
+                                        value={articleDetails?.content}
                                         onChange={(e) => handleValueChange(e)}
                                         placeholder="Enter Markdown text"
                                         className={` ${styles.textarea} w-full p-3 border-2 border-solid border-current`}
@@ -166,7 +164,7 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,isDi
                                     className={` prose prose-headings:m-0 prose-p:mt-0 prose-p:mb-1 prose-li:m-0 prose-li:mb-1 prose-ol:m-0 prose-ul:m-0 prose-ul:leading-6
                             hr-black prose-hr:border-solid prose-hr:border prose-hr:border-black
                              marker:text-gray-400 ${styles['markdownPreview']}`} >
-                                    {articleDetails?.article}
+                                    {articleDetails?.content}
                                 </ReactMarkdown>
                             </div>
                         </div>
@@ -180,7 +178,7 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,isDi
                     <div className={`bg-white p-4 w-full md:w-9/12  ml-auto h-full relative`}>
                         <div className="flex items-center justify-between mb-6">
                             <button className={`mb-2`} onClick={togglePublishing}>Close</button>
-                                <button className={`p-2 rounded-2xl ${isDiasbled ? "bg-gray-500 text-black" : "text-white bg-violet-700"}`} disabled={isDiasbled} onClick={publishArticleInFirebase}> {`${isDiasbled ? "Publishing" :"Publish now"}`}</button>
+                                <button className={`p-2 rounded-2xl ${isDiasbled ? "bg-gray-500 text-black" : "text-white bg-violet-700"}`} disabled={isDiasbled} onClick={publishArticle}> {`${isDiasbled ? "Publishing" :"Publish now"}`}</button>
                         </div>
                         <p className="mb-8">Add or change topics (up to 5) so readers know what your story is about</p>
 
@@ -194,14 +192,12 @@ function Editor({ unsplashSearch, isUnsplashVisible, uploadImage, isvisible,isDi
                         <p className="mb-8">Topics are optional, but they help surface your story to the right readers</p>
 
                         <div className="flex items-center gap-3 flex-wrap">
-                            {articleDetails?.topics &&
-                                articleDetails?.topics?.map((topic: string, index: number) => {
-                                    return <button onClick={() => removeTag(topic)} key={index} className={`bg-gray-300 flex items-center gap-2 p-2 rounded-xl`}>
-                                        {topic}
-                                        <Image src="/images/icons8-close.svg" width={15} height={15} alt="close" />
-                                    </button>
-                                })
-                            }
+                            {articleDetails?.topics && articleDetails?.topics?.length > 0 && articleDetails?.topics?.map((topic: string, index: number) => {
+                                return <button onClick={() => removeTag(topic)} key={index} className={`bg-gray-300 flex items-center gap-2 p-2 rounded-xl`}>
+                                    {topic}
+                                    <Image src="/images/icons8-close.svg" width={15} height={15} alt="close" />
+                                </button>
+                            })}
                         </div>
                     </div>
                 </div>

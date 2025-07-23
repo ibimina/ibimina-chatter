@@ -7,10 +7,11 @@ const MarkdownEditor = () => {
     const { articleDetails, handleValueChange,
         uploadImage, isUnsplashVisible, toggleUnsplash,
         unsplashSearch, getUnsplashTerm, insertMarkdown, getUnSplashUrl,
-        publishArticleInFirebase, changeRoute, removeTag,isDiasbled,
+        publishArticle, changeRoute, removeTag,isDiasbled,
         isvisible, toggleVisible, isPublishing, togglePublishing, addTag
     } = useEditor()
-   
+  
+
     return (
         <>
             <Head>
@@ -38,7 +39,7 @@ const MarkdownEditor = () => {
                 handleValueChange={handleValueChange}
                 insertMarkdown={insertMarkdown}
                 getUnSplashUrl={getUnSplashUrl}
-                publishArticleInFirebase={publishArticleInFirebase}
+                publishArticle={publishArticle}
                 isPublishing={isPublishing}
                 togglePublishing={togglePublishing}
                 addTag={addTag}

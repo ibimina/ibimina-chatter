@@ -1,14 +1,34 @@
 import { Key } from 'react';
 import Link from 'next/link';
 import { ArticleProps } from '@/types/index';
-import { useFeeds, useInteraction } from '@/hooks/index';
 import FeedLayout from '@/container/feedslayout';
 import ArticleCard from '@/components/articlecard';
 import Head from 'next/head';
+import {  useGetAllFeeds } from '@/services/user.service';
+import { toast } from 'react-toastify';
+import { useQueryClient } from "@tanstack/react-query";
+import { requestBookmark } from '@/services/bookmark.service';
 
 function Chatter() {
-	const { feeds, isLoading } = useFeeds();
-	const { addBookmark } = useInteraction()
+	const { feeds, isLoading } = useGetAllFeeds();
+	const queryClient = useQueryClient();
+
+	
+
+	const bookmarkArticle = async (articleId: string) => {
+		try {
+			const res = await requestBookmark(articleId);
+			if (res.status === 200) {
+				toast.success('Bookmark added successfully');
+				queryClient.invalidateQueries({ queryKey: ["feeds"] });
+			} else {
+				throw new Error('Failed to add bookmark');
+			}
+		} catch (error) {
+			console.error('Error adding bookmark:', error);
+			toast.error("Error adding bookmark")
+		}
+	};
 
 	return (
 		<>
@@ -33,7 +53,7 @@ function Chatter() {
 						<ul>
 							{feeds.map((feed: ArticleProps, index: Key) => {
 								return (
-									<ArticleCard key={index} feed={feed} update={addBookmark} />
+									<ArticleCard key={index} feed={feed} update={bookmarkArticle} />
 								);
 							})}
 						</ul>

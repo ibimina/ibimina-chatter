@@ -1,21 +1,29 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import styles from '@/styles/chatter.module.css';
 import { Header } from '@/components/index';
 import Link from 'next/link';
-import { useAuthContext } from '@/store/store';
+import { useRouter } from 'next/router';
+import Cookies from 'js-cookie';
 
 function FeedLayout({ children }: { children: React.ReactNode }) {
     const [isvisible, seIsVisible] = useState(false);
+    const router = useRouter();
     const handleNav = () => {
         seIsVisible(!isvisible);
     };
-    const { state } = useAuthContext()
+    const access = typeof window !== 'undefined' ? sessionStorage.getItem('access_token') : null;
+    useEffect(() => {
+        if (!access) {
+            Cookies.remove('loggedin');
+            router.push('/');
+        }
+    })
 
     return (
         <>
             {
-                state?.user?.uid === "" && state?.authState ?
+                access === null ?
                     <>
                         <header className={`flex items-center justify-between p-2 bg-white shadow-md`}>
                             <div className={`flex items-center gap-2`}>
@@ -43,7 +51,7 @@ function FeedLayout({ children }: { children: React.ReactNode }) {
                 <aside className={` ${styles.aside} md:w-full  lg:w-3/12`} data-visible={isvisible}>
                     <ul className={`h-full w-9/12 lg:w-full pl-4  lg:p-5 pt-12 md:w-5/12 bg-gray-100 lg:rounded-xl ${styles.ul}`}>
                         {
-                            state?.user?.uid === "" && state?.authState ?
+                            access === null ?
                                 <>
                                     <div className='mb-3'>
                                         <h2 className="text-xl font-semibold">Sign Up Now! </h2>
@@ -132,9 +140,9 @@ function FeedLayout({ children }: { children: React.ReactNode }) {
                                                 alt='message'
                                             />
                                             Message
-                                            
+
                                         </Link>
-                                     
+
                                     </li>
                                 </>
                         }

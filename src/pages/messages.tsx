@@ -1,10 +1,6 @@
 import FeedLayout from "@/container/feedslayout";
-import { firebaseStore } from "@/firebase/config";
-import { useMessage } from "@/hooks";
-import { DocumentData, collection, doc, onSnapshot, query, setDoc, getDoc } from "firebase/firestore";
 import React, { Key, useState, useEffect, useCallback } from "react";
 import Image from "next/image";
-import { useAuthContext } from "@/store/store";
 import styles from "@/styles/messages.module.css"
 import { formatDistanceStrict } from "date-fns";
 import Link from "next/link";
@@ -12,91 +8,90 @@ import { useRouter } from "next/router";
 
 
 function Message() {
-    const { state } = useAuthContext()
-    const { messages } = useMessage()
     const [ismodal, setIsModal] = useState(false)
+    const messages: any[] = []
     const [inkSpire, setInkSpire] = useState("")
-    const [searchUsers, setSearchUser] = useState<DocumentData>()
+    const [searchUsers, setSearchUser] = useState()
     const [chatMessage, setChatMessage] = useState("")
     const [selectUser, setSelectUser] = useState({ photoURL: "", displayName: "", uid: "" })
-    const [singleUserMessages, setSingleUserMessages] = useState<DocumentData>()
+    const [singleUserMessages, setSingleUserMessages] = useState()
     const router = useRouter()
     const { q } = router.query
 
     useEffect(() => {
-        if (inkSpire.trim().length > 0) {
-            const q = query(collection(firebaseStore, "users"));
-            onSnapshot(q, (querySnapshot) => {
-                const users: any[] = [];
-                querySnapshot.forEach((doc) => {
-                    if (doc?.data()?.displayName?.includes(inkSpire)) users.push(doc.data());
-                });
-                setSearchUser(users)
-            });
-        } 
+        // if (inkSpire.trim().length > 0) {
+        //     const q = query(collection(firebaseStore, "users"));
+        //     onSnapshot(q, (querySnapshot) => {
+        //         const users: any[] = [];
+        //         querySnapshot.forEach((doc) => {
+        //             if (doc?.data()?.displayName?.includes(inkSpire)) users.push(doc.data());
+        //         });
+        //         setSearchUser(users)
+        //     });
+        // } 
     }, [inkSpire])
 
     const messageUser = (uid: string) => {
         setIsModal(false)
         setInkSpire("")
-        onSnapshot(doc(firebaseStore, "messages", state?.user?.uid, "chats", `${uid}`), (doc) => {
-            if (doc.exists() && doc.data()?.message?.length > 0) {
-                // sort the messages by timestamp
-                const sortedMessages = doc.data()?.message.sort((a: any, b: any) => {
-                    return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
-                })
-                setSingleUserMessages(sortedMessages)
-                setSearchUser([])
-            } else {
-                setSingleUserMessages([])
-            }
-        });
+        // onSnapshot(doc(firebaseStore, "messages", state?.user?.uid, "chats", `${uid}`), (doc) => {
+        //     if (doc.exists() && doc.data()?.message?.length > 0) {
+        //         // sort the messages by timestamp
+        //         const sortedMessages = doc.data()?.message.sort((a: any, b: any) => {
+        //             return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+        //         })
+        //         setSingleUserMessages(sortedMessages)
+        //         setSearchUser([])
+        //     } else {
+        //         setSingleUserMessages([])
+        //     }
+        // });
     }
     useEffect(() => {
-        if (q && state?.user?.uid) {
-            const qRef = query(collection(firebaseStore, "users"));
-            onSnapshot(qRef, (querySnapshot) => {
-                querySnapshot.forEach((doc) => {
-                    if (doc?.data()?.uid === q) {
-                        setSelectUser({ photoURL: doc.data().photoURL, displayName: doc.data().displayName, uid: doc.data().uid })
-                        messageUser(`${q}`)
-                    }
-                })
-            });
-        } else {
-            setSelectUser({ photoURL: "", displayName: "", uid: "" })
-            setSearchUser([])
-        }
-    }, [q, state?.user?.uid])
+        // if (q && state?.user?.uid) {
+        //     const qRef = query(collection(firebaseStore, "users"));
+        //     onSnapshot(qRef, (querySnapshot) => {
+        //         querySnapshot.forEach((doc) => {
+        //             if (doc?.data()?.uid === q) {
+        //                 setSelectUser({ photoURL: doc.data().photoURL, displayName: doc.data().displayName, uid: doc.data().uid })
+        //                 messageUser(`${q}`)
+        //             }
+        //         })
+        //     });
+        // } else {
+        //     setSelectUser({ photoURL: "", displayName: "", uid: "" })
+        //     setSearchUser([])
+        // }
+    }, [q, ])
     const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault()
-        try {
-            const messageInfo = { message: chatMessage, username: state.user.displayName, messageUserUid: state?.user?.uid, messagerImage: state.user.photoURL, timestamp: new Date().toISOString() }
-            const docRef = doc(firebaseStore, "messages", state?.user?.uid, "chats", `${selectUser?.uid}`)
-            const docReff = doc(firebaseStore, "messages", `${selectUser?.uid}`, "chats", state?.user?.uid)
-            const userMessage = await getDoc(docRef)
-            const currMessage = await getDoc(docReff)
-            const contact = {
-                name: selectUser.displayName, uid: selectUser.uid, image: selectUser.photoURL, lastmessage: chatMessage, timestamp: new Date().toISOString(), sentby: state?.user?.uid
-            }
-            const contactTwo = {
-                name: state?.user?.displayName, uid: state?.user?.uid, image: state?.user?.photoURL, lastmessage: chatMessage, timestamp: new Date().toISOString(), sentby: state?.user?.uid
-            }
-            if (userMessage.exists()) {
-                await setDoc(docRef, { message: [...userMessage.data()?.message, messageInfo], contact }, { merge: true })
-            }
-            else {
-                await setDoc(docRef, { message: [messageInfo], contact })
-            }
-            if (currMessage.exists()) {
-                await setDoc(docReff, { message: [...currMessage.data()?.message, messageInfo], contact: { ...contactTwo } }, { merge: true })
-            }
-            else {
-                await setDoc(docReff, { message: [messageInfo], contact: { ...contactTwo } })
-            }
-        } catch (error) {
-            console.log(error)
-        }
+        // try {
+        //     const messageInfo = { message: chatMessage, username: state.user.displayName, messageUserUid: state?.user?.uid, messagerImage: state.user.photoURL, timestamp: new Date().toISOString() }
+        //     const docRef = doc(firebaseStore, "messages", state?.user?.uid, "chats", `${selectUser?.uid}`)
+        //     const docReff = doc(firebaseStore, "messages", `${selectUser?.uid}`, "chats", state?.user?.uid)
+        //     const userMessage = await getDoc(docRef)
+        //     const currMessage = await getDoc(docReff)
+        //     const contact = {
+        //         name: selectUser.displayName, uid: selectUser.uid, image: selectUser.photoURL, lastmessage: chatMessage, timestamp: new Date().toISOString(), sentby: state?.user?.uid
+        //     }
+        //     const contactTwo = {
+        //         name: state?.user?.displayName, uid: state?.user?.uid, image: state?.user?.photoURL, lastmessage: chatMessage, timestamp: new Date().toISOString(), sentby: state?.user?.uid
+        //     }
+        //     if (userMessage.exists()) {
+        //         await setDoc(docRef, { message: [...userMessage.data()?.message, messageInfo], contact }, { merge: true })
+        //     }
+        //     else {
+        //         await setDoc(docRef, { message: [messageInfo], contact })
+        //     }
+        //     if (currMessage.exists()) {
+        //         await setDoc(docReff, { message: [...currMessage.data()?.message, messageInfo], contact: { ...contactTwo } }, { merge: true })
+        //     }
+        //     else {
+        //         await setDoc(docReff, { message: [messageInfo], contact: { ...contactTwo } })
+        //     }
+        // } catch (error) {
+        //     console.log(error)
+        // }
         setChatMessage("")
     }
     const getMessage = (m: { uid: string; name: string; image: any; }) => {
@@ -125,7 +120,7 @@ function Message() {
                         {
                             messages?.length > 0 &&
                             <ul className={`${styles.previewMessage} p-2 on scroll-m-7`}>
-                                {
+                                {/* {
                                     messages?.map((m: { sentby: string, name: string, image: string, uid: string, timestamp: string, lastmessage: string }, index: Key) => <li key={index} className="mb-3">
                                         <div className="lg:flex items-start gap-2" onClick={() => getMessage(m)} role="button">
                                             <Image className="rounded-full" src={m?.image ? m?.image : '/images/icons8-user.svg'} height={50} width={50} alt={m.name} />
@@ -136,7 +131,7 @@ function Message() {
                                             </div>
                                         </div>
                                     </li>)
-                                }
+                                } */}
                             </ul>
                         }
                     </div>
@@ -159,7 +154,7 @@ function Message() {
                             </Link>
 
                             <div className={`flex p-2 px-3 flex-col justify-end ${styles.messgeHeight}`}>
-                                {
+                                {/* {
                                     singleUserMessages?.length > 0 &&
                                     <ul className={`overflow-y-scroll mb-2 `}>
                                         {
@@ -194,7 +189,7 @@ function Message() {
                                     <div className="text-center h-full flex items-center justify-center">
                                         <p>no message</p>
                                     </div>
-                                }
+                                } */}
                                 <form onSubmit={handleSendMessage} className="mb-2 mx-1">
                                     <input type="text" className="w-full border-2 border-slate-400 rounded-xl p-2" name="privatechat" value={chatMessage} onChange={(e) => setChatMessage(e.target.value)} />
                                 </form>
@@ -212,7 +207,7 @@ function Message() {
                             <div className="border-b-2 p-3 border-gray-200 flex items-center gap-1">
                                 <span>To: </span><input className="w-full bg-inherit outline-none" type="search" name="inkSpireuser" placeholder="Search..." value={inkSpire} onChange={(e) => setInkSpire(e.target.value)} />
                             </div>
-                            <div className="p-2">
+                            {/* <div className="p-2">
                                 {
                                     searchUsers?.length === 0
                                         ? <p>no user found</p>
@@ -228,7 +223,7 @@ function Message() {
                                                     </label>
                                                 )}
                                             </ul>)}
-                            </div>
+                            </div> */}
                             <div className="mx-2 mt-2 ">
                                 <button onClick={() =>{
                                     console.log(selectUser)

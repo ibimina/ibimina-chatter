@@ -19,8 +19,10 @@
 				"name": "next"
 			}
 		],
+		      "baseUrl": "src",
+
 		"paths": {
-			"@/*": ["./src/*"]
+			"@/*": ["*"]
 		}
 	},
 	"include": [
@@ -33,3 +35,11 @@
 	],
 	"exclude": ["node_modules"]
 }
+//  {
+//     "compilerOptions": {
+//       "baseUrl": "src",
+//       "paths": {
+//         "@/*": ["*"]
+//       }
+//     }
+//   }

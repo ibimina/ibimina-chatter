@@ -1,5 +1,4 @@
 import { ArticleCard, Header } from "@/components";
-import { firebaseStore } from "@/firebase/config";
 import { ArticleProps, UserBookmarkProps } from "@/types";
 import { DocumentData, collection, onSnapshot } from "firebase/firestore";
 import Head from "next/head";
@@ -12,21 +11,21 @@ function S() {
     const [a, setA] = useState<DocumentData | null>();
 
     useEffect(() => {
-        const docRef = collection(firebaseStore, 'articles')
+        // const docRef = collection(firebaseStore, 'articles')
 
-        const docSnap = onSnapshot(docRef, (doc) => {
-            let arr: any[] = []
-            doc.forEach((doc) => {
-                const topicExist = doc.data()?.topics?.includes(`${q}`)
-                if (topicExist && doc.data().published) {
-                    arr.push({ ...doc.data(), id: doc.id })
-                }
-                setA(arr)
-            })
-        })
-        return () => {
-            docSnap()
-        }
+        // const docSnap = onSnapshot(docRef, (doc) => {
+        //     let arr: any[] = []
+        //     doc.forEach((doc) => {
+        //         const topicExist = doc.data()?.topics?.includes(`${q}`)
+        //         if (topicExist && doc.data().published) {
+        //             arr.push({ ...doc.data(), id: doc.id })
+        //         }
+        //         setA(arr)
+        //     })
+        // })
+        // return () => {
+        //     docSnap()
+        // }
     }, [q])
 
     return (
@@ -50,7 +49,7 @@ function S() {
                 {
                     a?.length > 0 &&
                     a?.map((article: ArticleProps) => {
-                        return <ArticleCard key={article.id} feed={article} update={function (id: string, bookmark: UserBookmarkProps[]): void {
+                        return <ArticleCard key={article.id} feed={article} update={function (id: string,): void {
                             throw new Error("Function not implemented.");
                         }} />
                     })

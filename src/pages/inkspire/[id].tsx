@@ -3,86 +3,89 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { firebaseStore } from "@/firebase/config";
-import { doc, getDoc, setDoc } from "firebase/firestore";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { LinkRenderer } from "@/components";
 import styles from "@/styles/editor.module.css"
-import { useAuthContext } from "@/store/store";
-import { useInteraction, useSingleArticle, useTime } from "@/hooks";
-
+import { useTime } from "@/hooks";
 import { EmailShareButton, FacebookShareButton, LinkedinShareButton, TelegramShareButton, TwitterShareButton, WhatsappShareButton, } from "react-share";
 import FeedLayout from "@/container/feedslayout";
 import Head from "next/head";
-import { Isliked } from "@/helper/isLiked";
+import {  postCommentRequest, useGetArticleById, useLikeArticle } from "@/services/article.service";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+import { useBookmarkArticle } from "@/services/bookmark.service";
+import { useCurrentUserState } from "@/store/user.store";
+import { queryClient } from "@/context/tanstack-provider";
+import { AxiosError } from "axios";
 
 export async function getServerSideProps(context: any) {
 
     const id = context.query.id
-    const res = await getDoc(doc(firebaseStore, "articles", `${id}`))
-    const metaData = res.data()
     return {
         props: {
-            title: `${metaData?.title} by ${metaData?.author?.name} on inkSpire`,
-            image: metaData?.coverImageUrl,
-            description: metaData?.subtitle,
-            url: `https://ibimina-chatter.vercel.app/inkspire/${metaData?.id}`,
+            title: `InkSpire - Article ${id}`,
+            image: `https://ibimina-chatter.vercel.app/api/articles/${id}/cover`,
+            description: `Read the article with ID ${id} on InkSpire`,
+            url: `https://ibimina-chatter.vercel.app/inkspire/${id}`,
         }
     }
 }
 
 export default function SingleArticle({ title, image, description, url }: any) {
-    const { article } = useSingleArticle()
-    const { state } = useAuthContext();
-    const { isbookmarked, isliked } = Isliked(article)
+    const { currentUser } = useCurrentUserState()
     const router = useRouter();
     const { id } = router.query;
+    const { article,
+        isLoading,
+        error, } = useGetArticleById(id as string)
+    const { mutate: handleLikeRequest } = useLikeArticle("article")
+    const { mutate: handleBookmarkRequest } = useBookmarkArticle("article")
+
+
+
     const [comment, setComment] = useState('');
     const [shareUrl, setShareUrl] = useState('');
     const [isShared, setIsShared] = useState(false);
-    const { published } = useTime(article?.timestamp)
+    const { published } = useTime(article?.created_at ?? "")
     const [viewLikes, setViewLikes] = useState(false)
-    useEffect(() => {
-        setShareUrl(window?.location?.href);
-    }, []);
-    useEffect(() => {
-        (async () => {
-            if (id! !== undefined) {
-                const docRef = doc(firebaseStore, "articles", `${id}`);
-                const docSnap = await getDoc(docRef);
-                await setDoc(docRef, {
-                    views: docSnap.data()?.views + 1
-                }, { merge: true });
-            }
-        })();
-    }, [id]);
-    const { addBookmark, increaseLike, addNotification } = useInteraction();
+    const { mutate, isPending } = useMutation({
+        mutationFn: postCommentRequest,
+        onSuccess: async (response) => {
+            toast.success(response.data.message);
+            queryClient.invalidateQueries({ queryKey: ["articld"] });
+        },
+        onError: (error: AxiosError) => {
+            toast.error('An error occurred'), console.error(error);
+        },
+    });
 
     const postComment = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (state?.user === null || state?.user?.uid === "") {
-            alert("You need to login to comment")
-        } else {
-            const docRef = doc(firebaseStore, 'articles', article?.id!);
-            await setDoc(docRef, {
-                comments: [
-                    ...article?.comments, {
-                        uid: state?.user?.uid,
-                        name: state?.user?.displayName,
-                        image: state?.user?.photoURL,
-                        comment: comment,
-                        timestamp: new Date().toISOString()
-                    }]
-            }, { merge: true });
-            await addNotification('commented', article!)
-            setComment("")
+        if (currentUser === null || currentUser?.id === "") {
+            toast.error("You need to login to comment")
+        }
+        else {
+            mutate({ article_id: article.id, comment })
         }
     }
+
+
+    useEffect(() => {
+        setShareUrl(window?.location?.href);
+    }, []);
     const handleRoute = () => {
         router.back();
     }
+    if (!article) {
+        return (
+            <>
+                Health
+            </>
+        )
+    }
     return (
+
         <>
             <Head>
                 <title>{title}</title>
@@ -109,28 +112,28 @@ export default function SingleArticle({ title, image, description, url }: any) {
                         ></button>   <h1 className="font-bold text-3xl">Article</h1>
                     </div>
                     {
-                        article?.id?.length === undefined && <>loading...</>
+                        isLoading && <>loading...</>
                     }
-                    {article?.coverImageUrl?.length > 2 &&
+                    {article?.cover_image?.length > 2 &&
                         <div className={`relative h-96 mb-4`}>
-                            <Image src={article?.coverImageUrl} alt={article?.title} fill sizes="(max-width: 768px) 100vw,(max-width: 1200px) 50vw,  33vw"
+                            <Image src={article?.cover_image} alt={article?.title} fill sizes="(max-width: 768px) 100vw,(max-width: 1200px) 50vw,  33vw"
                             />
                         </div>
                     }
 
                     <h1 className={`text-2xl text-center  mb-2 font-bold`}>{article?.title}</h1>
                     <p className={`text-xl text-center  mb-6 font-medium`}>{article?.subtitle}</p>
-                    <Link href={`/profile/${encodeURIComponent(article?.author?.uid)}`} className={`flex flex-col md:flex-row items-center md:justify-center md:gap-4 mb-8`}>
+                    <Link href={`/profile/${encodeURIComponent(article?.author?.id)}`} className={`flex flex-col md:flex-row items-center md:justify-center md:gap-4 mb-8`}>
                         <div className="flex items-center justify-center gap-1 mb-2 md:mb-0">
-                            {article?.author?.image?.length > 2 &&
-                                <Image className={`rounded-full`} src={article?.author?.image} width={30} height={30} alt="author avatar" />
+                            {article?.author?.profile_image &&
+                                <Image className={`rounded-full`} src={article?.author?.profile_image ?? ""} width={30} height={30} alt="author avatar" />
 
                             }
-                            {article?.author?.image === null &&
+                            {article?.author?.profile_image === null &&
                                 <Image className={`rounded-full`} src={"/images/icons8-user-64.png"} width={30} height={30} alt="author avatar" />
                             }
 
-                            <span className="capitalize">{article?.author?.name} </span>
+                            <span className="capitalize">{article?.author?.username} </span>
 
                         </div>
                         {
@@ -146,15 +149,15 @@ export default function SingleArticle({ title, image, description, url }: any) {
                         className={` prose max-w-none prose-headings:m-0 prose-p:my-0  prose-li:m-0 prose-ol:m-0 prose-ul:m-0 prose-ul:leading-6
                             hr-black prose-hr:border-solid prose-hr:border prose-hr:border-black
                              marker:text-gray-700  break-words whitespace-pre-wrap`} >
-                        {article?.article}
+                        {article?.content ?? ""}
                     </ReactMarkdown>
                     <div className='relative flex items-center gap-2 justify-center mt-20 mb-10'>
                         <div className={`flex items-center gap-1`}>
                             <button
-                                onClick={() => increaseLike(article?.id!, article?.likes!, article!)}
+                                onClick={() => handleLikeRequest(article?.id)}
                                 title="likes">
                                 {
-                                    isliked ?
+                                    article?.liked_by?.find((u: { id: string }) => currentUser?.id === u?.id) ?
                                         <>
                                             <Image src='/images/icons8-love-48.png' height={24} width={24} alt="like" />
                                         </>
@@ -162,28 +165,28 @@ export default function SingleArticle({ title, image, description, url }: any) {
                                             <Image src='/images/icons8-like-50.png' height={24} width={24} alt="like" />
                                         </>
                                 }
-                            </button>
-                            <button onClick={() => setViewLikes(!viewLikes)} className={`${isliked ? "text-red-500 cursor-pointer" : "text-current cursor-pointer"}`} title="View who liked" >{article?.likesCount}</button>
+                                </button>
+                            <button onClick={() => setViewLikes(!viewLikes)} className={`${article?.liked_by?.some((u: { id: string }) => currentUser?.id === u?.id) ? "text-red-500 cursor-pointer" : "text-current cursor-pointer"}`} title="View who liked" >{article?.liked_by?.length}</button>
                         </div>
                         <button
-                            onClick={() => addBookmark(article?.id!, article?.bookmarks)}
+                            onClick={() => handleBookmarkRequest(article?.id)}
                             className='flex items-center gap-1' title="bookmarks">
                             {
-                                isbookmarked ?
+                                article?.bookmarked_by?.some((u: { id: string }) => currentUser?.id === u?.id) ?
                                     <>
                                         <Image src='/images/icons8-isbookmark.png' className="brightness-150" height={24} width={24} alt="like" />
-                                        <p className="text-">    {article?.bookmarks?.length}</p>
+                                        <p className="text-">{article?.bookmarked_by?.length}</p>
                                     </>
 
                                     : <>
                                         <Image src='/images/icons8-add-bookmark.svg' height={24} width={24} alt="bookmark" />
-                                        <p className="text-current">   {article?.bookmarks?.length} </p>
+                                        <p className="text-current">   {article?.bookmarked_by?.length} </p>
                                     </>
                             }
                         </button>
                         <button className='flex items-center gap-1' title="views">
                             <Image src="/images/icons8-chart-24.png" height={18} width={18} alt="views chart" />
-                            {article?.views}
+                            {article?.views_count}
                         </button>
 
                         <button className='flex items-center gap-1' title="comments">
@@ -242,11 +245,11 @@ export default function SingleArticle({ title, image, description, url }: any) {
                                     <button onClick={() => setViewLikes(!viewLikes)} className="cursor-pointer bg-close-icon bg-no-repeat bg-center w-3 h-3 hover:bg-slate-200" title=""></button>
                                 </div>
 
-                                {article?.likes?.map((like: any, index: Key) => {
+                                {article?.liked_by?.map((like: any, index: Key) => {
                                     return (
                                         <div className="flex items-center justify-between mb-3" key={index}>
                                             <div className="flex items-center gap-1">
-                                                <Image className="rounded-full" src={like.image ? like.image : "/images/icons8-user-64.png"} height={24} width={24} alt="like" />
+                                                <Image className="rounded-full" src={like.profile_image ? like.profile_image : "/images/icons8-user-64.png"} height={24} width={24} alt="like" />
                                                 <p className="text-gray-500">  {like.name}</p>
                                             </div>
                                             <p>{like?.timestamp?.length} {like?.timestamp?.length > 1 ? "likes" : "like"}</p>
@@ -254,7 +257,7 @@ export default function SingleArticle({ title, image, description, url }: any) {
                                 })
                                 }
                                 {
-                                    article?.likes?.length === 0 && <p>No likes yet</p>
+                                    article?.likes_count === 0 && <p>No likes yet</p>
                                 }
                             </div>
                         </div>
@@ -267,7 +270,7 @@ export default function SingleArticle({ title, image, description, url }: any) {
                             <div className="flex flex-wrap gap-2">
                                 {article?.topics?.map((topic: any, index: number) => {
                                     return (
-                                        <Link href={`/n?q=${topic}`} key={index} className="bg-gray-200 px-2 py-1 rounded-lg text-sm text-gray-600 hover:bg-gray-200">
+                                        <Link href={`/n?q=${topic.title}`} key={index} className="bg-gray-200 px-2 py-1 rounded-lg text-sm text-gray-600 hover:bg-gray-200">
                                             {topic}
                                         </Link>
                                     )
@@ -278,30 +281,29 @@ export default function SingleArticle({ title, image, description, url }: any) {
 
                     <div className="py-2 max-w-lg">
                         <h2 className="text-xl font-bold mb-3">
-                            {article?.comments?.length > 1 ? "Comments" : "Comment"}
+                            Comment{article?.comments?.length > 1 ? "s" : ""}
                             ({article?.comments?.length})
                         </h2>
-                        <Link href={`/${encodeURIComponent(article?.author?.uid)}`} className={`flex items-center gap-1 mb-8`}>
-                            {state?.user?.photoURL?.length > 2 &&
-                                <Image className={`rounded-full`} src={state?.user?.photoURL} width={30} height={30} alt="author avatar" />
-                            }
-                            {state?.user?.photoURL === null &&
-                                <Image className={`rounded-full`} src={"/images/icons8-user-64.png"} width={30} height={30} alt="author avatar" />
+                        <Link href={`/${encodeURIComponent(article?.author_id)}`} className={`flex items-center gap-1 mb-8`}>
+                            {currentUser?.profile_image  ?
+                                <Image className={`rounded-full`} src={currentUser?.profile_image} width={30} height={30} alt="author avatar" />
+                                :                                 <Image className={`rounded-full`} src={"/images/icons8-user-64.png"} width={30} height={30} alt="author avatar" />
 
                             }
-                            <span>{state?.user?.displayName ? state?.user?.displayName : "anonymous"}</span>
+                            
+                            <span>{currentUser?.username? currentUser?.username: "anonymous"}</span>
                         </Link>
                         <form onSubmit={postComment}>
                             <input value={comment} onChange={(e) => setComment(e.target.value)} className="block border-solid border-2 rounded-lg border-violet-400 w-full p-2 mb-6 outline-0 focus:shadow-violet-500/50 focus:shadow-lg" type="text" placeholder="Ask a question to spark a conversation" name="comment" />
-                            <input className="block bg-violet-700 text-gray-200 font-medium p-2 rounded-xl ml-auto" type="submit" value="Comment" />
+                            <input className="block bg-violet-700 text-gray-200 font-medium p-2 rounded-xl ml-auto" disabled={!comment} type="submit" value="Comment" />
                         </form>
                         {article?.comments?.length === 0 ? <p className="text-center text-gray-500">No comments yet</p> :
-                            article?.comments?.map((comment: { image: string, name: string, comment: string }, index: Key) => {
+                            article?.comments?.map((comment: { image: string, username: string, comment: string }, index: Key) => {
                                 return (
                                     <div key={index} className="flex items-center gap-2 mb-2">
                                         <Image className={`rounded-full`} src={comment?.image === null ? "/images/icons8-user-64.png" : comment?.image} width={30} height={30} alt="author avatar" />
                                         <div className="flex flex-col">
-                                            <span className="font-bold">{comment?.name}</span>
+                                            <span className="font-bold">{comment?.username}</span>
                                             <span className="text-gray-500">{comment?.comment}</span>
                                         </div>
                                     </div>

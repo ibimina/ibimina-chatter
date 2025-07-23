@@ -1,7 +1,7 @@
 
 function FallbackRender({ error, resetErrorBoundary }: { error: Error, resetErrorBoundary: () => void }) {
     // Call resetErrorBoundary() to reset the error boundary and retry the render.
-
+    console.log(error, "errorerrorerror");
     return (
         <>
             <div className="flex flex-col items-center justify-center h-screen">

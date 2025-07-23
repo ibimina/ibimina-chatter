@@ -1,23 +1,30 @@
 export interface ArticleProps {
-    id?: string,
+    id: string,
     title: string,
     subtitle: string,
-    coverImageUrl: string,
-    article: string,
+    cover_image: string,
+    content: string,
     topics: string[],
-    published: boolean,
-    likes: LikeProps[],
-    views: number,
-    bookmarks: UserBookmarkProps[],
-    comments: CommentProps[],
+    is_published: boolean,
+    views_count: number,
+    bookmarked_by:  {
+        username: string,
+        id: string,
+        profile_image: string
+    }[],
+      liked_by:{
+        username: string,
+        id: string,
+        profile_image: string
+    }[],
+    comments: { id: string, profile_image: string, username: string, comment: string }[],
     author: {
-        name: string,
-        uid: string,
-        image: string
+        username: string,
+        id: string,
+        profile_image: string
     },
-    timestamp: string,
-    readingTime:number
-    likesCount: number,
+    reading_time: number
+    created_at: string
 }
 
 export interface CommentProps{

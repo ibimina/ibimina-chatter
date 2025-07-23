@@ -1,17 +1,16 @@
-import useCollectionSnap from '@/hooks/useCollectionSnap';
-import { useAuthContext } from '@/store/store';
 import styles from '@/styles/editor.module.css';
 
 import Link from 'next/link';
 import { useState } from 'react';
 import { DeleteModal } from '@/components/index';
 import Image from 'next/image';
+import { useCurrentUserState } from '@/store/user.store';
 
 function ArticleSide({ isvisible, handleVisible }: { isvisible: boolean, handleVisible: (e: React.MouseEvent) => void }) {
-    const { state } = useAuthContext()
-    const { snap, loading, error } = useCollectionSnap("articles", "author.uid", state?.user?.uid);
-    const publishedLength = snap?.filter((doc: any) => doc.published === true).length;
-    const draftLength = snap?.filter((doc: any) => doc.published === false).length;
+    const { currentUser } = useCurrentUserState()
+    const { articles } = currentUser
+    const publishedLength = articles.filter((doc: any) => doc.is_published === true).length;
+    const draftLength = articles.filter((doc: any) => doc.is_published === false).length;
     const [showdeleteModal, setShowDeleteModal] = useState(false)
     const [showPublishedDeleteModal, setShowPublishedDeleteModal] = useState(false)
     const handleModal = () => {
@@ -28,18 +27,18 @@ function ArticleSide({ isvisible, handleVisible }: { isvisible: boolean, handleV
             <div className={`mb-12`}>
                 <h1 className={`mb-2 font-medium text-amber-950`}>My Drafts</h1>
                 <ul>
-                    {
+                    {/* {
                         loading &&
                         <span>Loading...</span>
                     }
                     {
                         error &&
                         <span>{error}</span>
-                    }
-                    {snap &&
-                        snap?.map((doc: { published: boolean; id: string; title: string, article: string; }) => {
+                    } */}
+                    {articles &&
+                        articles?.map((doc: { is_published: boolean; id: string; title: string, content: string; }) => {
                             return (
-                                doc.published === false &&
+                                doc.is_published === false &&
                                 <li key={doc?.id} className={`mb-1 `}>
                                     <Link href={`/draft/${encodeURIComponent(doc.id)}`}>
                                         <div className='flex items-start justify-between'>
@@ -47,8 +46,8 @@ function ArticleSide({ isvisible, handleVisible }: { isvisible: boolean, handleV
                                             <button onClick={handleModal} title='delete'>
                                                 <Image src="/images/icons8-delete-32.png" alt="delete icon" height={24} width={24} />
                                             </button>
-                                            {showdeleteModal && <DeleteModal articleid={doc.id} published={doc.published} handleModal={handleModal} />}
-                                        </div>   <span> {doc?.article.substring(0, 30)}</span>
+                                            {showdeleteModal && <DeleteModal articleid={doc.id} published={doc.is_published} handleModal={handleModal} />}
+                                        </div>   <span> {doc?.content.substring(0, 30)}</span>
                                     </Link>
                                 </li>
                             )
@@ -64,18 +63,18 @@ function ArticleSide({ isvisible, handleVisible }: { isvisible: boolean, handleV
             <div>
                 <h1 className={`mb-4 font-medium text-amber-950`}>Published</h1>
                 <ul>
-                    {
+                    {/* {
                         loading &&
                         <span>Loading...</span>
                     }
                     {
                         error &&
                         <span>{error}</span>
-                    }
+                    } */}
                     {
-                        snap?.map((doc: any) => {
+                        articles.map((doc: any) => {
                             return (
-                                doc.published === true &&
+                                doc.is_published === true &&
                                 <li key={doc?.id} className={`mb-2 flex items-start justify-between`}>
                                     <p> <Link href={`/edit/${encodeURIComponent(doc.id)}`} >
                                         {doc?.title.substring(0, 35)}
@@ -84,7 +83,7 @@ function ArticleSide({ isvisible, handleVisible }: { isvisible: boolean, handleV
                                     <button onClick={handleModal} title='delete'>
                                         <Image src="/images/icons8-delete-32.png" alt="delete icon" height={24} width={24} />
                                     </button>
-                                    {showPublishedDeleteModal && <DeleteModal articleid={doc.id} published={doc.published} handleModal={handleModalTwo} />}
+                                    {showPublishedDeleteModal && <DeleteModal articleid={doc.id} published={doc.is_published} handleModal={handleModalTwo} />}
                                 </li>
                             )
                         })

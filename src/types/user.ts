@@ -1,17 +1,22 @@
-export interface UserProps {
-	uid: string;
+export type TUserType = {
+	id: string;
 	email: string | null;
-	displayName: string | null;
-	photoURL: string | null;
-	topics: string[] ;
+	username: string | null;
+	profile_image: string | null;
+	topics: {title:string}[] ;
 	profile_tagline: string;
 	location: string;
 	bio: string;
-	twitter: string;
-	github: string;
-	instagram: string;
-	website: string;
-	linkedin: string;
-	youtube: string;
-	facebook: string;
+	twitter_url: string;
+	github_url: string;
+	instagram_url: string;
+	website_url: string;
+	linkedin_url: string;
+	youtube_url: string;
+	facebook_url: string;
+	following: TUserType[];	
+	articles_count: number;
+	articles: { is_published: boolean; id: string; title: string, content: string; }[];
+		followers: TUserType[];	
+
 }

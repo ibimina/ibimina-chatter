@@ -42,7 +42,7 @@ const MarkdownEditor = () => {
                     removeTag={removeTag}
                     isPublishing={isPublishing}
                     addTag={addTag}
-                    publishArticleInFirebase={updateArticleInFirebase}
+                    publishArticle={updateArticleInFirebase}
                     isDiasbled={isDiasbled}
                 />
             </main>

@@ -3,11 +3,12 @@ import { ArticleProps } from '@/types/index';
 import { Key } from 'react';
 import ArticleCard from '@/components/articlecard';
 import Head from 'next/head';
-import useBookmarks from '@/hooks/useBookmarks';
-
+import { useGetAllBookmarks, useBookmarkArticle } from '@/services/bookmark.service';
 
 function Bookmarks() {
-    const {feeds,update,loading} = useBookmarks()
+    const { bookmarks, isLoading } = useGetAllBookmarks();
+        const { mutate: handleBookmarkRequest } = useBookmarkArticle("article")
+
 
     return (
         <>
@@ -19,25 +20,25 @@ function Bookmarks() {
                 <meta name="description" content="Your bookmarked articles" />
             </Head>
             <FeedLayout>
-             
+
                 <main className={`md:w-4/6`}>
-                    {loading && 
+                    {isLoading &&
                         <div className={`flex items-center justify-center font-normal max-h-screen h-96`}>
                             <div className='max-w-md text-center'>
                                 <p className='text-center'>Loading...</p></div>
                         </div>}
                     <ul className={`p-2`}>
-                       
-                        {feeds &&
-                            feeds.map((feed: ArticleProps, index: Key) => {
+
+                        {bookmarks &&
+                            bookmarks.map((feed: ArticleProps, index: Key) => {
                                 return (
-                                    <ArticleCard key={index} feed={feed} update={update} />
+                                    <ArticleCard key={index} feed={feed} update={handleBookmarkRequest} />
                                 );
                             }
                             )}
                     </ul>
                     {
-                        feeds?.length === 0 && !loading &&
+                        bookmarks?.length === 0 && !isLoading &&
                         <div className={`flex items-center justify-center font-normal max-h-screen h-96`}>
                             <div className='max-w-md text-center'>
                                 <p className='text-center'>No articles found in your bookmarks.</p>

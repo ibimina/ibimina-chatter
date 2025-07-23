@@ -1,25 +1,26 @@
 import { Header } from "@/components";
-import useEditor from "@/hooks/useEditor";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Image from "next/image";
 import { TwitterShareButton, LinkedinShareButton, WhatsappShareButton } from "react-share";
 import Head from "next/head";
-import { doc, getDoc } from "firebase/firestore";
-import { firebaseStore } from "@/firebase/config";
+import { useRouter } from "next/router";
+import { useGetArticleById } from "@/services/article.service";
 
 
 //generate meta tags for social media sharing server side
 
 export async function getServerSideProps(context: any) {
 
-    // const { id } = context.query
     const id = context.query.id
-    const res = await getDoc(doc(firebaseStore, "articles", `${id}`))
-    const metaData = res.data()
     return {
         props: {
-            metaData,
+            metaData: {
+                title: `InkSpire - Article ${id}`,
+                description: `Read the article with ID ${id} on InkSpire`,
+                image: `https://ibimina-chatter.vercel.app/api/articles/${id}/cover`,
+                url: `https://ibimina-chatter.vercel.app/inkspire/${id}`
+            },
             id
         }
     }
@@ -28,9 +29,38 @@ export async function getServerSideProps(context: any) {
 
 
 
-function Article({ metaData, id }: { metaData: any, id: any }) {
+function Article({ metaData }: { metaData: any }) {
+    const router = useRouter();
+    // const [articleDetails, setArticleDetails] = useState<{
+    //     id: string;
+    //     title: string;
+    //     subtitle: string;
+    //     content: string;
+    //     cover_image: string;
+    // }>();
+        const id = router.query.id
 
-    const { articleDetails } = useEditor()
+    const {         article: articleDetails,
+        isLoading,
+        error,} = useGetArticleById(id as string)
+
+
+    // const { mutate, isPending } = useMutation({
+	// 	mutationFn: getArticleById,
+    //     onSuccess: async (response) => {
+    //         setArticleDetails(response.data);
+    //         const loader = document.querySelector(".loader")!;
+    //         loader.classList.add("hidden");
+    //     },
+	// 	onError: () => {
+	// 		toast.error("An error occurred while fetching the article");
+
+	// 	},
+    // });
+    // useEffect(() => {
+    //   mutate(id as string);
+    // }, [id]);
+
     const closeModal = (e: React.MouseEvent) => {
         e.preventDefault()
         const loader = document.querySelector(".loader")!
@@ -39,15 +69,15 @@ function Article({ metaData, id }: { metaData: any, id: any }) {
  
     return (<>
         {
-            articleDetails?.title?.length > 2 &&
+            articleDetails?.title && articleDetails.title.length > 2 &&
             <Head>
                 <meta charSet="utf-8" />
 
-                <title>{`${metaData?.title}`}</title>
+                <title>{`${articleDetails?.title}`}</title>
                 <meta name="description" content={articleDetails?.subtitle} />
-                <meta property="og:title" content={`${metaData?.title}`} />
+                <meta property="og:title" content={`${articleDetails?.title}`} />
                 <meta property="og:description" content={articleDetails?.subtitle} />
-                <meta property="og:image" content={articleDetails?.coverImageUrl} />
+                <meta property="og:image" content={articleDetails?.cover_image} />
                 <meta property="og:url" content={`https://ibimina-chatter.vercel.app/inkspire/${articleDetails?.id}`} />
                 <meta property="og:site_name" content="InkSpire" />
                 <meta property="og:type" content="website" />
@@ -59,7 +89,7 @@ function Article({ metaData, id }: { metaData: any, id: any }) {
                 <meta name="twitter:creator" content="@ibimina_" />
                 <meta name="twitter:title" content={`${metaData?.title}`} />
                 <meta name="twitter:description" content={articleDetails?.subtitle} />
-                <meta name="twitter:image" content={articleDetails?.coverImageUrl} />
+                <meta name="twitter:image" content={articleDetails?.cover_image} />
                 <meta name="twitter:image:alt" content={articleDetails?.title} />
 
             </Head>
@@ -112,20 +142,21 @@ function Article({ metaData, id }: { metaData: any, id: any }) {
         <div className={`w-10/12 lg:w-9-12 mx-auto mb-4 mt-8`}>
             <div className={`flex items-center gap-2 mb-2`}>
                 {
-                    articleDetails?.coverImageUrl ?
+                    articleDetails?.cover_image ?
                         <div className={`relative w-full h-96 mb-2`}>
-                            <Image src={articleDetails?.coverImageUrl} alt="cover image" fill
+                            <Image src={articleDetails?.cover_image} alt="cover image" fill
                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw,  33vw" />
                         </div>
                         : ""
                 }
             </div>
-            <ReactMarkdown remarkPlugins={[remarkGfm]}
-
+            <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
                 className={`prose max-w-none pose-headings:m-0 prose-p:my-0  prose-li:m-0 prose-ol:m-0 prose-ul:m-0 prose-ul:leading-6
                             hr-black prose-hr:border-solid prose-hr:border prose-hr:border-black
-                             marker:text-gray-700  break-words whitespace-pre-wrap`} >
-                {articleDetails.article}
+                             marker:text-gray-700  break-words whitespace-pre-wrap`}
+            >
+                {articleDetails?.content ?? ""}
             </ReactMarkdown>
         </div>
     </>);

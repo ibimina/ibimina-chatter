@@ -1,89 +1,73 @@
 import { Header } from "@/components";
-import { firebaseAuth, firebaseStorage, firebaseStore } from "@/firebase/config";
-import { useAuthContext } from "@/store/store";
-import { doc, setDoc } from "firebase/firestore";
 import Image from "next/image";
 import { Key, useEffect, useState } from "react";
 import Head from "next/head";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { useUpdate } from "@/hooks";
+import { useCurrentUserState } from "@/store/user.store";
 
 
 function User() {
-    const { state, dispatch } = useAuthContext()
     const [addTag, setAddTag] = useState('')
     const [success, setSuccess] = useState(false)
-    const { updateInArticles, updateInNotification, updateUserFollowing, updateFollowers, updateInChats } = useUpdate()
-
+    const { currentUser } = useCurrentUserState()
     //create a usestate for form and social links
     const [form, setForm] = useState({
-        displayName: state?.user?.displayName,
-        photoURL: state?.user?.photoURL,
-        profile_tagline: state?.user?.profile_tagline,
-        location: state?.user?.location,
-        bio: state?.user?.bio,
-        topics: state?.user?.topics,
-        twitter: state?.user?.twitter,
-        facebook: state?.user?.facebook,
-        linkedin: state?.user?.linkedin,
-        github: state?.user?.github,
-        website: state?.user?.website,
-        instagram: state?.user?.instagram,
-        youtube: state?.user?.youtube,
+      ...currentUser
+        
     })
 
-    useEffect(() => {
-        setForm(state.user)
-    }, [state?.user])
+    // useEffect(() => {
+    //     setForm(state.user)
+    // }, [state?.user])
     const updateInfo = async (e: React.FormEvent) => {
         e.preventDefault()
         let errorLinks = []
 
-        if (form.twitter.startsWith("https://twitter.com/") || form.twitter === "" || form.twitter.startsWith("https://www.twitter.com/")) {
-            dispatch({ type: "TWITTER", payload: form.twitter })
-        } else {
-            errorLinks.push(form.twitter)
-        }
-        if (form.linkedin.startsWith("https://linkedin.com/in/") || form.linkedin === "" || form.linkedin.startsWith("https://www.linkedin.com/in/")) {
-            dispatch({ type: "LINKEDIN", payload: form.linkedin })
-        } else {
-            errorLinks.push(form.linkedin)
-        } if (form.youtube.startsWith("https://youtube.com/") || form.youtube === "" || form.youtube.startsWith("https://www.youtube.com/")) {
-            dispatch({ type: "YOUTUBE", payload: form.youtube })
-        } else {
-            errorLinks.push(form.linkedin)
-        } if (form.website.startsWith("https://") || form.website === "" || form.website.startsWith("https://www.")) {
-            dispatch({ type: "WEBSITE", payload: form.website })
-        } else {
-            errorLinks.push(form.website)
-        } if (form.instagram.startsWith("https://instagram.com/") || form.instagram === "" || form.instagram.startsWith("https://www.instagram.com/")) {
-            dispatch({ type: "INSTAGRAM", payload: form.instagram })
-        } else {
-            errorLinks.push(form.instagram)
-        } if (form.github.startsWith("https://github.com/") || form.github === "" || form.github.startsWith("https://www.github.com/")) {
-            dispatch({ type: "GITHUB", payload: form.github })
-        } else {
-            errorLinks.push(form.github)
-        }
-        if (errorLinks.length > 0) {
-            alert(`The following links are not valid: ${errorLinks.join(", ")}`)
-            return
-        } else {
-            const { user } = state
-            //update user name and image in user     
-            const userRef = doc(firebaseStore, 'users', state?.user?.uid);
-            await setDoc(userRef, { ...user }, { merge: true });
-            //update user name and image in article and comments
-            await updateInArticles()
-            //update user name and image in notification
-            await updateInNotification()
-            //update user name and image in following
-            await updateUserFollowing()
-            //update user name and image in followers
-            await updateFollowers()
-            //update user name and image in chats
-            await updateInChats()
-        }
+        // if (form.twitter.startsWith("https://twitter.com/") || form.twitter === "" || form.twitter.startsWith("https://www.twitter.com/")) {
+        //     dispatch({ type: "TWITTER", payload: form.twitter })
+        // } else {
+        //     errorLinks.push(form.twitter)
+        // }
+        // if (form.linkedin.startsWith("https://linkedin.com/in/") || form.linkedin === "" || form.linkedin.startsWith("https://www.linkedin.com/in/")) {
+        //     dispatch({ type: "LINKEDIN", payload: form.linkedin })
+        // } else {
+        //     errorLinks.push(form.linkedin)
+        // } if (form.youtube.startsWith("https://youtube.com/") || form.youtube === "" || form.youtube.startsWith("https://www.youtube.com/")) {
+        //     dispatch({ type: "YOUTUBE", payload: form.youtube })
+        // } else {
+        //     errorLinks.push(form.linkedin)
+        // } if (form.website.startsWith("https://") || form.website === "" || form.website.startsWith("https://www.")) {
+        //     dispatch({ type: "WEBSITE", payload: form.website })
+        // } else {
+        //     errorLinks.push(form.website)
+        // } if (form.instagram.startsWith("https://instagram.com/") || form.instagram === "" || form.instagram.startsWith("https://www.instagram.com/")) {
+        //     dispatch({ type: "INSTAGRAM", payload: form.instagram })
+        // } else {
+        //     errorLinks.push(form.instagram)
+        // } if (form.github.startsWith("https://github.com/") || form.github === "" || form.github.startsWith("https://www.github.com/")) {
+        //     dispatch({ type: "GITHUB", payload: form.github })
+        // } else {
+        //     errorLinks.push(form.github)
+        // }
+        // if (errorLinks.length > 0) {
+        //     alert(`The following links are not valid: ${errorLinks.join(", ")}`)
+        //     return
+        // } else {
+        //     const { user } = state
+        //     //update user name and image in user     
+        //     // const userRef = doc(firebaseStore, 'users', state?.user?.uid);
+        //     // await setDoc(userRef, { ...user }, { merge: true });
+        //     // //update user name and image in article and comments
+        //     // await updateInArticles()
+        //     // //update user name and image in notification
+        //     // await updateInNotification()
+        //     // //update user name and image in following
+        //     // await updateUserFollowing()
+        //     // //update user name and image in followers
+        //     // await updateFollowers()
+        //     // //update user name and image in chats
+        //     // await updateInChats()
+        // }
         setSuccess(true)
     }
 
@@ -92,11 +76,11 @@ function User() {
     }
     const uploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files![0];
-        const uploadpath = `thumbnails/profile/${firebaseAuth.currentUser?.uid}/${file.name}`
-        const storageRef = ref(firebaseStorage, uploadpath)
-        await uploadBytes(storageRef, file)
-        const photoUrl = await getDownloadURL(storageRef)
-        dispatch({ type: "PHOTO", payload: photoUrl })
+        // const uploadpath = `thumbnails/profile/${firebaseAuth.currentUser?.uid}/${file.name}`
+        // const storageRef = ref(firebaseStorage, uploadpath)
+        // await uploadBytes(storageRef, file)
+        // const photoUrl = await getDownloadURL(storageRef)
+        // dispatch({ type: "PHOTO", payload: photoUrl })
     }
     useEffect(() => {
         if (success) setInterval(() => setSuccess(false), 6000)
@@ -125,8 +109,8 @@ function User() {
                     <p className="font-bold text-4xl mb-4">Basic info</p>
                     <label className="block mb-4">
                         <span className="block">Full name</span>
-                        <input type="text" placeholder="Enter your full name" value={form.displayName}
-                            onChange={(e) => setForm({ ...form, displayName: e.target.value })}
+                        <input type="text" placeholder="Enter your full name" value={form.username ?? ""}
+                            onChange={(e) => setForm({ ...form, username: e.target.value })}
                             className="block w-full rounded-lg py-3 px-2" />
                     </label>
                     <label className="block mb-4">
@@ -138,13 +122,13 @@ function User() {
                     <div className="mb-4">
                         <p className="mb-2">Profile Photo</p>
                         {
-                            form.photoURL ?
+                            form.profile_image ?
                                 <div className="relative">
                                     <button
-                                        onClick={() => setForm({ ...form, photoURL: '' })}
+                                        onClick={() => setForm({ ...form, profile_image: '' })}
                                         className={`absolute top-1 cursor-pointer left-28 w-7 h-7 bg-no-repeat bg-delete-icon`}>
                                     </button>
-                                    <Image className=" rounded-full" src={form.photoURL} width={150} height={100} alt={form.displayName} />
+                                    <Image className=" rounded-full" src={form.profile_image} width={150} height={100} alt={form?.username ?? "anynonmous"} />
                                 </div> :
                                 <label className="inline-block w-max h-min">
                                     <input type="file" className="appearance-none w-0 h-0" onChange={uploadImage} />
@@ -177,24 +161,24 @@ function User() {
                             <button
                                 className="bg-violet-900 text-white py-2 px-6 rounded-2xl"
                                 onClick={() => {
-                                    if (addTag?.trim().length > 2 && !state?.user?.topics.includes(addTag)) {
-                                        dispatch({ type: "ADDTAG", payload: addTag })
-                                        setAddTag('')
-                                    }
+                                    // if (addTag?.trim().length > 2 && !currentUser?.topics.includes(addTag)) {
+                                    //     dispatch({ type: "ADDTAG", payload: addTag })
+                                    //     setAddTag('')
+                                    // }
                                 }}>add</button>
                         </div>
 
                     </label>
                     <ul className="flex items-center gap-2 flex-wrap mt-8">
-                        {state?.user &&
-                            form.topics?.map((doc: string, index: Key) =>
+                        {currentUser &&
+                            form.topics?.map((doc: {title:string}, index: Key) =>
                                 <li key={index} className="bg-violet-200 p-2 rounded-sm text-current flex items-center gap-3">
                                     <p className="">
-                                        {doc}
+                                        {doc.title}
                                     </p>
                                     <button className="bg-no-repeat bg-center w-3 h-3 bg-close-icon cursor-pointer"
                                      onClick={() => {
-                                        dispatch({ type: "REMOVETAG", payload: doc })
+                                        // dispatch({ type: "REMOVETAG", payload: doc })
                                     }}></button>
                                 </li>
                             )}
@@ -206,36 +190,36 @@ function User() {
                     <label className="block mb-4">
                         <span>Twitter</span>
                         <input type="text" placeholder="https://twitter.com/@username"
-                            onChange={(e) => { updateInput(e, "twitter", e.target.value) }}
-                            value={form.twitter} className="block w-full rounded-lg py-3 px-2" />
+                            onChange={(e) => { updateInput(e, "twitter_url", e.target.value) }}
+                            value={form.twitter_url} className="block w-full rounded-lg py-3 px-2" />
                     </label>
                     <label className="block mb-4">
                         <span>Linkedin</span>
                         <input type="text" placeholder="https://www.linkedin.com/in/username"
-                            onChange={(e) => updateInput(e, "linkedin", e.target.value)}
-                            value={form.linkedin} className="block w-full rounded-lg py-3 px-2" />
+                            onChange={(e) => updateInput(e, "linkedin_url", e.target.value)}
+                            value={form.linkedin_url} className="block w-full rounded-lg py-3 px-2" />
                     </label>
                     <label className="block mb-4">
                         <span>Facebook</span>
                         <input type="text" placeholder="https://www.facebook.com/username"
-                            onChange={(e) => updateInput(e, "facebook", e.target.value)}
-                            value={form.facebook} className="block w-full rounded-lg py-3 px-2" />
+                            onChange={(e) => updateInput(e, "facebook_url", e.target.value)}
+                            value={form.facebook_url} className="block w-full rounded-lg py-3 px-2" />
                     </label>
                     <label className="block mb-4">
                         <span>Instagram</span>
-                        <input type="text" placeholder="https://www.instagram.com/username" onChange={(e) => updateInput(e, "instagram", e.target.value)} value={form.instagram} className="block w-full rounded-lg py-3 px-2" />
+                        <input type="text" placeholder="https://www.instagram.com/username" onChange={(e) => updateInput(e, "instagram_url", e.target.value)} value={form.instagram_url} className="block w-full rounded-lg py-3 px-2" />
                     </label>
                     <label className="block mb-4">
                         <span>Github</span>
-                        <input type="text" placeholder="https://www.github.com/username" onChange={(e) => updateInput(e, "github", e.target.value)} value={form.github} className="block w-full rounded-lg py-3 px-2" />
+                        <input type="text" placeholder="https://www.github.com/username" onChange={(e) => updateInput(e, "github_url", e.target.value)} value={form.github_url} className="block w-full rounded-lg py-3 px-2" />
                     </label>
                     <label className="block mb-4">
                         <span>Website</span>
-                        <input type="text" placeholder="https://www.ibimina-hart.com" onChange={(e) => updateInput(e, "website", e.target.value)} value={form.website} className="block w-full rounded-lg py-3 px-2" />
+                        <input type="text" placeholder="https://www.ibimina-hart.com" onChange={(e) => updateInput(e, "website_url", e.target.value)} value={form.website_url} className="block w-full rounded-lg py-3 px-2" />
                     </label>
                     <label className="block mb-2">
                         <span>Youtube</span>
-                        <input type="text" placeholder="https://www.youtube.com/ibimina-hart" onChange={(e) => updateInput(e, "youtube", e.target.value)} value={form.youtube} className="block w-full rounded-lg py-3 px-2" />
+                        <input type="text" placeholder="https://www.youtube.com/ibimina-hart" onChange={(e) => updateInput(e, "youtube_url", e.target.value)} value={form.youtube_url} className="block w-full rounded-lg py-3 px-2" />
                     </label>
                 </div>
             </div>

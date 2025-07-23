@@ -1,53 +1,27 @@
 import FeedLayout from "@/container/feedslayout"
-import { firebaseStore } from "@/firebase/config";
-import { useAuthContext } from "@/store/store";
-import { getDoc, doc, setDoc } from "firebase/firestore";
-import { useEffect, useState } from "react";
 import styles from '../styles/tags.module.css'
 import Head from "next/head";
 import Link from "next/link";
-interface topic {
-    name: string,
-    count: number
-}
-export default function Explore() {
-    const [topics, setTopics] = useState<topic[] | null>(null)
-    const { state, dispatch } = useAuthContext()
+import { addUserTopicsReq, useGetAllTopics } from "@/services/topic.service";
+import { useCurrentUserState } from "@/store/user.store";
 
-    useEffect(() => {
-        const getTopics = async () => {
-            const firebaseTopics = getDoc(doc(firebaseStore, "topics", `${process.env.NEXT_PUBLIC_TOPICS_DATABASE_ID}`))
-            const response = (await firebaseTopics)?.data()?.topics
-            setTopics(response.sort((a: topic, b: topic) => b.count - a.count))
-   
-        }
-        getTopics()
-        return () => { getTopics() }
-    }, [state, state?.user?.uid])
+export default function Explore() {
+    const { topics, isLoading } = useGetAllTopics()
+
+const {currentUser} = useCurrentUserState()
+
     const addUserTopic = async (e: React.MouseEvent, tag: string) => {
         e.preventDefault();
         let addBtn = e.currentTarget.getAttribute('aria-pressed');
-        const userRef = doc(firebaseStore, 'users', `${state?.user?.uid}`);
         if (addBtn === 'false') {
             e.currentTarget.setAttribute('aria-pressed', 'true');
-            const exist = state.user.topics?.find((articleTag: string) => {
-                return articleTag.toLowerCase() === tag.toLowerCase()
-            })
-            if (!exist) {
-                dispatch({ type: "ADDTAG", payload: tag })
-                setDoc(userRef, {
-                    topics: state?.user?.topics
-                }, { merge: true });
-            }
+      
         }
         else {
             e.currentTarget.setAttribute('aria-pressed', 'false');
-            dispatch({ type: "REMOVETAG", payload: tag })
-            setDoc(userRef, {
-                topics: state?.user?.topics
-            }, { merge: true });
-            
+    
         }
+       await addUserTopicsReq(tag)
     }
 
     return (
@@ -71,12 +45,12 @@ export default function Explore() {
                         <li className="text-violet-700 font-serif font-normal text-lg">Trending Topics</li>
                     </ul>
                     <div className={`grid md:grid-cols-2 lg:grid-cols-3 gap-3 my-8`}>
-                        {topics && topics.slice(0,10).map((topic, index) =>
-                            <div key={index} className={`flex justify-between items-center bg-stone-200 hover:bg-zinc-300  cursor-pointer`} aria-selected='false'>
-                                <Link className={`px-4 py-3 font-medium`} href={`/n?q=${topic?.name}`}>{topic?.name} </Link>
+                        {topics && topics.map((topic:{title: string, id:string}) =>
+                            <div key={topic.title} className={`flex justify-between items-center bg-stone-200 hover:bg-zinc-300  cursor-pointer`} aria-selected='false'>
+                                <Link className={`px-4 py-3 font-medium`} href={`/n?q=${topic?.title}`}>{topic?.title} </Link>
                                 <button
-                                    onClick={(e) => addUserTopic(e, topic.name)}
-                                    className={`bg-contain bg-no-repeat bg-center w-5 h-5 m-2 ${styles.add}`} aria-label="add tag" aria-pressed={state?.user.topics.includes(topic?.name) ? "true" : "false"}>
+                                    onClick={(e) => addUserTopic(e, topic.id)}
+                                    className={`bg-contain bg-no-repeat bg-center w-5 h-5 m-2 ${styles.add}`} aria-label="add tag" aria-pressed={currentUser.topics.some(t=> t.title.toLowerCase() === topic?.title.toLowerCase()) ? "true" : "false"}>
                                 </button>
 
                             </div>

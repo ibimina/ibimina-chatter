@@ -1,8 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from '../styles/forgotpassword.module.css';
-import { confirmPasswordReset, verifyPasswordResetCode } from 'firebase/auth';
-import { firebaseAuth } from '@/firebase/config';
 import { useState } from 'react';
 import Head from 'next/head';
 import RegistrationLayout from '@/container/registerlayout';
@@ -22,23 +20,23 @@ function ResetPassword() {
         if (passwordRegex.test(password)) {
 
             let actionCode = `${router?.query?.oobCode}`
-            verifyPasswordResetCode(firebaseAuth, actionCode).then((email) => {
-                confirmPasswordReset(firebaseAuth, actionCode, password).then((resp) => {
-                    setSuccess(true)
-                    setError("")
-                }).catch((error) => {
-                    if (error.message === "Firebase: Password should be at least 6 characters (auth/weak-password).") {
-                        setError("Password should be at least 6 characters")
-                    } else if (error.message === "Firebase: The password reset code has expired. (auth/expired-action-code).") {
-                        setError("The password reset code has expired")
-                    }
-                });
-            }).catch((error) => {
-                if (error.message === "Firebase: The password reset code has expired. (auth/expired-action-code).") {
-                    setError("The password reset code has expired, please request a new one from the forgot password page")
-                }
+            // verifyPasswordResetCode(firebaseAuth, actionCode).then((email) => {
+            //     confirmPasswordReset(firebaseAuth, actionCode, password).then((resp) => {
+            //         setSuccess(true)
+            //         setError("")
+            //     }).catch((error) => {
+            //         if (error.message === "Firebase: Password should be at least 6 characters (auth/weak-password).") {
+            //             setError("Password should be at least 6 characters")
+            //         } else if (error.message === "Firebase: The password reset code has expired. (auth/expired-action-code).") {
+            //             setError("The password reset code has expired")
+            //         }
+            //     });
+            // }).catch((error) => {
+            //     if (error.message === "Firebase: The password reset code has expired. (auth/expired-action-code).") {
+            //         setError("The password reset code has expired, please request a new one from the forgot password page")
+            //     }
 
-            });
+            // });
         } else {
             setError("Password must contain a capital letter, number and special character")
 

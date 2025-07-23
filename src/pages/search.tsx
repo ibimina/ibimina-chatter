@@ -1,7 +1,6 @@
 import { ArticleCard, Header } from "@/components";
-import { firebaseStore } from "@/firebase/config";
 import { ArticleProps, UserBookmarkProps } from "@/types";
-import { DocumentData, collection, onSnapshot } from "firebase/firestore";
+import { DocumentData } from "firebase/firestore";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -18,29 +17,29 @@ function Search() {
 
     useEffect(() => {
         setLoading(true)
-        const docRef = collection(firebaseStore, coll)
-        const docSnap = onSnapshot(docRef, (doc) => {
-            let arr: any[] = []
-            doc.forEach((doc) => {
-                if (coll === 'articles') {
-                    if (doc?.data()?.title?.toLowerCase().includes(q?.toString().toLowerCase()) && doc.data()?.published) {
-                        arr.push(doc.data())
+        // const docRef = collection(firebaseStore, coll)
+        // const docSnap = onSnapshot(docRef, (doc) => {
+        //     let arr: any[] = []
+        //     doc.forEach((doc) => {
+        //         if (coll === 'articles') {
+        //             if (doc?.data()?.title?.toLowerCase().includes(q?.toString().toLowerCase()) && doc.data()?.published) {
+        //                 arr.push(doc.data())
 
-                    }
-                } else {
-                    doc?.data()?.topics.forEach((topic: { name: string, count: number }) => {
-                        if (topic?.name?.toLowerCase().includes(q?.toString().toLowerCase()!)) {
-                            arr.push({ name: topic.name, count: topic.count })
-                        }
-                    })
-                }
-                setA(arr)
-                setLoading(false)
-            })
-        })
-        return () => {
-            docSnap()
-        }
+        //             }
+        //         } else {
+        //             doc?.data()?.topics.forEach((topic: { name: string, count: number }) => {
+        //                 if (topic?.name?.toLowerCase().includes(q?.toString().toLowerCase()!)) {
+        //                     arr.push({ name: topic.name, count: topic.count })
+        //                 }
+        //             })
+        //         }
+        //         setA(arr)
+        //         setLoading(false)
+        //     })
+        // })
+        // return () => {
+        //     docSnap()
+        // }
     }, [coll, q])
     return (
         <>

@@ -2,7 +2,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import styles from '../styles/forgotpassword.module.css';
 import { sendPasswordResetEmail } from 'firebase/auth';
-import { firebaseAuth } from '@/firebase/config';
 import { useState } from 'react';
 import Head from 'next/head';
 import RegistrationLayout from '@/container/registerlayout';
@@ -13,24 +12,24 @@ function ForgotPassword() {
 	const [invalidEmail, setInvalidEmail] = useState(false)
 	const [email, setEmail] = useState("")
 	const handlePasswordResetMail = (e: React.FormEvent<HTMLFormElement>, email: string) => {
-		e.preventDefault()
-		if (email.length > 0) {
-			sendPasswordResetEmail(firebaseAuth, email)
-				.then(() => {
-					// Password reset email sent!
-					// ..
-					setInvalidEmail(false)
-					setEmailSent(true)
-					setEmail("")
-				})
-				.catch((error) => {
-					const errorCode = error.code;
-					const errorMessage = error.message;
-					console.log(error)
-					setInvalidEmail(true)
-					// ..
-				});
-		}
+		// e.preventDefault()
+		// if (email.length > 0) {
+		// 	sendPasswordResetEmail(firebaseAuth, email)
+		// 		.then(() => {
+		// 			// Password reset email sent!
+		// 			// ..
+		// 			setInvalidEmail(false)
+		// 			setEmailSent(true)
+		// 			setEmail("")
+		// 		})
+		// 		.catch((error) => {
+		// 			const errorCode = error.code;
+		// 			const errorMessage = error.message;
+		// 			console.log(error)
+		// 			setInvalidEmail(true)
+		// 			// ..
+		// 		});
+		// }
 
 	}
 	return (

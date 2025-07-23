@@ -1,28 +1,37 @@
 import Link from 'next/link';
 import styles from '../styles/index.module.css';
-import { useState } from 'react';
-import { useGoogleSignin, useGitHubSignin, useLogin } from '@/hooks';
+import { useGoogleSignin, useGitHubSignin } from '@/hooks';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import RegistrationLayout from '@/container/registerlayout';
 import { ShowPassword } from '@/components';
+import { LoginType, loginSchema } from '@/validations/auth.validation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from "@hookform/resolvers/zod";
+import InputErrorWrapper from '@/components/custom/input-error-wrapper';
+import { AxiosError } from 'axios';
+import { toast } from "sonner";
+import { login } from '@/services/auth.service';
+import { useMutation } from '@tanstack/react-query';
 
 
 export default function Home() {
 	const router = useRouter()
-	const [loginDetails, setLoginDetails] = useState({
-		email: '',
-		password: '',
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm<LoginType>({
+		resolver: zodResolver(loginSchema),
+		mode: "onChange",
+		reValidateMode: "onChange",
+		defaultValues: {
+			email: '',
+			password: '',
+		},
 	});
-	const [emailExists, setEmailExists] = useState<boolean | null>(null);
-	const [passwordLimit, setPasswordLimit] = useState<boolean | null>(null);
-	const { loginUser, error, isLoading } = useLogin();
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setLoginDetails({
-			...loginDetails,
-			[e.target.name]: e.target.value,
-		});
-	};
+
+
 	const { google } = useGoogleSignin();
 	const { github } = useGitHubSignin()
 	const handleGithubLogin = async (e: React.MouseEvent) => {
@@ -33,22 +42,31 @@ export default function Home() {
 		e.preventDefault()
 		await google();
 	};
-	const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
-		await loginUser(loginDetails)
 
-		if (error == "Firebase: Error (auth/user-not-found).") {
-			setEmailExists(false)
-			setPasswordLimit(false)
-		} else if (error == "Firebase: Error (auth/wrong-password).") {
-			setEmailExists(true)
-			setPasswordLimit(false)
-		} else if (error === "Firebase: Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later. (auth/too-many-requests).") {
-			setEmailExists(null)
-			setPasswordLimit(true)
-		} else {
-			router.push("/chatter")
-		}
+	const { mutate, isPending } = useMutation({
+		mutationFn: login,
+		onSuccess: async (response) => {
+			const { access_token } = response?.data;
+			sessionStorage.setItem("access_token", access_token);
+			toast.success("Login Success");
+			router.push("/chatter");
+		},
+		onError: (error: AxiosError) => {
+			toast.error("Login Failed", {
+				description: typeof error?.response?.data === "string"
+					? error.response.data
+					: (error?.message || "An error occurred"),
+			});
+
+		},
+	});
+
+	const onSubmit = (data: LoginType) => {
+		const formData = new FormData();
+		formData.append('username', data.email);
+		formData.append('password', data.password);
+		console.log(formData)
+		mutate(formData)
 	}
 
 	return (
@@ -72,41 +90,42 @@ export default function Home() {
 								sharing your brilliant ideas and engaging stories{' '}
 							</p>
 						</div>
-						<form className={` mb-10`} onSubmit={handleLogin}>
-							{passwordLimit && <p className={`text-red-500`}>You have exceeded the login limit. Please wait a few minutes and try again.</p>}
-							<label className={`block mb-4`}>
-								{emailExists === false && <p className={`text-red-500`}>Wrong email</p>}
-								<input
-									onChange={handleChange}
-									name='email'
-									type='email'
-									placeholder='Enter your email'
-									required
-									className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
-								/>
-							</label>
-							<label className={`block mb-3 relative`}>
-								{emailExists && <p className={`text-red-500`}>Wrong password</p>}
-								<input
-									onChange={handleChange}
-									name='password'
-									type='password'
-									placeholder='Enter your password'
-									required
-									className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
-								/>
-							<ShowPassword />
-							</label>
+						<form className={` mb-10`} onSubmit={handleSubmit(onSubmit)}>
+							<InputErrorWrapper error={errors.email?.message}>
+								<label className={`block mb-4`}>
+									<input
+										type='email'
+										placeholder='Enter your email'
+										{...register('email')}
+										required
+										className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
+									/>
+								</label>
+							</InputErrorWrapper>
+
+
+							<InputErrorWrapper error={errors.password?.message}>
+								<label className={`block mb-3 relative`}>
+									<input
+										type='password'
+										placeholder='Enter your password'
+										{...register('password')}
+										className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
+									/>
+									<ShowPassword />
+								</label>
+							</InputErrorWrapper>
+
 							<Link
 								href='forgotpassword'
 								className={`block text-right mb-8 text-violet-700`}>
 								forgot password
 							</Link>
 							<input
-								disabled={isLoading}
+								disabled={isPending}
 								type='submit'
 								value='Log in'
-								className={`cursor-pointer mb-2 block w-full p-2 bg-violet-700 text-white rounded-lg hover:bg-black hover:text-white ${isLoading && 'opacity-50'}}`}
+								className={`cursor-pointer mb-2 block w-full p-2 bg-violet-700 text-white rounded-lg hover:bg-black hover:text-white ${isPending && 'opacity-50'}}`}
 							/>
 							<p className={`text-center`}>
 								Don&apos;t have an account?{' '}

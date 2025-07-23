@@ -1,83 +1,64 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import styles from '../styles/signup.module.css';
-import useSignUp from '@/hooks/useSignUp';
-import { useEffect, useState } from 'react';
 import RegistrationLayout from '@/container/registerlayout';
-import { useAuthContext } from '@/store/store';
 import { ShowPassword } from '@/components';
+import { ISignUp } from '@/interfaces/auth.interface';
+import { signUpSchema } from '@/validations/auth.validation';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import InputErrorWrapper from '@/components/custom/input-error-wrapper';
+import { signUp } from '@/services/auth.service';
+import { AxiosError } from 'axios';
+import { toast } from "sonner";
+import { useMutation } from '@tanstack/react-query';
+import { useRouter } from 'next/router';
 
 function SignUp() {
-	const [emailExists, setEmailExists] = useState<boolean | null>(null);
-	const [isPasswordShort, setIsPasswordShort] = useState<boolean | null>(null);
-	const { createUser, error, isLoading } = useSignUp();
-	const { state } = useAuthContext()
+	const router = useRouter();
 
-	const [userDetails, setUserDetails] = useState({
-		username: '',
-		email: '',
-		password: '',
-		topics: [],
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm<ISignUp>({
+		resolver: zodResolver(signUpSchema),
+		mode: "onChange",
+		reValidateMode: "onChange",
+		defaultValues: {
+			email: '',
+			password: '',
+			username: "",
+			confirm_password: ""
+		},
 	});
-	interface formErrorProps {
-		email: string;
-		name: string;
-		password: string;
-	}
-	const [formErrors, setFormErrors] = useState<formErrorProps>({ name: "", email: "", password: "" }) // ["Invalid email", "Username should be at least 3 characters"
-	const validateForm = () => {
-		let validEmailpattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-		if (validEmailpattern.test(userDetails.email)) {
-			setFormErrors({ ...formErrors, email: "invalid email" })
-		} else {
-			setFormErrors({ ...formErrors, email: "" })
-		} if (userDetails.username.length < 2) {
-			setFormErrors({ ...formErrors, name: "Username should be at least 2 characters" })
-		} else {
-			setFormErrors({ ...formErrors, name: "" })
-		}
-		if (userDetails.password.length < 6) {
-			setFormErrors({ ...formErrors, password: "Password should be at least 6 characters" })
-		} else {
-			setFormErrors({ ...formErrors, password: "" })
-		}
-		if (formErrors.name === "" && formErrors.email === "" && formErrors.password === "") {
-			return true
-		} else {
-			return false
-		}
-	};
 
+	const { mutate, isPending } = useMutation({
+		mutationFn: signUp,
+		onSuccess: (response) => {
+			const { access_token } = response?.data;
+			sessionStorage.setItem("access_token", access_token);
+			toast.success("Account Created", {
+				description:"Account Created Successfully",
+			});
+			router.push("/topics")
+		},
+		onError: (error: AxiosError) => {
+			toast.error("Account Creation Failed", {
+				description: typeof error?.response?.data === "string"
+					? error.response.data
+					: (error?.message || "An error occurred"),
+			});
+		},
+	});
 
-	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setUserDetails({ ...userDetails, [e.target.name]: e.target.value });
-		if (isPasswordShort) {
-			userDetails.password.length > 6;
-			setIsPasswordShort(false);
-		}
+	const onSubmit = (data: ISignUp) => {
+		mutate({
+			username: data.username,
+			email: data.email,
+			password: data.password,
+		})
 	};
-
-	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
-		const isValid = validateForm()
-		if (isValid) {
-			await createUser(userDetails)
-		}
-	};
-	useEffect(() => {
-		if (!state.success) {
-			if (
-				error === 'Firebase: Error (auth/email-already-in-use).'
-			) {
-				setEmailExists(true);
-			} else if (
-				error ===
-				'Firebase: Password should be at least 6 characters (auth/weak-password).'
-			) {
-				setIsPasswordShort(true);
-			}
-		}
-	}, [error, state.success])
 
 	return (
 		<>
@@ -101,64 +82,66 @@ function SignUp() {
 							readers from the very beginning.{' '}
 						</p>
 					</div>
-					<form className={`mb-10`} onSubmit={handleSubmit}>
-						<label className={`block mb-4`}>
-							<input
-								type='text'
-								name='username'
-								required
-								placeholder='Enter your username'
-								className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
-								onChange={handleInputChange}
-							/>
-							{formErrors.name &&
-								<p className={`text-red-500 text-sm`}>{formErrors.name}</p>
-							}
-						</label>
-						<label className={`block mb-4`}>
-							<input
-								onChange={handleInputChange}
-								name='email'
-								type='email'
-								placeholder='Enter your email'
-								required
-								className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
-							/>
-							{
-								formErrors.email &&
-								<p className={`text-red-500 text-sm`}>{formErrors.email}</p>
-							}
+					<form className={`mb-10`} onSubmit={handleSubmit(onSubmit)}>
+						<InputErrorWrapper error={errors.username?.message}>
 
-							{emailExists && (
-								<p className={`text-red-500 text-sm`}>Email already exists</p>
-							)}
-						</label>
-						<label className={`block mb-3 relative`}>
-							{
-								formErrors.password &&
-								<p className={`text-red-500 text-sm`}>{formErrors.password}</p>
-							}
-							{isPasswordShort && (
-								<p className={`text-red-500 text-sm`}>
-									Password should be at least 6 characters
-								</p>
-							)}
-							<input
-								type='password'
-								name='password'
-								required
-								placeholder='Enter your password'
-								className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
-								onChange={handleInputChange}
-							/>
-							<ShowPassword/>
-						</label>
+							<label className={`block mb-4`}>
+								<input
+									type='text'
+									required
+									placeholder='Enter your username'
+									{...register("username")}
+									className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
+								/>
+
+							</label>
+						</InputErrorWrapper>
+						<InputErrorWrapper error={errors.email?.message}>
+
+							<label className={`block mb-4`}>
+								<input
+									type='email'
+									placeholder='Enter your email'
+									required
+									{...register("email")}
+									className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
+								/>
+							</label>
+						</InputErrorWrapper>
+						<InputErrorWrapper error={errors.password?.message}>
+
+							<label className={`block mb-3 relative`}>
+
+								<input
+									type='password'
+									required
+									{...register("password")}
+									placeholder='Enter your password'
+									className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
+								/>
+								<ShowPassword />
+							</label>
+						</InputErrorWrapper>
+						<InputErrorWrapper error={errors.confirm_password?.message}>
+
+							<label className={`block mb-3 relative`}>
+
+								<input
+									type='password'
+									required
+									{...register("confirm_password")}
+									placeholder='Confirm your password'
+									className={`outline-none block w-full p-2 border-solid border-2 border-black rounded-lg`}
+								/>
+								<ShowPassword />
+							</label>
+						</InputErrorWrapper>
 						<input
 							type='submit'
 							value='Sign Up'
-							className={`cursor-pointer mt-10 block w-full p-2 bg-violet-700 text-white rounded-lg hover:bg-black hover:text-white ${isLoading ? styles.grey : ''
+							className={`cursor-pointer mt-10 block w-full p-2 bg-violet-700 text-white rounded-lg hover:bg-black hover:text-white ${isPending ? styles.grey : ''
 								} `}
-							disabled={isLoading}
+							disabled={isPending}
 						/>
 						<p className={` text-center`}>
 							Already have an account? <Link href='/'>Log in</Link>{' '}

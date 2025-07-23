@@ -1,4 +1,4 @@
-import { firebaseStore } from '@/firebase/config'
+// import { firebaseStore } from '@/firebase/config'
 import { collection, deleteDoc, doc, onSnapshot, setDoc } from 'firebase/firestore'
 import { useRouter } from 'next/router'
 import React from 'react'
@@ -6,20 +6,20 @@ import React from 'react'
 export default function DeleteModal({ articleid, handleModal, published }: { articleid: string, handleModal: () => void, published: boolean }) {
     const router = useRouter()
     const deleteArticle = async () => {
-        await deleteDoc(doc(firebaseStore, "articles", articleid))
-        if (published) {
-            const docRef = collection(firebaseStore, "bookmarks");
-            //get snapshots of bookmarks and delete article id
-            onSnapshot(docRef, (snap) => {
-                snap.forEach((book) => {
-                    const bookmarks = book.data().bookmarks
-                    const filteredBookmarks = bookmarks.filter((bookmark: string) => bookmark !== articleid)
-                    console.log(filteredBookmarks)
-                    //update bookmarks
-                    setDoc(doc(firebaseStore, "bookmarks", book.id), { bookmarks: filteredBookmarks })
-                })
-            })
-        }
+        // await deleteDoc(doc(firebaseStore, "articles", articleid))
+        // if (published) {
+        //     const docRef = collection(firebaseStore, "bookmarks");
+        //     //get snapshots of bookmarks and delete article id
+        //     onSnapshot(docRef, (snap) => {
+        //         snap.forEach((book) => {
+        //             const bookmarks = book.data().bookmarks
+        //             const filteredBookmarks = bookmarks.filter((bookmark: string) => bookmark !== articleid)
+        //             console.log(filteredBookmarks)
+        //             //update bookmarks
+        //             setDoc(doc(firebaseStore, "bookmarks", book.id), { bookmarks: filteredBookmarks })
+        //         })
+        //     })
+        // }
         handleModal()
         router.push('/post')
 
